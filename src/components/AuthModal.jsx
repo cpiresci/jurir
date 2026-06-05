@@ -29,7 +29,7 @@ export default function AuthModal() {
 
   const handleRegister = async () => {
     if (!email || !pwd) { setErr('Preencha todos os campos.'); return; }
-    if (pwd.length < 6)  { setErr('Senha mínima de 6 caracteres.'); return; }
+    if (pwd.length < 8) { setErr('Senha mínima de 8 caracteres.'); return; }
     setLoading(true); setErr('');
     try {
       await register(email, pwd);
