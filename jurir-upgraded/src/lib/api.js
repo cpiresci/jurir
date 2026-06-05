@@ -1,0 +1,143 @@
+import { API_BASE } from './constants';
+
+export async function apiFetch(path, opts = {}, token = null) {
+  const headers = { 'Content-Type': 'application/json', ...opts.headers };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const r = await fetch(`${API_BASE}${path}`, { ...opts, headers });
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(err.detail || err.message || `HTTP ${r.status}`);
+  }
+  return r.json();
+}
+
+export async function checkHealth() {
+  try {
+    // /api/status is lighter and returns richer provider data
+    const r = await fetch(`${API_BASE}/api/status`, { cache: 'no-store' });
+    if (r.ok) return r.json();
+  } catch { /* fallthrough */ }
+  // Fallback to /health if /api/status unavailable (older backend)
+  try {
+    const r = await fetch(`${API_BASE}/health`, { cache: 'no-store' });
+    return r.json().catch(() => ({}));
+  } catch {
+    return {};
+  }
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────
+export async function login(email, password) {
+  return apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+}
+export async function register(email, password) {
+  return apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) });
+}
+export async function getMe(token) {
+  return apiFetch('/api/auth/me', {}, token);
+}
+
+// ── Análise ───────────────────────────────────────────────────────────
+export async function analyzeFree(prompt, language = 'pt', signal) {
+  const r = await fetch(`${API_BASE}/api/analyze`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, language }),
+    signal,
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+export async function analyzePremiumPoll(prompt, token) {
+  return apiFetch('/api/analyze/premium', { method: 'POST', body: JSON.stringify({ prompt }) }, token);
+}
+export async function pollJob(jobId, token) {
+  return apiFetch(`/api/job/${jobId}`, {}, token);
+}
+export async function getAnalysis(id, token) {
+  return apiFetch(`/api/analysis/${id}`, {}, token);
+}
+export async function getAnalyses(token) {
+  return apiFetch('/api/analyses', {}, token);
+}
+
+// ── PDF ───────────────────────────────────────────────────────────────
+export async function downloadPdf(analysisId, token) {
+  const r = await fetch(`${API_BASE}/api/report/pdf/${analysisId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!r.ok) throw new Error(`PDF ${r.status}`);
+  const blob = await r.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `jurir-analise-${analysisId}.pdf`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Delta Analysis ────────────────────────────────────────────────────
+export async function analyzeDelta(body, token) {
+  return apiFetch('/api/delta/analyze', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+export async function deltaSummary(body, token) {
+  return apiFetch('/api/delta/summary', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+
+// ── Upload de Documento ───────────────────────────────────────────────
+export async function analyzeDocument(formData, token) {
+  const r = await fetch(`${API_BASE}/api/document/analyze`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+// ── Gerador de Petições ───────────────────────────────────────────────
+export async function generatePetition(body, token) {
+  const r = await fetch(`${API_BASE}/api/petition/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(err.detail || `HTTP ${r.status}`);
+  }
+  const blob = await r.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `jurir_peticao_${body.analysis_id}.docx`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Simulador de Instâncias ───────────────────────────────────────────
+export async function simulateInstances(body, token) {
+  return apiFetch('/api/analyze/simulate-instances', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+
+// ── Monitoramento de Processos ────────────────────────────────────────
+export async function addMonitoring(body, token) {
+  return apiFetch('/api/monitoring/add', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+export async function listMonitoring(token) {
+  return apiFetch('/api/monitoring/list', {}, token);
+}
+export async function removeMonitoring(numero_processo, token) {
+  return apiFetch(`/api/monitoring/${encodeURIComponent(numero_processo)}`, { method: 'DELETE' }, token);
+}
+
+// ── Stripe ────────────────────────────────────────────────────────────
+export async function createCheckoutSession(token) {
+  return apiFetch('/api/create-checkout-session', { method: 'POST' }, token);
+}
+
+// ── Verificação de Serial ─────────────────────────────────────────────
+export async function verifySerial(serial) {
+  const r = await fetch(`${API_BASE}/verify/${encodeURIComponent(serial)}`);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(err.detail || `HTTP ${r.status}`);
+  }
+  return r.json();
+}
