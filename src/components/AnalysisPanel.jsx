@@ -29,6 +29,7 @@ export default function AnalysisPanel() {
     mode, setMode, running, setRunning, resetAnalysis, authToken,
     openModal, addToast, setFreeResult, freeResult,
     setVerdict, setDevil, setScore, agentStates, setAnalysisId,
+    statusMessage,
   } = useStore();
 
   const { run: runSSE } = useSSEAnalysis();
@@ -40,14 +41,19 @@ export default function AnalysisPanel() {
     setRunning(true);
     resetAnalysis();
     const ctrl = new AbortController();
-    // [FIX] Timeout de 10 min para aguentar cold start do Render free tier (~50s)
     const t = setTimeout(() => ctrl.abort(), 600_000);
     try {
       const data = await analyzeFree(prompt, lang, ctrl.signal);
       setFreeResult(data);
     } catch (e) {
-      if (e.name === 'AbortError') addToast('Timeout — tente novamente.', 'error');
-      else addToast(`Erro: ${e.message}`, 'error');
+      if (e.name === 'AbortError') {
+        addToast('Análise expirou. Tente novamente.', 'error');
+      } else if (e.message.includes('504') || e.message.includes('503')) {
+        // [FIX] Render free tier: cold start pode causar timeout — mensagem clara
+        addToast('Servidor a iniciar. Aguarde 30s e tente novamente.', 'error');
+      } else {
+        addToast(`Erro: ${e.message}`, 'error');
+      }
     } finally {
       clearTimeout(t);
       setRunning(false);
@@ -90,10 +96,6 @@ export default function AnalysisPanel() {
       openModal('login');
       return;
     }
-    // [FIX v2] Verificar créditos premium ANTES de abrir o stream — evita erro 402 no meio
-    // da requisição com mensagem confusa ("HTTP 402") para o usuário.
-    // CUIDADO: userData pode ser null se o perfil ainda não carregou (cold start).
-    // Nesse caso deixa passar — o backend retorna 402 e o SSE hook trata corretamente.
     if (mode === 'premium' || mode === 'polling') {
       const ud = useStore.getState().userData;
       if (ud !== null && ud !== undefined && (ud.premium_credits ?? 1) <= 0) {
@@ -194,7 +196,21 @@ export default function AnalysisPanel() {
           )}
         </div>
 
-        {/* [FIX] freeResult agora renderiza corretamente com campos normalizados no store */}
+        {/* [FIX] Status de cooldown/recovery — aparece enquanto agentes não iniciaram */}
+        {running && statusMessage && (
+          <div style={{
+            marginTop: 20,
+            display: 'flex', alignItems: 'center', gap: 10,
+            background: 'var(--lift)', border: '1px solid var(--bn)',
+            borderRadius: 'var(--r-md)', padding: '12px 16px',
+          }}>
+            <Loader2 size={14} className="spin" style={{ color: 'var(--r3)', flexShrink: 0 }}/>
+            <span style={{ fontSize: '.84rem', color: 'var(--n3)', fontFamily: 'var(--f-sans)' }}>
+              {statusMessage}
+            </span>
+          </div>
+        )}
+
         {freeResult && (
           <div style={{
             marginTop: 28, background: 'var(--surface)',
