@@ -90,11 +90,13 @@ export default function AnalysisPanel() {
       openModal('login');
       return;
     }
-    // [FIX] Verificar créditos premium ANTES de abrir o stream — evita erro 402 no meio
-    // da requisição com mensagem confusa ("HTTP 402") para o usuário
+    // [FIX v2] Verificar créditos premium ANTES de abrir o stream — evita erro 402 no meio
+    // da requisição com mensagem confusa ("HTTP 402") para o usuário.
+    // CUIDADO: userData pode ser null se o perfil ainda não carregou (cold start).
+    // Nesse caso deixa passar — o backend retorna 402 e o SSE hook trata corretamente.
     if (mode === 'premium' || mode === 'polling') {
-      const { userData: ud } = useStore.getState();
-      if (!ud || ud.premium_credits <= 0) {
+      const ud = useStore.getState().userData;
+      if (ud !== null && ud !== undefined && (ud.premium_credits ?? 1) <= 0) {
         addToast('Sem créditos premium. Faça upgrade para continuar.', 'error');
         openModal('login');
         return;
