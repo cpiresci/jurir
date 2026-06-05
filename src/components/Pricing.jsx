@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useStore } from '../store';
 
 const FREE_FEATURES = [
@@ -16,8 +17,10 @@ const PREMIUM_FEATURES = [
   'Delta Analysis (comparativo de casos)',
   'Análise de documentos PDF/Word',
   'Simulador de Instâncias',
+  'Gerador de Petições .docx',
+  'Monitoramento Processual via DATAJUD',
   'Exportação em PDF profissional',
-  'Suporte prioritário',
+  'Verificação de autenticidade (serial)',
 ];
 
 export default function Pricing() {
@@ -36,12 +39,7 @@ export default function Pricing() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px,1fr))', gap: 20 }}>
-
-          {/* Free */}
-          <div style={{
-            background: 'var(--surface)', border: '1px solid var(--bn)',
-            borderRadius: 'var(--r-xl)', padding: 32,
-          }}>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--bn)', borderRadius: 'var(--r-xl)', padding: 32 }}>
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: '.72rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em', marginBottom: 8 }}>GRATUITO</div>
               <div style={{ fontFamily: 'var(--f-display)', fontSize: '2.4rem', fontWeight: 700 }}>R$ 0</div>
@@ -54,36 +52,26 @@ export default function Pricing() {
                 </li>
               ))}
             </ul>
-            <button
-              className="btn btn-ghost"
-              style={{ width: '100%', justifyContent: 'center' }}
-              onClick={() => document.getElementById('analise')?.scrollIntoView({ behavior: 'smooth' })}
-            >
+            <button className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }}
+              onClick={() => document.getElementById('analise')?.scrollIntoView({ behavior: 'smooth' })}>
               Usar Grátis
             </button>
           </div>
 
-          {/* Premium */}
           <div style={{
             background: 'linear-gradient(145deg, var(--surface), var(--lift))',
-            border: '1px solid var(--br)',
-            borderRadius: 'var(--r-xl)', padding: 32,
-            position: 'relative', overflow: 'hidden',
-            boxShadow: 'var(--shadow-crimson)',
+            border: '1px solid var(--br)', borderRadius: 'var(--r-xl)', padding: 32,
+            position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-crimson)',
           }}>
-            <div style={{
-              position: 'absolute', top: 16, right: 16,
+            <div style={{ position: 'absolute', top: 16, right: 16,
               background: 'linear-gradient(135deg, var(--r2), var(--r1))',
               borderRadius: 'var(--r-pill)', padding: '3px 10px',
-              fontSize: '.68rem', color: '#fff', fontWeight: 700, letterSpacing: '.08em',
-            }}>
+              fontSize: '.68rem', color: '#fff', fontWeight: 700, letterSpacing: '.08em' }}>
               POPULAR
             </div>
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: '.72rem', color: 'var(--r3)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em', marginBottom: 8 }}>PREMIUM</div>
-              <div style={{ fontFamily: 'var(--f-display)', fontSize: '2.4rem', fontWeight: 700, color: 'var(--n0)' }}>
-                Sob consulta
-              </div>
+              <div style={{ fontFamily: 'var(--f-display)', fontSize: '2.4rem', fontWeight: 700, color: 'var(--n0)' }}>Sob consulta</div>
               <div style={{ fontSize: '.82rem', color: 'var(--n4)', marginTop: 4 }}>acesso completo</div>
             </div>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
@@ -93,14 +81,15 @@ export default function Pricing() {
                 </li>
               ))}
             </ul>
-            <button
-              className="btn btn-crimson"
-              style={{ width: '100%', justifyContent: 'center' }}
-              onClick={() => openModal('register')}
-              disabled={!!authToken}
-            >
-              {authToken ? '✓ Conta ativa' : '🔓 Ativar Premium'}
-            </button>
+            {authToken ? (
+              <Link to="/premium" className="btn btn-gold" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
+                ⚡ Ativar Premium
+              </Link>
+            ) : (
+              <button className="btn btn-crimson" style={{ width: '100%', justifyContent: 'center' }} onClick={() => openModal('register')}>
+                🔓 Criar conta grátis
+              </button>
+            )}
           </div>
         </div>
       </div>
