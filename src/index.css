@@ -175,6 +175,10 @@ body {
 /* ── SPIN ── */
 .spin { animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .3; }
+}
 
 /* ── MODAL ── */
 .modal-overlay {
