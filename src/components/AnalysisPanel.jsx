@@ -40,7 +40,8 @@ export default function AnalysisPanel() {
     setRunning(true);
     resetAnalysis();
     const ctrl = new AbortController();
-    const t    = setTimeout(() => ctrl.abort(), 600_000);
+    // [FIX] Timeout de 10 min para aguentar cold start do Render free tier (~50s)
+    const t = setTimeout(() => ctrl.abort(), 600_000);
     try {
       const data = await analyzeFree(prompt, lang, ctrl.signal);
       setFreeResult(data);
@@ -181,6 +182,7 @@ export default function AnalysisPanel() {
           )}
         </div>
 
+        {/* [FIX] freeResult agora renderiza corretamente com campos normalizados no store */}
         {freeResult && (
           <div style={{
             marginTop: 28, background: 'var(--surface)',
@@ -190,7 +192,7 @@ export default function AnalysisPanel() {
               ANÁLISE GRATUITA — {freeResult.agent_area || 'Agente selecionado automaticamente'}
             </div>
             <p style={{ color: 'var(--n1)', lineHeight: 1.75, fontSize: '.9rem', whiteSpace: 'pre-wrap' }}>
-              {freeResult.analysis || freeResult.result || JSON.stringify(freeResult)}
+              {freeResult.analysis || JSON.stringify(freeResult)}
             </p>
             <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--bn2)' }}>
               <p style={{ fontSize: '.8rem', color: 'var(--n4)', marginBottom: 10 }}>
