@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JURIR</title>
+    <script>
+      // SPA fallback para GitHub Pages
+      // Preserva o path e redireciona para index.html via sessionStorage
+      var path = window.location.pathname;
+      var search = window.location.search;
+      var hash = window.location.hash;
+      sessionStorage.setItem('spa_redirect', path + search + hash);
+      window.location.replace('/');
+    </script>
+  </head>
+  <body></body>
+</html>
