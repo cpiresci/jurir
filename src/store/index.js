@@ -44,12 +44,14 @@ export const useStore = create((set, get) => ({
   running:         false,
   freeResult:      null,
   deltaResult:     null,
+  // [FIX] Mensagem de status para cooldown/recovery — evita 0/16 parado sem feedback
+  statusMessage:   null,
 
   resetAnalysis: () => set({
     analysisId: null, agentStates: {}, completedAgents: 0,
     verdictText: '', devilText: '', jurirScore: null,
     scoreDims: null, vetoActive: false, running: false,
-    freeResult: null, deltaResult: null,
+    freeResult: null, deltaResult: null, statusMessage: null,
   }),
 
   setAgentState:      (id, data)      => set(s => ({ agentStates: { ...s.agentStates, [id]: data } })),
@@ -59,12 +61,14 @@ export const useStore = create((set, get) => ({
   setScore:           (score, dims)   => set({ jurirScore: score, scoreDims: dims }),
   setVeto:            (v)             => set({ vetoActive: v }),
   setRunning:         (v)             => set({ running: v }),
-  setFreeResult:      (r)             => set({ freeResult: {
+  // [FIX] statusMessage para cooldown/recovery — limpar ao receber primeiro agent_thinking
+  setStatusMessage:   (msg)           => set({ statusMessage: msg }),
+  // [FIX] Prioridade corrigida: veredito (juiz) > free_analysis (agente preview)
+  setFreeResult: (r) => set({ freeResult: {
     ...r,
-    // Normaliza os campos do backend (veredito/free_analysis/area_especialista)
-    // para os nomes esperados pelo frontend (analysis/agent_area)
     agent_area: r.area_especialista || r.agent_area,
-    analysis:   r.free_analysis     || r.analysis || r.veredito,
+    // veredito é o resultado do Juiz IA — mais completo que free_analysis (preview 500 chars)
+    analysis: r.veredito || r.free_analysis || r.analysis,
   }}),
   setDeltaResult:     (r)             => set({ deltaResult: r }),
   setAnalysisId:      (id)            => set({ analysisId: id }),
