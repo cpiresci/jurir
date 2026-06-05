@@ -3,7 +3,7 @@ import { create } from 'zustand';
 export const useStore = create((set, get) => ({
   // ── Auth ──
   authToken: localStorage.getItem('jurir_token') || null,
-  userData: JSON.parse(localStorage.getItem('jurir_user') || 'null'),
+  userData:  JSON.parse(localStorage.getItem('jurir_user') || 'null'),
 
   setAuth: (token, user) => {
     localStorage.setItem('jurir_token', token);
@@ -28,21 +28,22 @@ export const useStore = create((set, get) => ({
   addToast: (message, type = 'info') => {
     const id = Date.now();
     set(s => ({ toasts: [...s.toasts, { id, message, type }] }));
+    setTimeout(() => get().removeToast(id), 4000);
   },
   removeToast: (id) => set(s => ({ toasts: s.toasts.filter(t => t.id !== id) })),
 
   // ── Analysis ──
-  analysisId: null,
-  agentStates: {},
+  analysisId:      null,
+  agentStates:     {},
   completedAgents: 0,
-  verdictText: '',
-  devilText: '',
-  jurirScore: null,
-  scoreDims: null,
-  vetoActive: false,
-  running: false,
-  freeResult: null,
-  deltaResult: null,
+  verdictText:     '',
+  devilText:       '',
+  jurirScore:      null,
+  scoreDims:       null,
+  vetoActive:      false,
+  running:         false,
+  freeResult:      null,
+  deltaResult:     null,
 
   resetAnalysis: () => set({
     analysisId: null, agentStates: {}, completedAgents: 0,
@@ -51,18 +52,34 @@ export const useStore = create((set, get) => ({
     freeResult: null, deltaResult: null,
   }),
 
-  setAgentState: (id, data) => set(s => ({
-    agentStates: { ...s.agentStates, [id]: data },
-  })),
+  setAgentState:      (id, data)      => set(s => ({ agentStates: { ...s.agentStates, [id]: data } })),
+  incrementCompleted: ()              => set(s => ({ completedAgents: s.completedAgents + 1 })),
+  setVerdict:         (text)          => set({ verdictText: text }),
+  setDevil:           (text)          => set({ devilText: text }),
+  setScore:           (score, dims)   => set({ jurirScore: score, scoreDims: dims }),
+  setVeto:            (v)             => set({ vetoActive: v }),
+  setRunning:         (v)             => set({ running: v }),
+  setFreeResult:      (r)             => set({ freeResult: r }),
+  setDeltaResult:     (r)             => set({ deltaResult: r }),
+  setAnalysisId:      (id)            => set({ analysisId: id }),
 
-  incrementCompleted: () => set(s => ({ completedAgents: s.completedAgents + 1 })),
+  // ── Delta ──
+  deltaLoading: false,
+  setDeltaLoading: (v) => set({ deltaLoading: v }),
 
-  setVerdict:     (text)        => set({ verdictText: text }),
-  setDevil:       (text)        => set({ devilText: text }),
-  setScore:       (score, dims) => set({ jurirScore: score, scoreDims: dims }),
-  setVeto:        (v)           => set({ vetoActive: v }),
-  setRunning:     (v)           => set({ running: v }),
-  setFreeResult:  (r)           => set({ freeResult: r }),
-  setDeltaResult: (r)           => set({ deltaResult: r }),
-  setAnalysisId:  (id)          => set({ analysisId: id }),
+  // ── Documento ──
+  docResult:    null,
+  docLoading:   false,
+  setDocResult: (r) => set({ docResult: r }),
+  setDocLoading:(v) => set({ docLoading: v }),
+
+  // ── Simulador ──
+  simResult:    null,
+  simLoading:   false,
+  setSimResult: (r) => set({ simResult: r }),
+  setSimLoading:(v) => set({ simLoading: v }),
+
+  // ── Monitoramento ──
+  monitored:    [],
+  setMonitored: (list) => set({ monitored: list }),
 }));
