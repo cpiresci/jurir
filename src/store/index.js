@@ -59,7 +59,13 @@ export const useStore = create((set, get) => ({
   setScore:           (score, dims)   => set({ jurirScore: score, scoreDims: dims }),
   setVeto:            (v)             => set({ vetoActive: v }),
   setRunning:         (v)             => set({ running: v }),
-  setFreeResult:      (r)             => set({ freeResult: r }),
+  setFreeResult:      (r)             => set({ freeResult: {
+    ...r,
+    // Normaliza os campos do backend (veredito/free_analysis/area_especialista)
+    // para os nomes esperados pelo frontend (analysis/agent_area)
+    agent_area: r.area_especialista || r.agent_area,
+    analysis:   r.free_analysis     || r.analysis || r.veredito,
+  }}),
   setDeltaResult:     (r)             => set({ deltaResult: r }),
   setAnalysisId:      (id)            => set({ analysisId: id }),
 
