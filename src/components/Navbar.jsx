@@ -1,17 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, LogOut } from 'lucide-react';
+import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useStore } from '../store';
 
+const FERRAMENTAS = [
+  { to: '/delta',         label: 'Delta Analysis',          icon: '⚡' },
+  { to: '/documentos',    label: 'Upload de Documentos',    icon: '📄' },
+  { to: '/peticoes',      label: 'Gerador de Petições',     icon: '📜' },
+  { to: '/simulador',     label: 'Simulador de Instâncias', icon: '⚖️' },
+  { to: '/monitoramento', label: 'Monitoramento Processual',icon: '🔔' },
+  { to: '/verificar',     label: 'Verificar Relatório',     icon: '🛡️' },
+];
+
 export default function Navbar() {
-  const [scrolled,   setScrolled]   = useState(false);
+  const [scrolled,   setScrolled]  = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [toolsOpen,  setToolsOpen]  = useState(false);
+  const toolsRef = useRef(null);
   const { authToken, userData, clearAuth, openModal, addToast } = useStore();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 55);
     window.addEventListener('scroll', handler);
     return () => window.removeEventListener('scroll', handler);
+  }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (toolsRef.current && !toolsRef.current.contains(e.target)) setToolsOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleLogout = () => {
@@ -41,6 +60,39 @@ export default function Navbar() {
         <NavAnchor href="/#analise">Análise</NavAnchor>
         <NavAnchor href="/#agentes">Agentes</NavAnchor>
         <NavAnchor href="/#precos">Preços</NavAnchor>
+
+        {/* Ferramentas dropdown */}
+        <div ref={toolsRef} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setToolsOpen(v => !v)}
+            style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--n0)'}
+            onMouseLeave={e => !toolsOpen && (e.currentTarget.style.color = 'var(--n3)')}
+          >
+            Ferramentas <ChevronDown size={12} style={{ transition: 'transform .2s', transform: toolsOpen ? 'rotate(180deg)' : 'none' }}/>
+          </button>
+          {toolsOpen && (
+            <div style={{
+              position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+              marginTop: 8, background: 'var(--glass2)', border: '1px solid var(--bn)',
+              borderRadius: 'var(--r-md)', padding: 6, minWidth: 230,
+              backdropFilter: 'blur(20px)', boxShadow: 'var(--shadow-deep)', zIndex: 300,
+            }}>
+              {FERRAMENTAS.map(({ to, label, icon }) => (
+                <Link key={to} to={to} onClick={() => setToolsOpen(false)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px',
+                    color: 'var(--n3)', fontSize: '.83rem', textDecoration: 'none',
+                    borderRadius: 'var(--r-sm)', transition: 'background .15s, color .15s' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--lift)'; e.currentTarget.style.color = 'var(--n0)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--n3)'; }}
+                >
+                  <span style={{ fontSize: '.9rem' }}>{icon}</span> {label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
         {authToken && <Link to="/historico" style={linkStyle}>Histórico</Link>}
       </div>
 
@@ -50,8 +102,9 @@ export default function Navbar() {
             <span style={{ fontSize: '.8rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)' }}>
               {userData?.email?.split('@')[0]}
             </span>
+            <Link to="/premium" className="btn btn-gold btn-sm">⚡ Premium</Link>
             <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
-              <LogOut size={14} /> Sair
+              <LogOut size={14}/> Sair
             </button>
           </div>
         ) : (
@@ -71,9 +124,14 @@ export default function Navbar() {
           <NavAnchor href="/#analise" onClick={() => setMobileOpen(false)}>Análise</NavAnchor>
           <NavAnchor href="/#agentes" onClick={() => setMobileOpen(false)}>Agentes</NavAnchor>
           <NavAnchor href="/#precos"  onClick={() => setMobileOpen(false)}>Preços</NavAnchor>
-          {authToken && (
-            <Link to="/historico" style={linkStyle} onClick={() => setMobileOpen(false)}>Histórico</Link>
-          )}
+          {FERRAMENTAS.map(({ to, label, icon }) => (
+            <Link key={to} to={to} onClick={() => setMobileOpen(false)}
+              style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>{icon}</span> {label}
+            </Link>
+          ))}
+          {authToken && <Link to="/historico" style={linkStyle} onClick={() => setMobileOpen(false)}>Histórico</Link>}
+          {authToken && <Link to="/premium" style={{ ...linkStyle, color: 'var(--g4)' }} onClick={() => setMobileOpen(false)}>⚡ Premium</Link>}
           <div style={{ borderTop: '1px solid var(--bn)', paddingTop: 12, marginTop: 8 }}>
             {authToken ? (
               <button className="btn btn-ghost" style={{ width: '100%' }} onClick={handleLogout}>
@@ -100,13 +158,9 @@ const linkStyle = {
 
 function NavAnchor({ href, children, onClick }) {
   return (
-    <a
-      href={href}
-      onClick={onClick}
-      style={linkStyle}
+    <a href={href} onClick={onClick} style={linkStyle}
       onMouseEnter={e => e.currentTarget.style.color = 'var(--n0)'}
-      onMouseLeave={e => e.currentTarget.style.color = 'var(--n3)'}
-    >
+      onMouseLeave={e => e.currentTarget.style.color = 'var(--n3)'}>
       {children}
     </a>
   );
