@@ -25,11 +25,11 @@ export const useStore = create((set, get) => ({
   closeModal: ()    => set({ modalOpen: null }),
 
   toasts: [],
-  addToast: (msg, type = 'info') => {
+  addToast: (message, type = 'info') => {
     const id = Date.now();
-    set(s => ({ toasts: [...s.toasts, { id, msg, type }] }));
-    setTimeout(() => set(s => ({ toasts: s.toasts.filter(t => t.id !== id) })), 4000);
+    set(s => ({ toasts: [...s.toasts, { id, message, type }] }));
   },
+  removeToast: (id) => set(s => ({ toasts: s.toasts.filter(t => t.id !== id) })),
 
   // ── Analysis ──
   analysisId: null,
