@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useStore } from '../store';
+import { checkHealth } from '../lib/api';
 
 const FERRAMENTAS = [
   { to: '/delta',         label: 'Delta Analysis',          icon: '⚡' },
@@ -16,8 +17,26 @@ export default function Navbar() {
   const [scrolled,   setScrolled]  = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toolsOpen,  setToolsOpen]  = useState(false);
+  // 'checking' | 'online' | 'offline'
+  const [engineStatus, setEngineStatus] = useState('checking');
   const toolsRef = useRef(null);
   const { authToken, userData, clearAuth, openModal, addToast } = useStore();
+
+  // ── Health check: verifica ao montar e a cada 3 minutos ──
+  useEffect(() => {
+    let cancelled = false;
+    const check = async () => {
+      try {
+        const data = await checkHealth();
+        if (!cancelled) setEngineStatus(data?.status === 'ok' ? 'online' : 'offline');
+      } catch {
+        if (!cancelled) setEngineStatus('offline');
+      }
+    };
+    check();
+    const interval = setInterval(check, 3 * 60 * 1000);
+    return () => { cancelled = true; clearInterval(interval); };
+  }, []);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 55);
@@ -97,6 +116,33 @@ export default function Navbar() {
       </div>
 
       <div className="nav-actions desktop-only">
+        {/* ── Indicador de motor ── */}
+        <div
+          title={
+            engineStatus === 'checking' ? 'Verificando motor…' :
+            engineStatus === 'online'   ? 'Motor online' : 'Motor offline — cold start pode levar ~50s'
+          }
+          style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            fontSize: '.72rem', fontFamily: 'var(--f-mono)',
+            color: engineStatus === 'online' ? 'var(--g4)' :
+                   engineStatus === 'offline' ? '#ef4444' : 'var(--n5)',
+            letterSpacing: '.06em', userSelect: 'none',
+            cursor: 'default',
+          }}
+        >
+          <span style={{
+            width: 7, height: 7, borderRadius: '50%',
+            background: engineStatus === 'online'  ? 'var(--g4)' :
+                        engineStatus === 'offline' ? '#ef4444' : 'var(--n5)',
+            boxShadow: engineStatus === 'online'
+              ? '0 0 6px var(--g4)' : engineStatus === 'offline'
+              ? '0 0 6px #ef4444' : 'none',
+            animation: engineStatus === 'checking' ? 'pulse 1.4s ease-in-out infinite' : 'none',
+          }} />
+          {engineStatus === 'checking' ? 'MOTOR…' :
+           engineStatus === 'online'   ? 'MOTOR OK' : 'MOTOR OFF'}
+        </div>
         {authToken ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: '.8rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)' }}>
