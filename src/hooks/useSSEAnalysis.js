@@ -75,7 +75,8 @@ export function useSSEAnalysis() {
 
           const t = ev.type;
 
-          if (t === 'agent_start') {
+          if (t === 'agent_start' || t === 'agent_thinking') {
+            // [FIX] Backend emite 'agent_thinking', não 'agent_start'
             setAgentState(ev.agent_id, { status: 'running', area: ev.area });
           } else if (t === 'agent_done') {
             setAgentState(ev.agent_id, {
@@ -88,17 +89,23 @@ export function useSSEAnalysis() {
             incrementCompleted();
           } else if (t === 'agent_error' || t === 'agent_skip') {
             setAgentState(ev.agent_id, { status: 'error', area: ev.area });
+          } else if (t === 'devil_thinking') {
+            setDevil('⚔️ Advogado do Diabo analisando…');
           } else if (t === 'devil_start') {
             setDevil('⚔️ Advogado do Diabo analisando…');
           } else if (t === 'devil_done') {
             setDevil(ev.analysis || '');
           } else if (t === 'veto') {
             setVeto(true);
-          } else if (t === 'judge_done') {
+          } else if (t === 'verdict') {
+            // [FIX] Backend emite type:'verdict', não 'judge_done'
             setVerdict(ev.verdict || ev.text || '');
+          } else if (t === 'saved') {
+            // [FIX] analysis_id chega no evento 'saved', não no 'verdict'
             if (ev.analysis_id) setAnalysisId(ev.analysis_id);
           } else if (t === 'score') {
-            setScore(ev.score, ev.dimensions);
+            // [FIX] Campo correto é 'jurir_score', não 'score'
+            setScore(ev.jurir_score ?? ev.score ?? null, ev.dimensions ?? null);
           } else if (t === 'error') {
             addToast(ev.message || 'Erro no streaming', 'error');
           }
