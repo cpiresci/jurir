@@ -3,7 +3,6 @@ import Navbar from './components/Navbar';
 import Background from './components/Background';
 import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
-import StatusBar from './components/StatusBar';
 import HomePage from './pages/Home';
 import HistoricoPage from './pages/Historico';
 import { useStore } from './store';
@@ -16,7 +15,6 @@ export default function App() {
       <Background />
       <div style={{ position: 'relative', zIndex: 10 }}>
         <Navbar />
-        <StatusBar />
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
