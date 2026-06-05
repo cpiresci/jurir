@@ -90,6 +90,16 @@ export default function AnalysisPanel() {
       openModal('login');
       return;
     }
+    // [FIX] Verificar créditos premium ANTES de abrir o stream — evita erro 402 no meio
+    // da requisição com mensagem confusa ("HTTP 402") para o usuário
+    if (mode === 'premium' || mode === 'polling') {
+      const { userData: ud } = useStore.getState();
+      if (!ud || ud.premium_credits <= 0) {
+        addToast('Sem créditos premium. Faça upgrade para continuar.', 'error');
+        openModal('login');
+        return;
+      }
+    }
     if (mode === 'free')         await runFree();
     else if (mode === 'premium') await runSSE(prompt, lang);
     else                         await runPolling();
