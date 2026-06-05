@@ -19,7 +19,9 @@ export function useSSEAnalysis() {
     const ctrl = new AbortController();
     abortRef.current = ctrl;
 
-    const timeout = setTimeout(() => ctrl.abort(), 120_000);
+    // [FIX] Timeout de 10 min — 16 agentes + Diabo + Juiz levam 3-4 min no Render free.
+    // clearTimeout movido para o finally; não aborta antes do stream terminar.
+    const timeout = setTimeout(() => ctrl.abort(), 600_000);
 
     try {
       const r = await fetch(`${API_BASE}/api/analyze/premium/stream`, {
@@ -31,7 +33,6 @@ export function useSSEAnalysis() {
         body: JSON.stringify({ prompt, language }),
         signal: ctrl.signal,
       });
-      clearTimeout(timeout);
 
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
 
@@ -88,11 +89,11 @@ export function useSSEAnalysis() {
         }
       }
     } catch (e) {
-      clearTimeout(timeout);
       if (e.name !== 'AbortError') {
         useStore.getState().addToast(`Erro: ${e.message}`, 'error');
       }
     } finally {
+      // [FIX] clearTimeout sempre no finally — garante limpeza em qualquer caminho
       clearTimeout(timeout);
       useStore.getState().setRunning(false);
     }
