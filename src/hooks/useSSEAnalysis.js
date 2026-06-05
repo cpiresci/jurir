@@ -10,7 +10,7 @@ export function useSSEAnalysis() {
     const {
       authToken, resetAnalysis, setRunning, setAgentState,
       incrementCompleted, setVerdict, setDevil, setScore,
-      setVeto, setAnalysisId, addToast,
+      setVeto, setAnalysisId, addToast, setStatusMessage,
     } = useStore.getState();
 
     resetAnalysis();
@@ -20,8 +20,6 @@ export function useSSEAnalysis() {
     const ctrl = new AbortController();
     abortRef.current = ctrl;
 
-    // [FIX] Timeout de 10 min — 16 agentes + Diabo + Juiz levam 3-4 min no Render free.
-    // clearTimeout movido para o finally; não aborta antes do stream terminar.
     const timeout = setTimeout(() => ctrl.abort(), 600_000);
 
     try {
@@ -36,7 +34,6 @@ export function useSSEAnalysis() {
       });
 
       if (!r.ok) {
-        // [FIX] Tratar erros HTTP com mensagens claras em vez de "HTTP 402" genérico
         if (r.status === 402) {
           useStore.getState().addToast('Sem créditos premium. Faça upgrade para continuar.', 'error');
           useStore.getState().openModal('login');
@@ -46,6 +43,10 @@ export function useSSEAnalysis() {
           useStore.getState().addToast('Sessão expirada. Faça login novamente.', 'error');
           useStore.getState().clearAuth();
           useStore.getState().openModal('login');
+          return;
+        }
+        if (r.status === 503) {
+          useStore.getState().addToast('Servidor ocupado. Tente novamente em instantes.', 'error');
           return;
         }
         const body = await r.json().catch(() => ({}));
@@ -75,9 +76,26 @@ export function useSSEAnalysis() {
 
           const t = ev.type;
 
-          if (t === 'agent_start' || t === 'agent_thinking') {
-            // [FIX] Backend emite 'agent_thinking', não 'agent_start'
+          if (t === 'start') {
+            // Primeiro evento — stream conectado, agentes prestes a iniciar
+            setStatusMessage(ev.message || '⚖ Conectado. Iniciando agentes…');
+
+          } else if (t === 'cooldown') {
+            // Cooldown de rate-limit entre análises — pode durar até 60s
+            setStatusMessage(ev.message || `⏳ Aguardando ${ev.seconds}s para garantir qualidade dos providers…`);
+
+          } else if (t === 'recovery') {
+            // Recovery wait pós-agentes — providers se recuperam antes do Diabo/Juiz
+            setStatusMessage(ev.message || `⏳ Consolidando análises… aguarde ${ev.seconds}s para síntese final.`);
+
+          } else if (t === 'keepalive') {
+            // Heartbeat — não faz nada visualmente, só mantém conexão viva
+
+          } else if (t === 'agent_start' || t === 'agent_thinking') {
+            // Primeiro agente chegou — limpa mensagem de status, grid toma conta
+            setStatusMessage(null);
             setAgentState(ev.agent_id, { status: 'running', area: ev.area });
+
           } else if (t === 'agent_done') {
             setAgentState(ev.agent_id, {
               status: 'done',
@@ -87,25 +105,31 @@ export function useSSEAnalysis() {
               topRisk: ev.top_risk,
             });
             incrementCompleted();
+
           } else if (t === 'agent_error' || t === 'agent_skip') {
             setAgentState(ev.agent_id, { status: 'error', area: ev.area });
-          } else if (t === 'devil_thinking') {
+
+          } else if (t === 'devil_thinking' || t === 'devil_start') {
+            setStatusMessage('⚔️ Advogado do Diabo analisando contraditório…');
             setDevil('⚔️ Advogado do Diabo analisando…');
-          } else if (t === 'devil_start') {
-            setDevil('⚔️ Advogado do Diabo analisando…');
+
           } else if (t === 'devil_done') {
+            setStatusMessage(null);
             setDevil(ev.analysis || '');
+
           } else if (t === 'veto') {
             setVeto(true);
+
           } else if (t === 'verdict') {
-            // [FIX] Backend emite type:'verdict', não 'judge_done'
+            setStatusMessage(null);
             setVerdict(ev.verdict || ev.text || '');
+
           } else if (t === 'saved') {
-            // [FIX] analysis_id chega no evento 'saved', não no 'verdict'
             if (ev.analysis_id) setAnalysisId(ev.analysis_id);
+
           } else if (t === 'score') {
-            // [FIX] Campo correto é 'jurir_score', não 'score'
             setScore(ev.jurir_score ?? ev.score ?? null, ev.dimensions ?? null);
+
           } else if (t === 'error') {
             addToast(ev.message || 'Erro no streaming', 'error');
           }
@@ -116,11 +140,9 @@ export function useSSEAnalysis() {
         useStore.getState().addToast(`Erro: ${e.message}`, 'error');
       }
     } finally {
-      // [FIX] clearTimeout sempre no finally — garante limpeza em qualquer caminho
       clearTimeout(timeout);
       useStore.getState().setRunning(false);
-      // [FIX] Refresca créditos do usuário após análise — evita que o store mostre
-      // valor desatualizado e o usuário tente rodar novamente sem saldo
+      useStore.getState().setStatusMessage(null);
       const { authToken: tok, setAuth } = useStore.getState();
       if (tok) {
         getMe(tok).then(user => setAuth(tok, user)).catch(() => {});
