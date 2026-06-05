@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Loader2, Zap, Send } from 'lucide-react';
 import { useStore } from '../store';
 import { useSSEAnalysis } from '../hooks/useSSEAnalysis';
@@ -13,8 +13,17 @@ const MODES = [
 ];
 
 export default function AnalysisPanel() {
-  const [prompt, setPrompt] = useState('');
-  const [lang,   setLang]   = useState('pt');
+  const [prompt, setPrompt] = useState(() => {
+    const stored = sessionStorage.getItem('jurir_doc_prompt');
+    if (stored) { sessionStorage.removeItem('jurir_doc_prompt'); return stored; }
+    return '';
+  });
+  const [lang, setLang] = useState('pt');
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem('jurir_doc_prompt');
+    if (stored) { sessionStorage.removeItem('jurir_doc_prompt'); setPrompt(stored); }
+  }, []);
 
   const {
     mode, setMode, running, setRunning, resetAnalysis, authToken,
@@ -88,8 +97,6 @@ export default function AnalysisPanel() {
   return (
     <section id="analise" style={{ paddingTop: 80 }}>
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '60px 24px 0' }}>
-
-        {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -108,27 +115,21 @@ export default function AnalysisPanel() {
           </p>
         </div>
 
-        {/* Mode tabs */}
         <div style={{ display: 'flex', gap: 4, background: 'var(--lift)', borderRadius: 'var(--r-sm)', padding: 4, marginBottom: 20 }}>
           {MODES.map(m => (
-            <button
-              key={m.id}
-              onClick={() => setMode(m.id)}
-              style={{
-                flex: 1, padding: '8px 12px', border: 'none', cursor: 'pointer',
-                borderRadius: 'calc(var(--r-sm) - 2px)',
-                background: mode === m.id ? 'var(--surface)' : 'transparent',
-                color: mode === m.id ? 'var(--n0)' : 'var(--n4)',
-                fontFamily: 'var(--f-sans)', fontSize: '.82rem', fontWeight: 600,
-                transition: 'all .2s',
-              }}
-            >
+            <button key={m.id} onClick={() => setMode(m.id)} style={{
+              flex: 1, padding: '8px 12px', border: 'none', cursor: 'pointer',
+              borderRadius: 'calc(var(--r-sm) - 2px)',
+              background: mode === m.id ? 'var(--surface)' : 'transparent',
+              color: mode === m.id ? 'var(--n0)' : 'var(--n4)',
+              fontFamily: 'var(--f-sans)', fontSize: '.82rem', fontWeight: 600,
+              transition: 'all .2s',
+            }}>
               {m.label}
             </button>
           ))}
         </div>
 
-        {/* Textarea */}
         <div style={{ position: 'relative', marginBottom: 16 }}>
           <textarea
             value={prompt}
@@ -154,46 +155,32 @@ export default function AnalysisPanel() {
           </span>
         </div>
 
-        {/* Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <select
-            value={lang}
-            onChange={e => setLang(e.target.value)}
-            style={{
-              background: 'var(--lift)', color: 'var(--n2)',
-              border: '1px solid var(--bn)', borderRadius: 'var(--r-sm)',
-              padding: '9px 12px', fontFamily: 'var(--f-sans)', fontSize: '.82rem',
-              outline: 'none', cursor: 'pointer',
-            }}
-          >
+          <select value={lang} onChange={e => setLang(e.target.value)} style={{
+            background: 'var(--lift)', color: 'var(--n2)',
+            border: '1px solid var(--bn)', borderRadius: 'var(--r-sm)',
+            padding: '9px 12px', fontFamily: 'var(--f-sans)', fontSize: '.82rem',
+            outline: 'none', cursor: 'pointer',
+          }}>
             <option value="pt">🇧🇷 Português</option>
             <option value="en">🇺🇸 English</option>
             <option value="es">🇪🇸 Español</option>
           </select>
-
-          <button
-            className="btn btn-crimson btn-lg"
-            style={{ flex: 1, justifyContent: 'center' }}
-            disabled={running}
-            onClick={handleRun}
-          >
+          <button className="btn btn-crimson btn-lg" style={{ flex: 1, justifyContent: 'center' }}
+            disabled={running} onClick={handleRun}>
             {running
               ? <><Loader2 size={15} className="spin"/> Analisando…</>
               : <><Send size={14}/> Analisar Caso</>
             }
           </button>
-
           {running && (
-            <button
-              className="btn btn-ghost btn-sm"
-              onClick={() => { setRunning(false); clearTimeout(pollRef.current); }}
-            >
+            <button className="btn btn-ghost btn-sm"
+              onClick={() => { setRunning(false); clearTimeout(pollRef.current); }}>
               Cancelar
             </button>
           )}
         </div>
 
-        {/* Free result */}
         {freeResult && (
           <div style={{
             marginTop: 28, background: 'var(--surface)',
@@ -216,7 +203,6 @@ export default function AnalysisPanel() {
           </div>
         )}
 
-        {/* Premium result */}
         {(hasPremiumResult || running) && mode !== 'free' && (
           <div style={{ marginTop: 32 }}>
             <AgentsGrid/>
