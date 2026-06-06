@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Loader2, Zap, Send } from 'lucide-react';
 import { useStore } from '../store';
 import { useSSEAnalysis } from '../hooks/useSSEAnalysis';
-import { analyzeFree, analyzePremiumPoll, pollJob, getAnalysis } from '../lib/api';
+import { analyzeFree, analyzePremiumPoll, pollJob, getAnalysis, wakeUp } from '../lib/api';
 import AgentsGrid from './AgentsGrid';
 import VerdictSection from './VerdictSection';
 
@@ -43,13 +43,15 @@ export default function AnalysisPanel() {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 600_000);
     try {
+      addToast('⚡ Acordando servidor…', 'info');
+      const awake = await wakeUp(ctrl.signal);
+      if (!awake) { addToast('Servidor indisponível. Tente novamente em instantes.', 'error'); return; }
       const data = await analyzeFree(prompt, lang, ctrl.signal);
       setFreeResult(data);
     } catch (e) {
       if (e.name === 'AbortError') {
         addToast('Análise expirou. Tente novamente.', 'error');
       } else if (e.message.includes('504') || e.message.includes('503')) {
-        // [FIX] Render free tier: cold start pode causar timeout — mensagem clara
         addToast('Servidor a iniciar. Aguarde 30s e tente novamente.', 'error');
       } else {
         addToast(`Erro: ${e.message}`, 'error');
@@ -103,6 +105,17 @@ export default function AnalysisPanel() {
         openModal('login');
         return;
       }
+    }
+    if (mode === 'premium' || mode === 'polling') {
+      setRunning(true);
+      addToast('⚡ Acordando servidor…', 'info');
+      const awake = await wakeUp();
+      if (!awake) {
+        addToast('Servidor indisponível. Tente novamente em instantes.', 'error');
+        setRunning(false);
+        return;
+      }
+      setRunning(false);
     }
     if (mode === 'free')         await runFree();
     else if (mode === 'premium') await runSSE(prompt, lang);
@@ -196,7 +209,6 @@ export default function AnalysisPanel() {
           )}
         </div>
 
-        {/* [FIX] Status de cooldown/recovery — aparece enquanto agentes não iniciaram */}
         {running && statusMessage && (
           <div style={{
             marginTop: 20,
