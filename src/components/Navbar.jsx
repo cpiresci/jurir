@@ -1,28 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
+import { Menu, X, LogOut, ChevronDown, Gavel } from 'lucide-react';
 import { useStore } from '../store';
 import { checkHealth } from '../lib/api';
 
 const FERRAMENTAS = [
-  { to: '/delta',         label: 'Delta Analysis',          icon: '⚡' },
-  { to: '/documentos',    label: 'Upload de Documentos',    icon: '📄' },
-  { to: '/peticoes',      label: 'Gerador de Petições',     icon: '📜' },
-  { to: '/simulador',     label: 'Simulador de Instâncias', icon: '⚖️' },
-  { to: '/monitoramento', label: 'Monitoramento Processual',icon: '🔔' },
-  { to: '/verificar',     label: 'Verificar Relatório',     icon: '🛡️' },
+  { to: '/delta',         label: 'Delta Analysis',           icon: '⚡' },
+  { to: '/documentos',    label: 'Upload de Documentos',     icon: '📄' },
+  { to: '/peticoes',      label: 'Gerador de Petições',      icon: '📜' },
+  { to: '/simulador',     label: 'Simulador de Instâncias',  icon: '⚖️' },
+  { to: '/monitoramento', label: 'Monitoramento Processual', icon: '🔔' },
+  { to: '/verificar',     label: 'Verificar Relatório',      icon: '🛡️' },
 ];
 
 export default function Navbar() {
-  const [scrolled,   setScrolled]  = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [toolsOpen,  setToolsOpen]  = useState(false);
-  // 'checking' | 'online' | 'offline'
+  const [scrolled,    setScrolled]   = useState(false);
+  const [mobileOpen,  setMobileOpen] = useState(false);
+  const [toolsOpen,   setToolsOpen]  = useState(false);
   const [engineStatus, setEngineStatus] = useState('checking');
   const toolsRef = useRef(null);
   const { authToken, userData, clearAuth, openModal, addToast } = useStore();
 
-  // ── Health check: verifica ao montar e a cada 3 minutos ──
+  // Health check
   useEffect(() => {
     let cancelled = false;
     const check = async () => {
@@ -60,133 +59,198 @@ export default function Navbar() {
 
   return (
     <nav className={`jnav${scrolled ? ' scrolled' : ''}`}>
+      {/* Brand */}
       <Link to="/" className="nav-brand">
-        <span className="nav-logo">
-          <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-            <polygon points="17,2 32,28 2,28" stroke="#B91C1C" strokeWidth="1.5" fill="none" opacity=".8"/>
-            <polygon points="17,8 27,26 7,26"  stroke="#CA8A04" strokeWidth=".8"  fill="none" opacity=".5"/>
-            <circle cx="17" cy="19" r="3" fill="#B91C1C" opacity=".9"/>
-            <line x1="17" y1="6" x2="17" y2="16" stroke="#EDE6DA" strokeWidth=".8" opacity=".4"/>
-          </svg>
-        </span>
+        {/* SVG Logo — scales of justice */}
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+          {/* Outer ring */}
+          <circle cx="19" cy="19" r="17.5" stroke="rgba(228,168,36,0.20)" strokeWidth="1"/>
+          {/* Balance beam */}
+          <line x1="8" y1="18" x2="30" y2="18" stroke="#E8A824" strokeWidth="1.2" strokeLinecap="round"/>
+          {/* Pillar */}
+          <line x1="19" y1="10" x2="19" y2="28" stroke="#E8A824" strokeWidth="1.2" strokeLinecap="round"/>
+          {/* Left pan */}
+          <path d="M8 18 Q10 23 14 23 Q18 23 20 18" stroke="#E8A824" strokeWidth="1" fill="rgba(228,168,36,0.06)" strokeLinecap="round"/>
+          {/* Right pan */}
+          <path d="M18 18 Q20 22 24 22 Q28 22 30 18" stroke="#C4890A" strokeWidth="1" fill="rgba(196,137,10,0.06)" strokeLinecap="round"/>
+          {/* Crown jewel */}
+          <circle cx="19" cy="10" r="2.5" fill="#E8A824" opacity=".9"/>
+          <circle cx="19" cy="10" r="4" stroke="rgba(228,168,36,0.3)" strokeWidth="1" fill="none"/>
+          {/* Crimson accent dots */}
+          <circle cx="11" cy="23.5" r="1.5" fill="#C01E1E" opacity=".7"/>
+          <circle cx="27" cy="22.5" r="1.5" fill="#C01E1E" opacity=".7"/>
+        </svg>
+
         <span className="nav-wordmark t-display">
           JUR<em>IR</em>
           <sub>INTELIGÊNCIA JURÍDICA</sub>
         </span>
       </Link>
 
+      {/* Center nav links */}
       <div className="nav-links desktop-only">
-        <NavAnchor href="/#analise">Análise</NavAnchor>
-        <NavAnchor href="/#agentes">Agentes</NavAnchor>
-        <NavAnchor href="/#precos">Preços</NavAnchor>
+        <NavLink href="/#analise">Análise</NavLink>
+        <NavLink href="/#agentes">Agentes</NavLink>
+        <NavLink href="/#precos">Preços</NavLink>
 
         {/* Ferramentas dropdown */}
         <div ref={toolsRef} style={{ position: 'relative' }}>
           <button
             onClick={() => setToolsOpen(v => !v)}
-            style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--n0)'}
-            onMouseLeave={e => !toolsOpen && (e.currentTarget.style.color = 'var(--n3)')}
+            style={navLinkStyle(toolsOpen)}
           >
-            Ferramentas <ChevronDown size={12} style={{ transition: 'transform .2s', transform: toolsOpen ? 'rotate(180deg)' : 'none' }}/>
+            Ferramentas
+            <ChevronDown size={11} style={{
+              transition: 'transform .2s',
+              transform: toolsOpen ? 'rotate(180deg)' : 'none',
+              color: toolsOpen ? 'var(--au6)' : 'inherit',
+            }}/>
           </button>
+
           {toolsOpen && (
             <div style={{
-              position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-              marginTop: 8, background: 'var(--glass2)', border: '1px solid var(--bn)',
-              borderRadius: 'var(--r-md)', padding: 6, minWidth: 230,
-              backdropFilter: 'blur(20px)', boxShadow: 'var(--shadow-deep)', zIndex: 300,
+              position: 'absolute', top: 'calc(100% + 12px)',
+              left: '50%', transform: 'translateX(-50%)',
+              background: 'var(--glass2)',
+              border: '1px solid var(--b-gold)',
+              borderRadius: 'var(--r-md)',
+              padding: 8, minWidth: 250,
+              backdropFilter: 'blur(24px)',
+              boxShadow: 'var(--shadow-deep), var(--shadow-glow-au)',
+              zIndex: 300,
+              animation: 'scaleUp .2s var(--ease-spring)',
             }}>
+              {/* Top shimmer */}
+              <div style={{
+                height: 1, margin: '0 8px 8px',
+                background: 'linear-gradient(90deg, transparent, var(--au5), transparent)',
+              }}/>
               {FERRAMENTAS.map(({ to, label, icon }) => (
                 <Link key={to} to={to} onClick={() => setToolsOpen(false)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px',
-                    color: 'var(--n3)', fontSize: '.83rem', textDecoration: 'none',
-                    borderRadius: 'var(--r-sm)', transition: 'background .15s, color .15s' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--lift)'; e.currentTarget.style.color = 'var(--n0)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--n3)'; }}
+                  style={dropItemStyle}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = 'rgba(228,168,36,0.07)';
+                    e.currentTarget.style.color = 'var(--au6)';
+                    e.currentTarget.style.borderColor = 'var(--b-gold)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = 'var(--p3)';
+                    e.currentTarget.style.borderColor = 'transparent';
+                  }}
                 >
-                  <span style={{ fontSize: '.9rem' }}>{icon}</span> {label}
+                  <span style={{ fontSize: '1rem', lineHeight: 1 }}>{icon}</span>
+                  <span>{label}</span>
                 </Link>
               ))}
             </div>
           )}
         </div>
 
-        {authToken && <Link to="/historico" style={linkStyle}>Histórico</Link>}
+        {authToken && (
+          <NavLink href="/historico" isRouter>Histórico</NavLink>
+        )}
       </div>
 
+      {/* Right actions */}
       <div className="nav-actions desktop-only">
-        {/* ── Indicador de motor ── */}
+        {/* Engine status */}
         <div
           title={
             engineStatus === 'checking' ? 'Verificando motor…' :
-            engineStatus === 'online'   ? 'Motor online' : 'Motor offline — cold start pode levar ~50s'
+            engineStatus === 'online'   ? 'Motor online' :
+            'Motor offline — cold start pode levar ~50s'
           }
           style={{
-            display: 'flex', alignItems: 'center', gap: 5,
-            fontSize: '.72rem', fontFamily: 'var(--f-mono)',
-            color: engineStatus === 'online' ? 'var(--g4)' :
-                   engineStatus === 'offline' ? '#ef4444' : 'var(--n5)',
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: '.7rem', fontFamily: 'var(--f-mono)',
+            color: engineStatus === 'online'  ? 'var(--jade2)' :
+                   engineStatus === 'offline' ? '#EF4444' : 'var(--p5)',
             letterSpacing: '.06em', userSelect: 'none',
-            cursor: 'default',
           }}
         >
           <span style={{
             width: 7, height: 7, borderRadius: '50%',
-            background: engineStatus === 'online'  ? 'var(--g4)' :
-                        engineStatus === 'offline' ? '#ef4444' : 'var(--n5)',
+            background: engineStatus === 'online'  ? 'var(--jade2)' :
+                        engineStatus === 'offline' ? '#EF4444' : 'var(--p5)',
             boxShadow: engineStatus === 'online'
-              ? '0 0 6px var(--g4)' : engineStatus === 'offline'
-              ? '0 0 6px #ef4444' : 'none',
+              ? '0 0 8px var(--jade2)'
+              : engineStatus === 'offline' ? '0 0 8px #EF4444' : 'none',
             animation: engineStatus === 'checking' ? 'pulse 1.4s ease-in-out infinite' : 'none',
-          }} />
+            flexShrink: 0,
+          }}/>
           {engineStatus === 'checking' ? 'MOTOR…' :
-           engineStatus === 'online'   ? 'MOTOR OK' : 'MOTOR OFF'}
+           engineStatus === 'online'   ? 'MOTOR OK' : 'OFFLINE'}
         </div>
+
+        {/* Auth section */}
         {authToken ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: '.8rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)' }}>
+            <span style={{
+              fontSize: '.78rem', color: 'var(--p4)',
+              fontFamily: 'var(--f-mono)',
+            }}>
               {userData?.email?.split('@')[0]}
             </span>
-            <Link to="/premium" className="btn btn-gold btn-sm">⚡ Premium</Link>
+            <Link to="/premium" className="btn btn-gold btn-sm">
+              ⚡ Premium
+            </Link>
             <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
-              <LogOut size={14}/> Sair
+              <LogOut size={13}/> Sair
             </button>
           </div>
         ) : (
           <>
-            <button className="btn btn-ghost btn-sm"   onClick={() => openModal('login')}>Entrar</button>
-            <button className="btn btn-crimson btn-sm" onClick={() => openModal('register')}>Começar Grátis</button>
+            <button className="btn btn-ghost btn-sm" onClick={() => openModal('login')}>
+              Entrar
+            </button>
+            <button className="btn btn-crimson btn-sm" onClick={() => openModal('register')}>
+              Começar Grátis
+            </button>
           </>
         )}
       </div>
 
+      {/* Mobile toggle */}
       <button className="mobile-menu-btn" onClick={() => setMobileOpen(v => !v)}>
         {mobileOpen ? <X size={20}/> : <Menu size={20}/>}
       </button>
 
+      {/* Mobile menu */}
       {mobileOpen && (
         <div className="mobile-menu">
-          <NavAnchor href="/#analise" onClick={() => setMobileOpen(false)}>Análise</NavAnchor>
-          <NavAnchor href="/#agentes" onClick={() => setMobileOpen(false)}>Agentes</NavAnchor>
-          <NavAnchor href="/#precos"  onClick={() => setMobileOpen(false)}>Preços</NavAnchor>
+          <a href="/#analise" style={mobileLink} onClick={() => setMobileOpen(false)}>Análise</a>
+          <a href="/#agentes" style={mobileLink} onClick={() => setMobileOpen(false)}>Agentes</a>
+          <a href="/#precos"  style={mobileLink} onClick={() => setMobileOpen(false)}>Preços</a>
           {FERRAMENTAS.map(({ to, label, icon }) => (
-            <Link key={to} to={to} onClick={() => setMobileOpen(false)}
-              style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span>{icon}</span> {label}
+            <Link key={to} to={to} style={{ ...mobileLink, display: 'flex', gap: 8, alignItems: 'center' }}
+              onClick={() => setMobileOpen(false)}>
+              <span>{icon}</span>{label}
             </Link>
           ))}
-          {authToken && <Link to="/historico" style={linkStyle} onClick={() => setMobileOpen(false)}>Histórico</Link>}
-          {authToken && <Link to="/premium" style={{ ...linkStyle, color: 'var(--g4)' }} onClick={() => setMobileOpen(false)}>⚡ Premium</Link>}
-          <div style={{ borderTop: '1px solid var(--bn)', paddingTop: 12, marginTop: 8 }}>
+          {authToken && (
+            <Link to="/historico" style={mobileLink} onClick={() => setMobileOpen(false)}>
+              Histórico
+            </Link>
+          )}
+          {authToken && (
+            <Link to="/premium" style={{ ...mobileLink, color: 'var(--au6)' }}
+              onClick={() => setMobileOpen(false)}>⚡ Premium</Link>
+          )}
+          <div style={{ borderTop: '1px solid var(--b-neutral)', paddingTop: 14, marginTop: 8 }}>
             {authToken ? (
-              <button className="btn btn-ghost" style={{ width: '100%' }} onClick={handleLogout}>
+              <button className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }}
+                onClick={handleLogout}>
                 <LogOut size={14}/> Sair
               </button>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <button className="btn btn-ghost"   onClick={() => { openModal('login');    setMobileOpen(false); }}>Entrar</button>
-                <button className="btn btn-crimson" onClick={() => { openModal('register'); setMobileOpen(false); }}>Começar Grátis</button>
+                <button className="btn btn-ghost" onClick={() => { openModal('login'); setMobileOpen(false); }}>
+                  Entrar
+                </button>
+                <button className="btn btn-crimson" onClick={() => { openModal('register'); setMobileOpen(false); }}>
+                  Começar Grátis
+                </button>
               </div>
             )}
           </div>
@@ -196,17 +260,54 @@ export default function Navbar() {
   );
 }
 
-const linkStyle = {
-  color: 'var(--n3)', fontSize: '.825rem', fontWeight: 500,
-  letterSpacing: '.04em', textDecoration: 'none', padding: '6px 12px',
+/* ── Style helpers ── */
+const navLinkStyle = (active = false) => ({
+  fontFamily: 'var(--f-sans)',
+  color: active ? 'var(--au6)' : 'var(--p3)',
+  fontSize: '.82rem', fontWeight: 500,
+  letterSpacing: '.04em', textDecoration: 'none',
+  padding: '7px 14px',
   borderRadius: 'var(--r-sm)',
+  background: 'none', border: 'none',
+  display: 'flex', alignItems: 'center', gap: 4,
+  transition: 'color .2s',
+});
+
+const dropItemStyle = {
+  display: 'flex', alignItems: 'center', gap: 10,
+  padding: '9px 12px',
+  color: 'var(--p3)', fontSize: '.82rem',
+  textDecoration: 'none',
+  borderRadius: 'var(--r-sm)',
+  border: '1px solid transparent',
+  transition: 'all .15s',
+  fontFamily: 'var(--f-sans)',
+  letterSpacing: '.02em',
 };
 
-function NavAnchor({ href, children, onClick }) {
+const mobileLink = {
+  color: 'var(--p3)', fontSize: '.875rem',
+  fontWeight: 500, letterSpacing: '.03em',
+  textDecoration: 'none', padding: '10px 4px',
+  borderBottom: '1px solid var(--b-subtle)',
+  display: 'block',
+};
+
+function NavLink({ href, children, isRouter }) {
+  const style = navLinkStyle();
+  if (isRouter) {
+    return (
+      <Link to={href} style={style}
+        onMouseEnter={e => e.currentTarget.style.color = 'var(--au6)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'var(--p3)'}>
+        {children}
+      </Link>
+    );
+  }
   return (
-    <a href={href} onClick={onClick} style={linkStyle}
-      onMouseEnter={e => e.currentTarget.style.color = 'var(--n0)'}
-      onMouseLeave={e => e.currentTarget.style.color = 'var(--n3)'}>
+    <a href={href} style={style}
+      onMouseEnter={e => e.currentTarget.style.color = 'var(--au6)'}
+      onMouseLeave={e => e.currentTarget.style.color = 'var(--p3)'}>
       {children}
     </a>
   );
