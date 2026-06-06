@@ -1,208 +1,107 @@
-import { useRef, useEffect, useState } from 'react';
 import { AGENT_AREAS } from '../lib/constants';
+import { ArrowRight, Cpu, Scale, Sword } from 'lucide-react';
 
-function useIntersect(options = {}) {
-  const ref = useRef(null);
-  const [entered, setEntered] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setEntered(true); obs.disconnect(); }
-    }, { threshold: 0.1, ...options });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return [ref, entered];
-}
+const WORKFLOW = [
+  {
+    icon: <Cpu size={18}/>,
+    label: '16 Agentes',
+    sub: 'análise em paralelo',
+    color: 'var(--flame)',
+    bg: 'rgba(255,0,77,0.10)',
+  },
+  {
+    icon: <Sword size={18}/>,
+    label: 'Advogado do Diabo',
+    sub: 'contraditório',
+    color: 'var(--flame-lt)',
+    bg: 'rgba(255,51,112,0.08)',
+  },
+  {
+    icon: <Scale size={18}/>,
+    label: 'Juiz IA Quantum',
+    sub: 'veredicto + score',
+    color: 'var(--n1)',
+    bg: 'rgba(248,248,255,0.07)',
+  },
+];
 
 export default function AgentsSection() {
-  const [ref, entered] = useIntersect();
-
   return (
-    <section id="agentes" style={{ padding: '100px 24px' }}>
-      <div style={{ maxWidth: 980, margin: '0 auto' }}>
+    <section id="agentes" className="agents-section">
+      <div className="page-wrap">
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 64 }}>
-          <div className="section-label" style={{ justifyContent: 'center', marginBottom: 20 }}>
-            Conselho Especialista
-          </div>
-          <h2
-            className="t-display"
-            style={{
-              fontSize: 'clamp(2rem,4vw,2.8rem)',
-              fontWeight: 700, marginBottom: 14,
-              color: 'var(--p0)',
-            }}
-          >
-            Os{' '}
-            <span style={{ color: 'var(--au6)', fontStyle: 'italic', textShadow: '0 0 32px rgba(228,168,36,0.25)' }}>
-              16 Agentes
-            </span>
-            {' '}Especialistas
+        <div className="section-header">
+          <div className="section-eyebrow">Arquitetura Multi-Agente</div>
+          <h2 className="section-title">
+            O Conselho de{' '}
+            <span className="outline">16</span>{' '}
+            <em>Agentes</em>
           </h2>
-          <p style={{ color: 'var(--p4)', fontSize: '.92rem', maxWidth: 500, margin: '0 auto', lineHeight: 1.7 }}>
-            Cada agente é um especialista dedicado a uma área do Direito brasileiro,
-            analisando seu caso em paralelo com total independência.
+          <p className="section-desc">
+            Cada agente é um especialista dedicado em sua área do Direito brasileiro.
+            Após o contraditório rigoroso, o Juiz IA prolata o veredicto definitivo.
           </p>
         </div>
 
-        {/* Agents grid */}
-        <div ref={ref} className="agents-grid" style={{ marginBottom: 48 }}>
-          {AGENT_AREAS.map(({ id, area, icon }, i) => (
-            <AgentTile
-              key={id}
-              icon={icon} area={area} id={id}
-              delay={entered ? i * 40 : 0}
-              visible={entered}
-            />
+        {/* Workflow strip */}
+        <div className="workflow-strip">
+          {WORKFLOW.map((w, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div className="workflow-step">
+                <div className="workflow-step-icon" style={{ background: w.bg }}>
+                  <span style={{ color: w.color }}>{w.icon}</span>
+                </div>
+                <div className="workflow-step-text">
+                  <div className="name">{w.label}</div>
+                  <div className="sub">{w.sub}</div>
+                </div>
+              </div>
+              {i < WORKFLOW.length - 1 && (
+                <ArrowRight size={13} style={{ color: 'var(--n5)', flexShrink: 0 }}/>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="flame-rule" style={{ marginBottom: 40 }}/>
+
+        {/* Agent catalog */}
+        <div className="agent-catalog">
+          {AGENT_AREAS.map(({ id, area, icon }) => (
+            <div key={id} className="catalog-card">
+              <span className="catalog-icon">{icon}</span>
+              <div>
+                <div className="catalog-name">{area}</div>
+                <div className="catalog-id">{id}</div>
+              </div>
+            </div>
           ))}
         </div>
 
         {/* Special agents */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 20,
-        }}>
-          <SpecialAgent
-            icon="⚔️"
-            title="Advogado do Diabo"
-            sub="Contraditório Obrigatório"
-            desc="Apresenta todos os argumentos contrários ao caso. Nenhuma decisão sem o contraditório completo — garantindo imparcialidade máxima."
-            color="var(--cr4)"
-            glow="rgba(192,30,30,0.20)"
-            border="var(--b-crimson)"
-          />
-          <SpecialAgent
-            icon="⚖️"
-            title="Juiz IA Quantum"
-            sub="Veredicto Final"
-            desc="Pondera todos os 16 pareceres + contraditório e prolata o veredicto jurídico definitivo com JURIR Score dimensional."
-            color="var(--au6)"
-            glow="rgba(228,168,36,0.18)"
-            border="var(--b-gold)"
-          />
+        <div className="special-agents-grid">
+          <div className="special-agent-card" style={{ border: '1px solid rgba(255,0,77,0.22)' }}>
+            <div className="special-agent-glow" style={{ background: 'radial-gradient(circle, rgba(255,0,77,0.14) 0%, transparent 70%)' }}/>
+            <div style={{ fontSize: '1.5rem', marginBottom: 14 }}>⚔️</div>
+            <div style={{ fontFamily: 'var(--f-display)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--n0)', textTransform: 'uppercase', letterSpacing: '.02em', marginBottom: 8 }}>
+              Advogado do Diabo
+            </div>
+            <p style={{ fontSize: '.82rem', color: 'var(--n4)', lineHeight: 1.7 }}>
+              Apresenta o contraditório completo — identifica todas as fraquezas da tese, riscos processuais e argumentos contrários com rigor absoluto.
+            </p>
+          </div>
+          <div className="special-agent-card" style={{ border: '1px solid rgba(248,248,255,0.10)' }}>
+            <div className="special-agent-glow" style={{ background: 'radial-gradient(circle, rgba(248,248,255,0.05) 0%, transparent 70%)' }}/>
+            <div style={{ fontSize: '1.5rem', marginBottom: 14 }}>⚖️</div>
+            <div style={{ fontFamily: 'var(--f-display)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--n0)', textTransform: 'uppercase', letterSpacing: '.02em', marginBottom: 8 }}>
+              Juiz IA Quantum
+            </div>
+            <p style={{ fontSize: '.82rem', color: 'var(--n4)', lineHeight: 1.7 }}>
+              Pondera os 16 pareceres e o contraditório, prola o veredicto definitivo e calcula o JURIR Score em 4 dimensões: mérito, risco, estratégia e precedentes.
+            </p>
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function AgentTile({ icon, area, id, delay, visible }) {
-  return (
-    <div
-      style={{
-        background: 'rgba(10,10,32,0.7)',
-        border: '1px solid var(--b-neutral)',
-        borderRadius: 'var(--r-md)',
-        padding: '16px',
-        display: 'flex', alignItems: 'center', gap: 12,
-        backdropFilter: 'blur(8px)',
-        transition: `border-color .25s, transform .3s, box-shadow .3s, opacity .5s ${delay}ms`,
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(16px)',
-        cursor: 'default', position: 'relative', overflow: 'hidden',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.borderColor = 'var(--b-gold)';
-        e.currentTarget.style.transform = 'translateY(-3px)';
-        e.currentTarget.style.boxShadow = '0 8px 32px rgba(228,168,36,0.08)';
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.borderColor = 'var(--b-neutral)';
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = 'none';
-      }}
-    >
-      {/* Shimmer line */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 1,
-        background: 'linear-gradient(90deg, transparent, rgba(228,168,36,0.20), transparent)',
-        opacity: 0,
-        transition: 'opacity .25s',
-      }}/>
-      <span style={{ fontSize: '1.05rem', flexShrink: 0, lineHeight: 1 }}>{icon}</span>
-      <div>
-        <div style={{
-          fontSize: '.8rem', fontWeight: 600,
-          color: 'var(--p2)', lineHeight: 1.3,
-        }}>
-          {area}
-        </div>
-        <div style={{
-          fontSize: '.6rem', color: 'var(--p5)',
-          fontFamily: 'var(--f-mono)', marginTop: 2,
-          letterSpacing: '.06em',
-        }}>
-          {id}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SpecialAgent({ icon, title, sub, desc, color, glow, border }) {
-  return (
-    <div style={{
-      background: `linear-gradient(145deg, rgba(10,10,32,0.85), rgba(15,15,40,0.9))`,
-      border: `1px solid ${border}`,
-      borderRadius: 'var(--r-xl)', padding: '28px',
-      position: 'relative', overflow: 'hidden',
-      transition: 'transform .3s, box-shadow .3s',
-      backdropFilter: 'blur(12px)',
-    }}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.boxShadow = `0 16px 56px ${glow}`;
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = 'none';
-      }}
-    >
-      {/* Top shimmer */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-        background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
-        opacity: 0.6,
-      }}/>
-
-      {/* Background glow orb */}
-      <div style={{
-        position: 'absolute', top: -30, right: -30,
-        width: 140, height: 140, borderRadius: '50%',
-        background: `radial-gradient(circle, ${glow} 0%, transparent 70%)`,
-        filter: 'blur(20px)',
-        pointerEvents: 'none',
-      }}/>
-
-      <div style={{ fontSize: '2.2rem', marginBottom: 16, lineHeight: 1 }}>{icon}</div>
-
-      <div style={{
-        fontFamily: 'var(--f-display)',
-        fontSize: '1.2rem', fontWeight: 700,
-        marginBottom: 4, color: 'var(--p0)',
-        textShadow: `0 0 24px ${glow}`,
-      }}>
-        {title}
-      </div>
-
-      <div style={{
-        fontSize: '.68rem', color, fontFamily: 'var(--f-mono)',
-        letterSpacing: '.12em', marginBottom: 14,
-        textTransform: 'uppercase',
-      }}>
-        {sub}
-      </div>
-
-      <p style={{
-        fontSize: '.855rem', color: 'var(--p4)',
-        lineHeight: 1.65, margin: 0,
-      }}>
-        {desc}
-      </p>
-    </div>
   );
 }
