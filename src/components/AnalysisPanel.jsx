@@ -36,6 +36,11 @@ export default function AnalysisPanel() {
   const pollRef = useRef(null);
   const hasPremiumResult = Object.keys(agentStates).length > 0;
 
+  // [FIX] Auto-switch para premium quando agentes chegam — evita veredito invisível
+  useEffect(() => {
+    if (hasPremiumResult && mode === 'free') setMode('premium');
+  }, [hasPremiumResult]);
+
   const runFree = async () => {
     setRunning(true); resetAnalysis();
     const ctrl = new AbortController();
@@ -202,7 +207,7 @@ export default function AnalysisPanel() {
         )}
 
         {/* Premium result grid */}
-        {(hasPremiumResult || running) && mode !== 'free' && (
+        {(hasPremiumResult || running) && (mode !== 'free' || hasPremiumResult) && (
           <div style={{ marginTop: 36 }}>
             <AgentsGrid/>
             <VerdictSection/>

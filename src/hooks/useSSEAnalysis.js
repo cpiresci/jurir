@@ -118,7 +118,7 @@ export function useSSEAnalysis() {
 
           } else if (t === 'devil_done') {
             setStatusMessage(null);
-            setDevil(ev.analysis || '');
+            setDevil(ev.analysis || ev.text || ev.result || '');
 
           } else if (t === 'veto') {
             setVeto(true);
@@ -128,7 +128,7 @@ export function useSSEAnalysis() {
 
           } else if (t === 'verdict') {
             setStatusMessage(null);
-            setVerdict(ev.verdict || ev.text || '');
+            setVerdict(ev.verdict || ev.text || ev.result || ev.analysis || '');
 
           } else if (t === 'saved') {
             if (ev.analysis_id) setAnalysisId(ev.analysis_id);
