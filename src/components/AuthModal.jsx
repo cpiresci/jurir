@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
-import { login, register, getMe } from '../lib/api';
+import { login, register, getMe, wakeUp } from '../lib/api';
 
 export default function AuthModal() {
   const { modalOpen, closeModal, setAuth, addToast } = useStore();
@@ -10,12 +10,21 @@ export default function AuthModal() {
   const [pwd,     setPwd]     = useState('');
   const [loading, setLoading] = useState(false);
   const [err,     setErr]     = useState('');
+  const [wakeMsg, setWakeMsg] = useState('');
+  const abortRef = useRef(null);
 
   if (!modalOpen) return null;
 
   const handleLogin = async () => {
     if (!email || !pwd) { setErr('Preencha todos os campos.'); return; }
-    setLoading(true); setErr('');
+    setLoading(true); setErr(''); setWakeMsg('');
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    setWakeMsg('⚡ Conectando ao servidor…');
+    const awake = await wakeUp(ctrl.signal);
+    setWakeMsg('');
+    if (ctrl.signal.aborted) { setLoading(false); return; }
+    if (!awake) { setErr('Servidor indisponível. Tente novamente em instantes.'); setLoading(false); return; }
     try {
       const { access_token } = await login(email, pwd);
       const user = await getMe(access_token);
@@ -30,7 +39,14 @@ export default function AuthModal() {
   const handleRegister = async () => {
     if (!email || !pwd) { setErr('Preencha todos os campos.'); return; }
     if (pwd.length < 8) { setErr('Senha mínima de 8 caracteres.'); return; }
-    setLoading(true); setErr('');
+    setLoading(true); setErr(''); setWakeMsg('');
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    setWakeMsg('⚡ Conectando ao servidor…');
+    const awake = await wakeUp(ctrl.signal);
+    setWakeMsg('');
+    if (ctrl.signal.aborted) { setLoading(false); return; }
+    if (!awake) { setErr('Servidor indisponível. Tente novamente em instantes.'); setLoading(false); return; }
     try {
       await register(email, pwd);
       addToast('Conta criada! Faça login.', 'success');
@@ -56,7 +72,6 @@ export default function AuthModal() {
           </button>
         </div>
 
-        {/* Tab switcher */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'var(--lift)', borderRadius: 'var(--r-sm)', padding: 4 }}>
           {['login', 'register'].map(t => (
             <button
@@ -96,6 +111,7 @@ export default function AuthModal() {
             />
           </div>
 
+          {wakeMsg && <p style={{ color: 'var(--g4)', fontSize: '.8rem', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}><Loader2 size={12} className="spin"/>{wakeMsg}</p>}
           {err && <p style={{ color: 'var(--r4)', fontSize: '.8rem', margin: 0 }}>{err}</p>}
 
           <button

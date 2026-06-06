@@ -12,8 +12,33 @@ export async function apiFetch(path, opts = {}, token = null) {
 }
 
 export async function checkHealth() {
-  const r = await fetch(`${API_BASE}/health`, { cache: 'no-store' });
-  return r.json().catch(() => ({}));
+  // [FIX v10.1] Usa /wake (sem DB, <50ms) em vez de /health (acessa DB).
+  const r = await fetch(`${API_BASE}/wake`, { cache: 'no-store' });
+  return r.ok ? { status: 'ok' } : {};
+}
+
+export async function wakeUp(signal) {
+  const MAX_TRIES = 12;
+  const INTERVAL  = 5000;
+  const url = `${API_BASE}/wake`;
+  for (let i = 0; i < MAX_TRIES; i++) {
+    if (signal?.aborted) return false;
+    try {
+      const r = await fetch(url, { cache: 'no-store', signal });
+      if (r.ok) return true;
+    } catch { /* servidor ainda dormindo */ }
+    if (i < MAX_TRIES - 1) {
+      await new Promise(res => {
+        let elapsed = 0;
+        const tick = setInterval(() => {
+          elapsed += 500;
+          if (signal?.aborted || elapsed >= INTERVAL) { clearInterval(tick); res(elapsed); }
+        }, 500);
+      });
+      if (signal?.aborted) return false;
+    }
+  }
+  return false;
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────
