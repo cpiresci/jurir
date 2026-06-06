@@ -40,6 +40,9 @@
 
   /* SEMANTIC */
   --emerald:  #00E090;
+  --emerald2: #00E090;
+  --cr5:      #FF3370;
+  --br-cr:    rgba(255,51,112,0.30);
   --amber:    #FFB800;
   --sky:      #0099FF;
   --gold:     #FFD700;
