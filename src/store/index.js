@@ -17,7 +17,7 @@ export const useStore = create((set, get) => ({
   },
 
   // ── UI ──
-  mode: 'free',
+  mode: 'premium',  // [FIX] default premium — SSE com veredito completo
   setMode: (mode) => set({ mode }),
 
   modalOpen: null,
