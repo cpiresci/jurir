@@ -83,7 +83,10 @@ export default function AgentsGrid() {
                   </div>
                   {conf != null && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
-                      <span style={{ fontSize: '.62rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)' }}>{conf}%</span>
+                      <span style={{ fontSize: '.62rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)' }}>
+                        {/* [FIX v7.0] ~ indica confidence estimado por heurística (tag CONF= não extraído) */}
+                        {s?.confidenceEstimated ? '~' : ''}{conf}%
+                      </span>
                       {risk && (
                         <span style={{ fontSize: '.58rem', fontFamily: 'var(--f-mono)', color: RISK_COLOR[risk] || 'var(--n5)', letterSpacing: '.06em' }}>
                           · {risk}

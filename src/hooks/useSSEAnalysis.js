@@ -102,6 +102,7 @@ export function useSSEAnalysis() {
               status: 'done',
               area: ev.area,
               confidence: ev.confidence,
+              confidenceEstimated: ev.confidence_estimated || false,  // [FIX v7.0]
               analysis: ev.analysis,
               topRisk: ev.top_risk,
               riskLevel: ev.risk_level || null,

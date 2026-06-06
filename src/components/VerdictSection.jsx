@@ -1,4 +1,4 @@
-import { Scale, Shield, Download, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
 
@@ -88,7 +88,9 @@ export default function VerdictSection() {
     catch (e) { addToast(`Erro PDF: ${e.message}`, 'error'); }
   };
 
-  if (!verdictText && !running) return null;
+  // [FIX v7.0] Mantém seção visível se devil já chegou mas juiz ainda não
+  // (evita que VerdictSection desapareça quando running=false antes do verdict)
+  if (!verdictText && !devilText && !running) return null;
 
   return (
     <div style={{ marginTop: 36 }}>
@@ -119,6 +121,21 @@ export default function VerdictSection() {
           <p style={{ fontSize: '.86rem', color: 'var(--n3)', lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0 }}>
             {devilText}
           </p>
+        </div>
+      )}
+
+      {/* Loading do Juiz — devil chegou mas veredito ainda não */}
+      {devilText && !verdictText && running && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '14px 18px', marginTop: 16,
+          background: 'rgba(194,136,10,0.06)',
+          border: '1px solid var(--br-flame)', borderRadius: 'var(--r-sm)',
+        }}>
+          <Loader2 size={13} className="spin" style={{ color: 'var(--flame)', flexShrink: 0 }}/>
+          <span style={{ fontSize: '.82rem', color: 'var(--n4)' }}>
+            ⚖️ Juiz IA deliberando o veredito final…
+          </span>
         </div>
       )}
 
