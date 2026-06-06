@@ -47,11 +47,21 @@ export const useStore = create((set, get) => ({
   // [FIX] Mensagem de status para cooldown/recovery — evita 0/16 parado sem feedback
   statusMessage:   null,
 
+  // [FIX] Estado granular do Advogado do Diabo e do Juiz IA para cards visuais
+  // status: 'idle' | 'running' | 'done' | 'error'
+  devilState: { status: 'idle', analysis: '', confidence: 0 },
+  judgeState: { status: 'idle', verdict: '' },
+
+  setDevilState: (patch) => set(s => ({ devilState: { ...s.devilState, ...patch } })),
+  setJudgeState: (patch) => set(s => ({ judgeState: { ...s.judgeState, ...patch } })),
+
   resetAnalysis: () => set({
     analysisId: null, agentStates: {}, completedAgents: 0,
     verdictText: '', devilText: '', jurirScore: null,
     scoreDims: null, vetoActive: false, running: false,
     freeResult: null, deltaResult: null, statusMessage: null,
+    devilState: { status: 'idle', analysis: '', confidence: 0 },
+    judgeState: { status: 'idle', verdict: '' },
   }),
 
   setAgentState:      (id, data)      => set(s => ({ agentStates: { ...s.agentStates, [id]: data } })),
