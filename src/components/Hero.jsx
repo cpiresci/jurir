@@ -131,11 +131,11 @@ export default function Hero() {
     <>
       <style>{`
         .hero-section {
-          min-height: 100dvh;
+  
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: center;
-          padding: clamp(100px, 13vh, 130px) 48px 80px;
+          padding: clamp(88px, 11vh, 110px) 48px 40px;
           position: relative;
           overflow: hidden;
         }
