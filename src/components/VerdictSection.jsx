@@ -125,12 +125,12 @@ export default function VerdictSection() {
           background: 'var(--bg-card)', border: '1px solid var(--b-cobalt)',
           borderRadius: 'var(--r-xl)', padding: 32,
           boxShadow: 'var(--shadow-cobalt)',
-          display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 40,
+          display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 40, overflow: 'visible',
           alignItems: 'start',
         }}>
           {/* Score ring */}
           {jurirScore !== null && (
-            <div style={{ paddingTop: 8 }}>
+                <div style={{ paddingTop: 8, position: 'relative', zIndex: 10 }}>
               <ScoreRing score={jurirScore}/>
               {/* Dimensions */}
               {scoreDims && (
