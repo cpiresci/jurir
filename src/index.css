@@ -853,7 +853,6 @@ a { color: inherit; }
   transform: translateY(-2px);
   box-shadow: var(--shadow-cobalt);
 }
-[conteúdo do hero_mobile_patch.css]
 
 /* ══ HERO MOBILE PATCH ══ */
 @media (max-width: 768px) {
