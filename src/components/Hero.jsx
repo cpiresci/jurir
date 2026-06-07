@@ -301,6 +301,18 @@ export default function Hero() {
             </div>
           </div>
 
+          {/* Desktop: Score + LiveFeed */}
+          <div style={{display:"flex",justifyContent:"center",gap:16,marginBottom:24,opacity:visible?1:0}}>
+            <div style={{background:"var(--bg-card)",border:"1px solid var(--b-main)",borderRadius:"var(--r-lg)",padding:"16px 20px",display:"flex",flexDirection:"column",alignItems:"center",gap:8,boxShadow:"var(--shadow-float)"}}>
+              <ScoreRing size={80} score={87} visible={visible}/>
+              <span style={{fontFamily:"var(--f-mono)",fontSize:".48rem",color:"var(--jade2)",letterSpacing:".1em"}}>FORTEMENTE FAVORÁVEL</span>
+            </div>
+            <div style={{background:"var(--bg-card)",border:"1px solid var(--b-main)",borderRadius:"var(--r-md)",padding:"16px 20px",minWidth:190,display:"flex",flexDirection:"column",gap:10,justifyContent:"center",boxShadow:"var(--shadow-float)"}}>
+              <div style={{fontFamily:"var(--f-mono)",fontSize:".55rem",color:"var(--t3)",letterSpacing:".18em"}}>TRIBUNAL AO VIVO</div>
+              <LiveFeed visible={visible}/>
+            </div>
+          </div>
+
           {/* Mobile score + live card */}
           <div className="hero-mobile-card" style={{
             marginBottom:32,
