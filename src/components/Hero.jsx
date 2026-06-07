@@ -133,9 +133,9 @@ export default function Hero() {
         .hero-section {
           min-height: 100dvh;
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
-          padding: clamp(80px, 10vh, 100px) 48px clamp(40px, 6vh, 60px);
+          padding: clamp(88px, 11vh, 110px) 48px 60px;
           position: relative;
           overflow: hidden;
         }
@@ -194,7 +194,7 @@ export default function Hero() {
 
         {/* Score ring — desktop */}
         <div className="hero-float" style={{
-          position:'absolute', top:'50%', left:'4%', transform:'translateY(-10%)',
+          position:'absolute', bottom:'clamp(120px, 14vh, 160px)', left:'2%',
           background:'var(--bg-card)', border:'1px solid var(--b-main)',
           borderRadius:'var(--r-lg)', padding:'22px 24px',
           boxShadow:'var(--shadow-float)',
@@ -210,7 +210,7 @@ export default function Hero() {
 
         {/* Live feed — desktop */}
         <div className="hero-float" style={{
-          position:'absolute', top:'50%', right:'4%', transform:'translateY(20%)',
+          position:'absolute', bottom:'clamp(160px, 18vh, 210px)', right:'2%',
           background:'var(--bg-card)', border:'1px solid var(--b-main)',
           borderRadius:'var(--r-md)', padding:'16px 20px',
           boxShadow:'var(--shadow-float)',
