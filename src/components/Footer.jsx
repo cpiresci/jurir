@@ -52,7 +52,7 @@ export default function Footer() {
               <div style={{ fontFamily:'var(--f-sans)', fontSize:'.78rem', fontWeight:600, color:'var(--t1)', letterSpacing:'.02em' }}>
                 {p.label}
               </div>
-              <div style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t3)', letterSpacing:'.06em', lineHeight:1.5 }}>
+              <div style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t5)', letterSpacing:'.06em', lineHeight:1.5 }}>
                 {p.desc}
               </div>
             </div>
@@ -139,12 +139,12 @@ export default function Footer() {
             <div style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t5)', letterSpacing:'.22em', marginBottom:16, textTransform:'uppercase' }}>
               Aviso Legal
             </div>
-            <p style={{ fontSize:'.75rem', color:'var(--t2)', lineHeight:1.7, fontFamily:'var(--f-sans)' }}>
+            <p style={{ fontSize:'.75rem', color:'var(--t5)', lineHeight:1.7, fontFamily:'var(--f-sans)' }}>
               O JURIR é uma ferramenta de análise jurídica assistida por inteligência artificial.
               Não substitui o aconselhamento de um advogado habilitado na OAB.
               Consulte sempre um profissional para decisões legais vinculantes.
             </p>
-            <div style={{ marginTop:14, fontFamily:'var(--f-mono)', fontSize:'.58rem', color:'var(--t3)', letterSpacing:'.1em' }}>
+            <div style={{ marginTop:14, fontFamily:'var(--f-mono)', fontSize:'.58rem', color:'var(--t5)', letterSpacing:'.1em' }}>
               © {new Date().getFullYear()} JURIR
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function Footer() {
           </span>
           <div style={{ display:'flex', gap:20 }}>
             {['SambaNova AI', 'Cerebras', 'Google Gemini', 'OpenRouter'].map(p => (
-              <span key={p} style={{ fontFamily:'var(--f-mono)', fontSize:'.55rem', color:'var(--t3)', letterSpacing:'.08em', opacity:0.9 }}>
+              <span key={p} style={{ fontFamily:'var(--f-mono)', fontSize:'.55rem', color:'var(--t5)', letterSpacing:'.08em', opacity:0.7 }}>
                 {p}
               </span>
             ))}
