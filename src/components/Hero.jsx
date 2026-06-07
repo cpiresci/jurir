@@ -198,34 +198,6 @@ export default function Hero() {
           <span style={{ color:'var(--t3)',marginRight:2 }}>ÁREA ATIVA</span>
           <span style={{ color:'var(--co7)',fontWeight:600 }}>{AREAS[activeArea]}</span>
         </div>
-
-        {/* Score ring — desktop */}
-        <div className="hero-float" style={{
-          position:'absolute', bottom:'clamp(120px, 14vh, 160px)', left:'2%',
-          background:'var(--bg-card)', border:'1px solid var(--b-main)',
-          borderRadius:'var(--r-lg)', padding:'22px 24px',
-          boxShadow:'var(--shadow-float)',
-          opacity:visible?1:0, transition:'opacity .7s .8s',
-          pointerEvents:'none', flexDirection:'column', alignItems:'center', gap:10,
-        }}>
-          <ScoreRing size={110} score={87} visible={visible}/>
-          <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.54rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.5rem',color:'var(--jade2)',letterSpacing:'.1em' }}>FORTEMENTE FAVORÁVEL</span>
-          </div>
-        </div>
-
-        {/* Live feed — desktop */}
-        <div className="hero-float" style={{
-          position:'absolute', bottom:'clamp(160px, 18vh, 210px)', right:'2%',
-          background:'var(--bg-card)', border:'1px solid var(--b-main)',
-          borderRadius:'var(--r-md)', padding:'16px 20px',
-          boxShadow:'var(--shadow-float)',
-          opacity:visible?1:0, transition:'opacity .7s 1.0s',
-          pointerEvents:'none', minWidth:220,
-          flexDirection:'column', gap:10,
-        }}>
-          <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.18em',marginBottom:2 }}>TRIBUNAL AO VIVO</div>
           <LiveFeed visible={visible}/>
         </div>
 
