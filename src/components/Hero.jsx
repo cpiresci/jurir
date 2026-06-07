@@ -131,11 +131,10 @@ export default function Hero() {
     <>
       <style>{`
         .hero-section {
-  
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: center;
-          padding: clamp(88px, 11vh, 110px) 48px 0;
+          padding: clamp(88px, 11vh, 110px) 48px 60px;
           position: relative;
           overflow: hidden;
         }
@@ -152,11 +151,18 @@ export default function Hero() {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
         }
+        .hero-desktop-cards {
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+          margin-bottom: clamp(20px, 3vw, 32px);
+        }
         @media (max-width: 768px) {
           .hero-section { padding: 88px 20px 48px; }
           .hero-float { display: none !important; }
           .hero-mobile-card { display: flex !important; }
           .hero-stats-grid { grid-template-columns: repeat(2, 1fr); }
+          .hero-desktop-cards { display: none !important; }
           .hero-trust-row { gap: 14px !important; }
         }
         @media (max-width: 420px) {
@@ -191,6 +197,56 @@ export default function Hero() {
           <span style={{ color:'var(--t3)',marginRight:2 }}>ÁREA ATIVA</span>
           <span style={{ color:'var(--co7)',fontWeight:600 }}>{AREAS[activeArea]}</span>
         </div>
+          <LiveFeed visible={visible}/>
+        </div>
+
+        {/* ── MAIN ── */}
+        <div className="hero-inner">
+
+          {/* Badge */}
+          <div className="hero-badge fade-up" style={{ marginBottom:'clamp(28px,5vw,44px)', opacity:visible?1:0 }}>
+            <Zap size={9} style={{ color:'var(--co7)' }}/>
+            <span style={{ color:'var(--t2)' }}>Inteligência Jurídica Quântica</span>
+            <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
+            <span style={{ color:'var(--co7)',fontWeight:600 }}>Plataforma v10.0</span>
+            <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
+            <span style={{ color:'var(--am4)',fontWeight:500 }}>16 AGENTES</span>
+          </div>
+
+          {/* Headline */}
+          <h1 className="hero-title fade-up fade-up-1" style={{ marginBottom:6, opacity:visible?1:0 }}>
+            O tribunal do futuro
+          </h1>
+          <h1 className="hero-title fade-up fade-up-1" style={{
+            marginBottom:'clamp(22px,4vw,36px)', opacity:visible?1:0,
+            background:'linear-gradient(135deg,var(--co8) 0%,var(--co7) 40%,var(--am4) 100%)',
+            WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
+            fontStyle:'italic',
+          }}>
+            analisa o seu caso.
+          </h1>
+
+          {/* Subline */}
+          <p className="fade-up fade-up-2" style={{
+            fontSize:'clamp(1rem,2.4vw,1.12rem)', color:'var(--t1)',
+            maxWidth:1100, margin:'0 auto 12px',
+            lineHeight:1.8, opacity:visible?1:0,
+            fontFamily:'var(--f-display)', fontWeight:400, letterSpacing:'.01em',
+          }}>
+            Dezesseis agentes de IA especializados analisam cada faceta do seu processo em paralelo.
+            O <em style={{ color:'var(--cr3)' }}>Advogado do Diabo</em> confronta. O{' '}
+            <em style={{ color:'var(--co7)' }}>Juiz IA Quantum</em> prolata o veredicto final.
+          </p>
+
+          {/* Latim */}
+          <div className="fade-up fade-up-3" style={{ opacity:visible?1:0, marginBottom:'clamp(32px,5vw,52px)' }}>
+            <span style={{ fontFamily:'var(--f-display)',fontStyle:'italic',fontSize:'clamp(.8rem,2vw,.9rem)',color:'var(--t3)',letterSpacing:'.04em' }}>
+              "Iustitia est constans et perpetua voluntas ius suum cuique tribuendi"
+            </span>
+            <div style={{ fontFamily:'var(--f-mono)',fontSize:'.52rem',color:'var(--t4)',letterSpacing:'.18em',marginTop:5,textTransform:'uppercase' }}>
+              — Ulpiano, Digesto
+            </div>
+          </div>
 
           {/* CTAs */}
           <div className="fade-up fade-up-3" style={{
@@ -208,27 +264,38 @@ export default function Hero() {
             </button>
           </div>
 
-
-          {/* Desktop: Score + LiveFeed abaixo dos CTAs */}
-          <div className="hero-desktop-cards fade-up" style={{
-            display:'flex', justifyContent:'center', gap:16,
-            marginBottom:'clamp(20px,3vw,32px)', opacity:visible?1:0,
-          }}>
+          {/* Desktop: Score + LiveFeed em linha, abaixo dos CTAs */}
+          <div className="hero-desktop-cards fade-up fade-up-3" style={{ opacity:visible?1:0 }}>
             <div style={{
               background:'var(--bg-card)', border:'1px solid var(--b-main)',
-              borderRadius:'var(--r-lg)', padding:'16px 20px',
+              borderRadius:'var(--r-lg)', padding:'18px 22px',
               boxShadow:'var(--shadow-float)',
               display:'flex', flexDirection:'column', alignItems:'center', gap:8,
             }}>
-              <ScoreRing size={80} score={87} visible={visible}/>
-              <span style={{fontFamily:'var(--f-mono)',fontSize:'.5rem',color:'var(--jade2)',letterSpacing:'.1em'}}>FORTEMENTE FAVORÁVEL</span>
+              <ScoreRing size={90} score={87} visible={visible}/>
+              <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
+                <span style={{ fontFamily:'var(--f-mono)',fontSize:'.52rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
+                <span style={{ fontFamily:'var(--f-mono)',fontSize:'.48rem',color:'var(--jade2)',letterSpacing:'.1em' }}>FORTEMENTE FAVORÁVEL</span>
+              </div>
             </div>
             <div style={{
               background:'var(--bg-card)', border:'1px solid var(--b-main)',
               borderRadius:'var(--r-md)', padding:'16px 20px',
-              boxShadow:'var(--shadow-float)', minWidth:190,
+              boxShadow:'var(--shadow-float)', minWidth:200,
               display:'flex', flexDirection:'column', gap:10, justifyContent:'center',
             }}>
+              <div style={{ fontFamily:'var(--f-mono)',fontSize:'.56rem',color:'var(--t3)',letterSpacing:'.18em' }}>TRIBUNAL AO VIVO</div>
+              <LiveFeed visible={visible}/>
+            </div>
+          </div>
+
+          {/* Desktop: Score + LiveFeed */}
+          <div style={{display:'flex',justifyContent:'center',gap:16,marginBottom:24,opacity:visible?1:0}}>
+            <div style={{background:'var(--bg-card)',border:'1px solid var(--b-main)',borderRadius:'var(--r-lg)',padding:'16px 20px',display:'flex',flexDirection:'column',alignItems:'center',gap:8,boxShadow:'var(--shadow-float)'}}>
+              <ScoreRing size={80} score={87} visible={visible}/>
+              <span style={{fontFamily:'var(--f-mono)',fontSize:'.48rem',color:'var(--jade2)',letterSpacing:'.1em'}}>FORTEMENTE FAVORÁVEL</span>
+            </div>
+            <div style={{background:'var(--bg-card)',border:'1px solid var(--b-main)',borderRadius:'var(--r-md)',padding:'16px 20px',minWidth:190,display:'flex',flexDirection:'column',gap:10,justifyContent:'center',boxShadow:'var(--shadow-float)'}}>
               <div style={{fontFamily:'var(--f-mono)',fontSize:'.55rem',color:'var(--t3)',letterSpacing:'.18em'}}>TRIBUNAL AO VIVO</div>
               <LiveFeed visible={visible}/>
             </div>
@@ -317,7 +384,7 @@ export default function Hero() {
 
           {/* Scroll hint */}
           <div style={{
-            marginTop:'clamp(16px,2vw,24px)', opacity:visible?0.4:0,
+            marginTop:'clamp(32px,5vw,52px)', opacity:visible?0.4:0,
             transition:'opacity .7s 1.4s',
             display:'flex', flexDirection:'column', alignItems:'center', gap:8,
           }}>
