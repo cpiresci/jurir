@@ -35,9 +35,8 @@ export default function Background() {
     document.addEventListener('mouseup',   onUp);
 
     const draw = () => {
-      // Lerp ring
-      rx += (mx - rx) * 0.12;
-      ry += (my - ry) * 0.12;
+      rx += (mx - rx) * 0.10;
+      ry += (my - ry) * 0.10;
       dot.style.left  = mx + 'px';
       dot.style.top   = my + 'px';
       ring.style.left = rx + 'px';
@@ -47,31 +46,34 @@ export default function Background() {
       const H = canvas.height;
       ctx.clearRect(0, 0, W, H);
 
-      t += 0.004;
+      t += 0.0032;
 
-      // Subtle gradient orbs — cold blue tones
+      // ── AMBIENT ORBS — quantum judicial atmosphere ──
       const orbs = [
-        { x: 0.15, y: 0.22, r: 0.38, c: 'rgba(20,114,217,0.055)' },
-        { x: 0.82, y: 0.12, r: 0.32, c: 'rgba(43,138,245,0.04)' },
-        { x: 0.55, y: 0.78, r: 0.42, c: 'rgba(11,79,160,0.045)' },
-        { x: 0.92, y: 0.65, r: 0.28, c: 'rgba(90,174,255,0.03)' },
+        { x: 0.12, y: 0.18, r: 0.42, c1: 'rgba(20,114,217,0.065)', c2: 'rgba(43,138,245,0.02)' },
+        { x: 0.85, y: 0.10, r: 0.35, c1: 'rgba(43,138,245,0.050)', c2: 'rgba(90,174,255,0.01)' },
+        { x: 0.52, y: 0.82, r: 0.48, c1: 'rgba(11,79,160,0.055)',  c2: 'rgba(20,114,217,0.01)' },
+        { x: 0.90, y: 0.68, r: 0.30, c1: 'rgba(139,92,246,0.035)', c2: 'transparent' },
+        { x: 0.25, y: 0.75, r: 0.28, c1: 'rgba(20,114,217,0.040)', c2: 'transparent' },
+        { x: 0.72, y: 0.38, r: 0.22, c1: 'rgba(90,174,255,0.030)', c2: 'transparent' },
       ];
 
       orbs.forEach((o, i) => {
-        const ox = W * (o.x + Math.sin(t + i * 1.5) * 0.04);
-        const oy = H * (o.y + Math.cos(t * 0.7 + i) * 0.04);
-        const rr = Math.min(W, H) * (o.r + Math.sin(t * 0.5 + i) * 0.02);
+        const ox = W * (o.x + Math.sin(t + i * 1.3) * 0.045);
+        const oy = H * (o.y + Math.cos(t * 0.65 + i * 0.8) * 0.045);
+        const rr = Math.min(W, H) * (o.r + Math.sin(t * 0.45 + i) * 0.025);
         const g = ctx.createRadialGradient(ox, oy, 0, ox, oy, rr);
-        g.addColorStop(0, o.c);
+        g.addColorStop(0, o.c1);
+        g.addColorStop(0.5, o.c2 !== 'transparent' ? o.c2 : 'rgba(20,114,217,0.008)');
         g.addColorStop(1, 'transparent');
         ctx.fillStyle = g;
         ctx.fillRect(0, 0, W, H);
       });
 
-      // Fine grid — very subtle
-      ctx.strokeStyle = 'rgba(180,188,210,0.09)';
+      // ── FINE GRID — tribunal chamber ──
+      ctx.strokeStyle = 'rgba(180,188,210,0.075)';
       ctx.lineWidth = 0.5;
-      const gSize = 52;
+      const gSize = 56;
       for (let x = 0; x < W; x += gSize) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
       }
@@ -79,16 +81,56 @@ export default function Background() {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
       }
 
-      // Top horizontal light beam
+      // ── QUANTUM DOTS at intersections ──
+      const dotAlpha = 0.06 + Math.sin(t * 2) * 0.02;
+      ctx.fillStyle = `rgba(20,114,217,${dotAlpha})`;
+      for (let x = gSize; x < W; x += gSize) {
+        for (let y = gSize; y < H; y += gSize) {
+          if (Math.random() > 0.998) {
+            ctx.fillStyle = `rgba(43,138,245,${0.25 + Math.random() * 0.3})`;
+            ctx.beginPath();
+            ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.fillStyle = `rgba(180,188,210,${dotAlpha})`;
+            ctx.beginPath();
+            ctx.arc(x, y, 0.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // ── TOP QUANTUM BEAM (navbar line) ──
       const beamY = 64;
-      const beamGrad = ctx.createLinearGradient(0, beamY, W, beamY);
-      beamGrad.addColorStop(0, 'transparent');
-      beamGrad.addColorStop(0.25, `rgba(20,114,217,${0.06 + Math.sin(t) * 0.015})`);
-      beamGrad.addColorStop(0.55, `rgba(43,138,245,${0.08 + Math.cos(t * 0.8) * 0.015})`);
-      beamGrad.addColorStop(0.80, `rgba(20,114,217,${0.05 + Math.sin(t * 1.2) * 0.01})`);
-      beamGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = beamGrad;
-      ctx.fillRect(0, beamY - 1, W, 2);
+      const beamAnim = 0.07 + Math.sin(t * 1.4) * 0.022;
+      const bGrad = ctx.createLinearGradient(0, beamY, W, beamY);
+      bGrad.addColorStop(0, 'transparent');
+      bGrad.addColorStop(0.20, `rgba(20,114,217,${beamAnim})`);
+      bGrad.addColorStop(0.45, `rgba(43,138,245,${beamAnim + 0.02})`);
+      bGrad.addColorStop(0.70, `rgba(139,92,246,${beamAnim * 0.7})`);
+      bGrad.addColorStop(0.88, `rgba(20,114,217,${beamAnim * 0.5})`);
+      bGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = bGrad;
+      ctx.fillRect(0, beamY - 1, W, 1.5);
+
+      // ── DIAGONAL LIGHT RAYS — subtle, luxurious ──
+      const rayAlpha = 0.012 + Math.sin(t * 0.8) * 0.004;
+      ctx.save();
+      for (let r = 0; r < 3; r++) {
+        const rayX = W * (0.2 + r * 0.3 + Math.sin(t * 0.3 + r) * 0.05);
+        const rayGrad = ctx.createLinearGradient(rayX, 0, rayX + H * 0.4, H);
+        rayGrad.addColorStop(0, `rgba(20,114,217,${rayAlpha + r * 0.003})`);
+        rayGrad.addColorStop(0.5, `rgba(43,138,245,${rayAlpha * 0.5})`);
+        rayGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = rayGrad;
+        ctx.beginPath();
+        ctx.moveTo(rayX - 30, 0);
+        ctx.lineTo(rayX + 30, 0);
+        ctx.lineTo(rayX + 30 + H * 0.45, H);
+        ctx.lineTo(rayX - 30 + H * 0.35, H);
+        ctx.fill();
+      }
+      ctx.restore();
 
       raf = requestAnimationFrame(draw);
     };
