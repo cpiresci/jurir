@@ -402,11 +402,11 @@ body {
 
 .hero-title {
   font-family: var(--f-display);
-  font-size: clamp(2.8rem, 8vw, 7.5rem);
+  font-size: clamp(3.6rem, 10vw, 9rem);
   font-weight: 300;
-  line-height: 1.06;
+  line-height: 1.0;
   color: var(--t0);
-  letter-spacing: -.03em;
+  letter-spacing: -.04em;
 }
 
 /* ══════════════════════════════════════════════════
@@ -854,16 +854,10 @@ a { color: inherit; }
   box-shadow: var(--shadow-cobalt);
 }
 
-/* ══ HERO DESKTOP ULTRA ══ */
-.hero-section {
-  min-height: 100dvh !important;
-}
-
 /* ══ HERO MOBILE ══ */
-@media (max-width: 768px) {
-  .hero-title { font-size: clamp(2.6rem, 10vw, 4rem) !important; }
-  .hero-badge { font-size: .62rem !important; padding: 6px 14px !important; flex-wrap: wrap; justify-content: center; }
+@media (max-width: 900px) {
+  .hero-title { font-size: clamp(2.8rem, 9vw, 5rem) !important; letter-spacing: -.02em; }
 }
-@media (max-width: 420px) {
-  .hero-title { font-size: clamp(2.1rem, 9vw, 3rem) !important; }
+@media (max-width: 480px) {
+  .hero-title { font-size: clamp(2.2rem, 8vw, 3.4rem) !important; }
 }

@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import base64, os, sys
+
+# ── HERO.JSX NOVO COMPLETO ──────────────────────────────────────────────────
+HERO = r"""import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Zap } from 'lucide-react';
 import { useStore } from '../store';
 
@@ -131,9 +134,11 @@ export default function Hero() {
     <>
       <style>{`
         .hero-section {
-          align-items: flex-start;
+          min-height: 100dvh;
+          display: flex;
+          align-items: center;
           justify-content: center;
-          padding: clamp(88px, 11vh, 100px) 48px 24px;
+          padding: 100px 48px 64px;
           position: relative;
           overflow: hidden;
         }
@@ -150,18 +155,11 @@ export default function Hero() {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
         }
-        .hero-desktop-cards {
-          display: flex;
-          justify-content: center;
-          gap: 16px;
-          margin-bottom: clamp(20px, 3vw, 32px);
-        }
         @media (max-width: 768px) {
           .hero-section { padding: 88px 20px 48px; }
           .hero-float { display: none !important; }
           .hero-mobile-card { display: flex !important; }
           .hero-stats-grid { grid-template-columns: repeat(2, 1fr); }
-          .hero-desktop-cards { display: none !important; }
           .hero-trust-row { gap: 14px !important; }
         }
         @media (max-width: 420px) {
@@ -199,7 +197,7 @@ export default function Hero() {
 
         {/* Score ring — desktop */}
         <div className="hero-float" style={{
-          position:'absolute', bottom:'clamp(20px, 4vh, 40px)', left:'2%',
+          position:'absolute', bottom:'16%', left:'4%',
           background:'var(--bg-card)', border:'1px solid var(--b-main)',
           borderRadius:'var(--r-lg)', padding:'22px 24px',
           boxShadow:'var(--shadow-float)',
@@ -215,7 +213,7 @@ export default function Hero() {
 
         {/* Live feed — desktop */}
         <div className="hero-float" style={{
-          position:'absolute', bottom:'clamp(20px, 4vh, 40px)', right:'2%',
+          position:'absolute', bottom:'26%', right:'4%',
           background:'var(--bg-card)', border:'1px solid var(--b-main)',
           borderRadius:'var(--r-md)', padding:'16px 20px',
           boxShadow:'var(--shadow-float)',
@@ -231,7 +229,7 @@ export default function Hero() {
         <div className="hero-inner">
 
           {/* Badge */}
-          <div className="hero-badge fade-up" style={{ marginBottom:'clamp(14px,2.5vw,20px)', opacity:visible?1:0 }}>
+          <div className="hero-badge fade-up" style={{ marginBottom:'clamp(28px,5vw,44px)', opacity:visible?1:0 }}>
             <Zap size={9} style={{ color:'var(--co7)' }}/>
             <span style={{ color:'var(--t2)' }}>Inteligência Jurídica Quântica</span>
             <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
@@ -256,7 +254,7 @@ export default function Hero() {
           {/* Subline */}
           <p className="fade-up fade-up-2" style={{
             fontSize:'clamp(1rem,2.4vw,1.12rem)', color:'var(--t1)',
-            maxWidth:1100, margin:'0 auto 12px',
+            maxWidth:620, margin:'0 auto 12px',
             lineHeight:1.8, opacity:visible?1:0,
             fontFamily:'var(--f-display)', fontWeight:400, letterSpacing:'.01em',
           }}>
@@ -266,7 +264,7 @@ export default function Hero() {
           </p>
 
           {/* Latim */}
-          <div className="fade-up fade-up-3" style={{ opacity:visible?1:0, marginBottom:'clamp(16px,2.5vw,24px)' }}>
+          <div className="fade-up fade-up-3" style={{ opacity:visible?1:0, marginBottom:'clamp(32px,5vw,52px)' }}>
             <span style={{ fontFamily:'var(--f-display)',fontStyle:'italic',fontSize:'clamp(.8rem,2vw,.9rem)',color:'var(--t3)',letterSpacing:'.04em' }}>
               "Iustitia est constans et perpetua voluntas ius suum cuique tribuendi"
             </span>
@@ -279,7 +277,7 @@ export default function Hero() {
           <div className="fade-up fade-up-3" style={{
             display:'flex', gap:'clamp(10px,2vw,14px)',
             justifyContent:'center', flexWrap:'wrap',
-            marginBottom:'clamp(20px,3vw,28px)', opacity:visible?1:0,
+            marginBottom:'clamp(36px,6vw,56px)', opacity:visible?1:0,
           }}>
             <button className="btn btn-cobalt-ultra btn-lg" onClick={() => scrollTo('analise')}
               style={{ fontSize:'clamp(.86rem,2.5vw,.96rem)',padding:'clamp(13px,3vw,16px) clamp(26px,5vw,38px)' }}>
@@ -290,7 +288,6 @@ export default function Hero() {
               Criar Conta Gratuita
             </button>
           </div>
-
 
           {/* Mobile score + live card */}
           <div className="hero-mobile-card" style={{
@@ -318,7 +315,7 @@ export default function Hero() {
             gap:1, background:'var(--b-main)',
             borderRadius:'var(--r-lg)', overflow:'hidden',
             boxShadow:'var(--shadow-cobalt)',
-            maxWidth: 860, margin: '0 auto',
+            maxWidth:760, margin:'0 auto',
             border:'1px solid var(--b-cobalt)',
           }}>
             {STATS.map((s,i) => (
@@ -353,7 +350,7 @@ export default function Hero() {
 
           {/* Trust */}
           <div className="hero-trust-row fade-up fade-up-4" style={{
-            marginTop:'clamp(12px,2vw,18px)', opacity:visible?1:0,
+            marginTop:'clamp(20px,4vw,32px)', opacity:visible?1:0,
             display:'flex', justifyContent:'center',
             gap:'clamp(14px,3vw,28px)', flexWrap:'wrap',
           }}>
@@ -387,3 +384,55 @@ export default function Hero() {
     </>
   );
 }
+"""
+
+# CSS patch para hero-title gigante
+CSS_PATCH = """
+/* ══ HERO TITLE ULTRA ══ */
+.hero-title {
+  font-family: var(--f-display);
+  font-size: clamp(3.2rem, 7.5vw, 6rem);
+  font-weight: 300;
+  line-height: 1.06;
+  color: var(--t0);
+  letter-spacing: -.03em;
+}
+
+/* ══ HERO MOBILE ══ */
+@media (max-width: 768px) {
+  .hero-title { font-size: clamp(2.6rem, 10vw, 4rem); }
+  .hero-badge { font-size: .62rem !important; padding: 6px 14px !important; flex-wrap: wrap; justify-content: center; }
+}
+@media (max-width: 420px) {
+  .hero-title { font-size: clamp(2.1rem, 9vw, 3rem); }
+}
+"""
+
+# Escrever Hero.jsx
+hero_path = 'src/components/Hero.jsx'
+with open(hero_path, 'w', encoding='utf-8') as f:
+    f.write(HERO)
+print(f"✅ {hero_path} escrito ({len(HERO)} chars)")
+
+# Atualizar hero-title no index.css e appendar media queries
+css_path = 'src/index.css'
+css = open(css_path, encoding='utf-8').read()
+
+# Substituir bloco hero-title existente
+import re
+css = re.sub(
+    r'\.hero-title \{[^}]+\}',
+    '.hero-title {\n  font-family: var(--f-display);\n  font-size: clamp(3.2rem, 7.5vw, 6rem);\n  font-weight: 300;\n  line-height: 1.06;\n  color: var(--t0);\n  letter-spacing: -.03em;\n}',
+    css
+)
+
+# Remover patches mobile antigos se existirem
+css = re.sub(r'/\* ══ HERO (MOBILE|TITLE)[^/]*══ \*/.*?(?=\n\n|\Z)', '', css, flags=re.DOTALL)
+
+# Appendar patch limpo
+css = css.rstrip() + '\n\n/* ══ HERO MOBILE ══ */\n@media (max-width: 768px) {\n  .hero-title { font-size: clamp(2.6rem, 10vw, 4rem); }\n  .hero-badge { font-size: .62rem !important; padding: 6px 14px !important; flex-wrap: wrap; justify-content: center; }\n}\n@media (max-width: 420px) {\n  .hero-title { font-size: clamp(2.1rem, 9vw, 3rem); }\n}\n'
+
+with open(css_path, 'w', encoding='utf-8') as f:
+    f.write(css)
+print(f"✅ {css_path} atualizado ({len(css)} chars)")
+print("TUDO OK")
