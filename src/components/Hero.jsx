@@ -131,6 +131,7 @@ export default function Hero() {
     <>
       <style>{`
         .hero-section {
+          min-height: 100dvh;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -197,6 +198,34 @@ export default function Hero() {
           <span style={{ color:'var(--t3)',marginRight:2 }}>ÁREA ATIVA</span>
           <span style={{ color:'var(--co7)',fontWeight:600 }}>{AREAS[activeArea]}</span>
         </div>
+
+        {/* Score ring — desktop */}
+        <div className="hero-float" style={{
+          position:'absolute', bottom:'clamp(120px, 14vh, 160px)', left:'2%',
+          background:'var(--bg-card)', border:'1px solid var(--b-main)',
+          borderRadius:'var(--r-lg)', padding:'22px 24px',
+          boxShadow:'var(--shadow-float)',
+          opacity:visible?1:0, transition:'opacity .7s .8s',
+          pointerEvents:'none', flexDirection:'column', alignItems:'center', gap:10,
+        }}>
+          <ScoreRing size={110} score={87} visible={visible}/>
+          <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.54rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.5rem',color:'var(--jade2)',letterSpacing:'.1em' }}>FORTEMENTE FAVORÁVEL</span>
+          </div>
+        </div>
+
+        {/* Live feed — desktop */}
+        <div className="hero-float" style={{
+          position:'absolute', bottom:'clamp(160px, 18vh, 210px)', right:'2%',
+          background:'var(--bg-card)', border:'1px solid var(--b-main)',
+          borderRadius:'var(--r-md)', padding:'16px 20px',
+          boxShadow:'var(--shadow-float)',
+          opacity:visible?1:0, transition:'opacity .7s 1.0s',
+          pointerEvents:'none', minWidth:220,
+          flexDirection:'column', gap:10,
+        }}>
+          <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.18em',marginBottom:2 }}>TRIBUNAL AO VIVO</div>
           <LiveFeed visible={visible}/>
         </div>
 
@@ -285,30 +314,6 @@ export default function Hero() {
               display:'flex', flexDirection:'column', gap:10, justifyContent:'center',
             }}>
               <div style={{ fontFamily:'var(--f-mono)',fontSize:'.56rem',color:'var(--t3)',letterSpacing:'.18em' }}>TRIBUNAL AO VIVO</div>
-              <LiveFeed visible={visible}/>
-            </div>
-          </div>
-
-          {/* Desktop: Score + LiveFeed */}
-          <div style={{display:'flex',justifyContent:'center',gap:16,marginBottom:24,opacity:visible?1:0}}>
-            <div style={{background:'var(--bg-card)',border:'1px solid var(--b-main)',borderRadius:'var(--r-lg)',padding:'16px 20px',display:'flex',flexDirection:'column',alignItems:'center',gap:8,boxShadow:'var(--shadow-float)'}}>
-              <ScoreRing size={80} score={87} visible={visible}/>
-              <span style={{fontFamily:'var(--f-mono)',fontSize:'.48rem',color:'var(--jade2)',letterSpacing:'.1em'}}>FORTEMENTE FAVORÁVEL</span>
-            </div>
-            <div style={{background:'var(--bg-card)',border:'1px solid var(--b-main)',borderRadius:'var(--r-md)',padding:'16px 20px',minWidth:190,display:'flex',flexDirection:'column',gap:10,justifyContent:'center',boxShadow:'var(--shadow-float)'}}>
-              <div style={{fontFamily:'var(--f-mono)',fontSize:'.55rem',color:'var(--t3)',letterSpacing:'.18em'}}>TRIBUNAL AO VIVO</div>
-              <LiveFeed visible={visible}/>
-            </div>
-          </div>
-
-          {/* Desktop: Score + LiveFeed */}
-          <div style={{display:"flex",justifyContent:"center",gap:16,marginBottom:24,opacity:visible?1:0}}>
-            <div style={{background:"var(--bg-card)",border:"1px solid var(--b-main)",borderRadius:"var(--r-lg)",padding:"16px 20px",display:"flex",flexDirection:"column",alignItems:"center",gap:8,boxShadow:"var(--shadow-float)"}}>
-              <ScoreRing size={80} score={87} visible={visible}/>
-              <span style={{fontFamily:"var(--f-mono)",fontSize:".48rem",color:"var(--jade2)",letterSpacing:".1em"}}>FORTEMENTE FAVORÁVEL</span>
-            </div>
-            <div style={{background:"var(--bg-card)",border:"1px solid var(--b-main)",borderRadius:"var(--r-md)",padding:"16px 20px",minWidth:190,display:"flex",flexDirection:"column",gap:10,justifyContent:"center",boxShadow:"var(--shadow-float)"}}>
-              <div style={{fontFamily:"var(--f-mono)",fontSize:".55rem",color:"var(--t3)",letterSpacing:".18em"}}>TRIBUNAL AO VIVO</div>
               <LiveFeed visible={visible}/>
             </div>
           </div>
