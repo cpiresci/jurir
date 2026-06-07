@@ -173,12 +173,76 @@ export default function AgentsSection() {
             </h3>
           </div>
 
-          <div style={{ display:'flex', alignItems:'flex-start', gap:0, overflowX:'auto', paddingBottom:8 }}>
+          {/* Desktop: horizontal | Mobile: vertical stack */}
+          <style>{`
+            .flow-grid {
+              display: flex;
+              align-items: flex-start;
+              gap: 0;
+            }
+            .flow-item {
+              display: flex;
+              align-items: flex-start;
+              min-width: 0;
+              flex: 1;
+            }
+            .flow-card {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              flex: 1;
+              min-width: 140px;
+              padding: 0 10px;
+              text-align: center;
+            }
+            .flow-connector {
+              padding-top: 26px;
+              flex-shrink: 0;
+              display: flex;
+              align-items: center;
+              gap: 2px;
+            }
+            @media (max-width: 700px) {
+              .flow-grid {
+                flex-direction: column;
+                gap: 0;
+              }
+              .flow-item {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+              }
+              .flow-card {
+                flex-direction: row !important;
+                text-align: left !important;
+                align-items: flex-start !important;
+                padding: 18px 16px !important;
+                min-width: unset !important;
+                background: var(--bg-card);
+                border: 1px solid var(--b-cobalt);
+                border-radius: var(--r-md);
+                gap: 18px;
+                margin-bottom: 4px;
+              }
+              .flow-card-text {
+                flex: 1;
+              }
+              .flow-connector {
+                display: none !important;
+              }
+              .flow-step-circle {
+                margin-bottom: 0 !important;
+                flex-shrink: 0;
+              }
+            }
+          `}</style>
+
+          <div className="flow-grid">
             {FLOW.map((f, i) => (
-              <div key={i} style={{ display:'flex', alignItems:'flex-start', minWidth:0, flex:1 }}>
-                <div style={{ display:'flex', flexDirection:'column', alignItems:'center', flex:1, minWidth:140, padding:'0 10px' }}>
-                  {/* Step indicator */}
-                  <div style={{
+              <div key={i} className="flow-item">
+                <div className="flow-card">
+                  {/* Step circle */}
+                  <div className="flow-step-circle" style={{
                     width:52, height:52, borderRadius:'50%',
                     background:'var(--bg-card)',
                     border:'1px solid var(--b-cobalt)',
@@ -188,28 +252,27 @@ export default function AgentsSection() {
                     flexShrink:0, position:'relative',
                   }}>
                     {f.icon}
-                    {/* Step number */}
                     <div style={{
                       position:'absolute', top:-4, right:-4,
-                      width:16, height:16, borderRadius:'50%',
+                      width:18, height:18, borderRadius:'50%',
                       background:'var(--co7)', color:'#fff',
-                      fontFamily:'var(--f-mono)', fontSize:'.48rem',
+                      fontFamily:'var(--f-mono)', fontSize:'.5rem',
                       display:'flex', alignItems:'center', justifyContent:'center',
-                      letterSpacing:'.04em', fontWeight:600,
+                      letterSpacing:'.04em', fontWeight:700,
                     }}>
                       {f.step}
                     </div>
                   </div>
 
-                  <div style={{ textAlign:'center' }}>
+                  <div className="flow-card-text">
                     <div style={{
-                      fontSize:'.79rem', fontWeight:600, color:'var(--t0)',
-                      marginBottom:6, fontFamily:'var(--f-sans)', letterSpacing:'.01em',
+                      fontSize:'.84rem', fontWeight:700, color:'var(--t0)',
+                      marginBottom:7, fontFamily:'var(--f-sans)', letterSpacing:'.01em',
                     }}>
                       {f.label}
                     </div>
                     <div style={{
-                      fontSize:'.7rem', color:'var(--t4)', lineHeight:1.55,
+                      fontSize:'.76rem', color:'var(--t2)', lineHeight:1.65,
                       fontFamily:'var(--f-display)', fontWeight:400, letterSpacing:'.01em',
                     }}>
                       {f.desc}
@@ -217,11 +280,11 @@ export default function AgentsSection() {
                   </div>
                 </div>
 
-                {/* Connector */}
+                {/* Connector — hidden on mobile via CSS */}
                 {i < FLOW.length - 1 && (
-                  <div style={{ paddingTop:26, flexShrink:0, display:'flex', alignItems:'center', gap:2 }}>
+                  <div className="flow-connector">
                     <div style={{ width:12, height:1, background:'var(--co7)', opacity:0.25 }}/>
-                    <div style={{ width:4, height:4, borderRadius:'50%', background:'var(--co7)', opacity:0.4 }}/>
+                    <div style={{ width:5, height:5, borderRadius:'50%', background:'var(--co7)', opacity:0.45 }}/>
                     <div style={{ width:12, height:1, background:'var(--co7)', opacity:0.25 }}/>
                   </div>
                 )}
