@@ -133,9 +133,9 @@ export default function Hero() {
         .hero-section {
           min-height: 100dvh;
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
-          padding: clamp(88px, 11vh, 110px) 48px 60px;
+          padding: clamp(100px, 13vh, 130px) 48px 80px;
           position: relative;
           overflow: hidden;
         }
@@ -152,18 +152,11 @@ export default function Hero() {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
         }
-        .hero-desktop-cards {
-          display: flex;
-          justify-content: center;
-          gap: 16px;
-          margin-bottom: clamp(20px, 3vw, 32px);
-        }
         @media (max-width: 768px) {
           .hero-section { padding: 88px 20px 48px; }
           .hero-float { display: none !important; }
           .hero-mobile-card { display: flex !important; }
           .hero-stats-grid { grid-template-columns: repeat(2, 1fr); }
-          .hero-desktop-cards { display: none !important; }
           .hero-trust-row { gap: 14px !important; }
         }
         @media (max-width: 420px) {
@@ -198,6 +191,34 @@ export default function Hero() {
           <span style={{ color:'var(--t3)',marginRight:2 }}>ÁREA ATIVA</span>
           <span style={{ color:'var(--co7)',fontWeight:600 }}>{AREAS[activeArea]}</span>
         </div>
+
+        {/* Score ring — desktop */}
+        <div className="hero-float" style={{
+          position:'absolute', top:'clamp(260px, 34vh, 370px)', left:'4%',
+          background:'var(--bg-card)', border:'1px solid var(--b-main)',
+          borderRadius:'var(--r-lg)', padding:'22px 24px',
+          boxShadow:'var(--shadow-float)',
+          opacity:visible?1:0, transition:'opacity .7s .8s',
+          pointerEvents:'none', flexDirection:'column', alignItems:'center', gap:10,
+        }}>
+          <ScoreRing size={110} score={87} visible={visible}/>
+          <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.54rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.5rem',color:'var(--jade2)',letterSpacing:'.1em' }}>FORTEMENTE FAVORÁVEL</span>
+          </div>
+        </div>
+
+        {/* Live feed — desktop */}
+        <div className="hero-float" style={{
+          position:'absolute', top:'clamp(300px, 40vh, 430px)', right:'4%',
+          background:'var(--bg-card)', border:'1px solid var(--b-main)',
+          borderRadius:'var(--r-md)', padding:'16px 20px',
+          boxShadow:'var(--shadow-float)',
+          opacity:visible?1:0, transition:'opacity .7s 1.0s',
+          pointerEvents:'none', minWidth:220,
+          flexDirection:'column', gap:10,
+        }}>
+          <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.18em',marginBottom:2 }}>TRIBUNAL AO VIVO</div>
           <LiveFeed visible={visible}/>
         </div>
 
@@ -263,31 +284,6 @@ export default function Hero() {
               style={{ fontSize:'clamp(.86rem,2.5vw,.96rem)',padding:'clamp(13px,3vw,16px) clamp(26px,5vw,38px)' }}>
               Criar Conta Gratuita
             </button>
-          </div>
-
-          {/* Desktop: Score + LiveFeed em linha, abaixo dos CTAs */}
-          <div className="hero-desktop-cards fade-up fade-up-3" style={{ opacity:visible?1:0 }}>
-            <div style={{
-              background:'var(--bg-card)', border:'1px solid var(--b-main)',
-              borderRadius:'var(--r-lg)', padding:'18px 22px',
-              boxShadow:'var(--shadow-float)',
-              display:'flex', flexDirection:'column', alignItems:'center', gap:8,
-            }}>
-              <ScoreRing size={90} score={87} visible={visible}/>
-              <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
-                <span style={{ fontFamily:'var(--f-mono)',fontSize:'.52rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
-                <span style={{ fontFamily:'var(--f-mono)',fontSize:'.48rem',color:'var(--jade2)',letterSpacing:'.1em' }}>FORTEMENTE FAVORÁVEL</span>
-              </div>
-            </div>
-            <div style={{
-              background:'var(--bg-card)', border:'1px solid var(--b-main)',
-              borderRadius:'var(--r-md)', padding:'16px 20px',
-              boxShadow:'var(--shadow-float)', minWidth:200,
-              display:'flex', flexDirection:'column', gap:10, justifyContent:'center',
-            }}>
-              <div style={{ fontFamily:'var(--f-mono)',fontSize:'.56rem',color:'var(--t3)',letterSpacing:'.18em' }}>TRIBUNAL AO VIVO</div>
-              <LiveFeed visible={visible}/>
-            </div>
           </div>
 
           {/* Mobile score + live card */}
