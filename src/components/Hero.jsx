@@ -131,7 +131,6 @@ export default function Hero() {
     <>
       <style>{`
         .hero-section {
-          min-height: 100dvh;
           display: flex;
           align-items: center;
           justify-content: center;
