@@ -251,7 +251,7 @@ export default function Hero() {
           {/* Subline */}
           <p className="fade-up fade-up-2" style={{
             fontSize:'clamp(1rem,2.4vw,1.12rem)', color:'var(--t1)',
-            maxWidth:620, margin:'0 auto 12px',
+            maxWidth:1100, margin:'0 auto 12px',
             lineHeight:1.8, opacity:visible?1:0,
             fontFamily:'var(--f-display)', fontWeight:400, letterSpacing:'.01em',
           }}>
@@ -312,7 +312,7 @@ export default function Hero() {
             gap:1, background:'var(--b-main)',
             borderRadius:'var(--r-lg)', overflow:'hidden',
             boxShadow:'var(--shadow-cobalt)',
-            maxWidth:760, margin:'0 auto',
+            maxWidth: 860, margin: '0 auto',
             border:'1px solid var(--b-cobalt)',
           }}>
             {STATS.map((s,i) => (
