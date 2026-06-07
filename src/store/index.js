@@ -17,7 +17,7 @@ export const useStore = create((set, get) => ({
   },
 
   // ── UI ──
-  mode: 'premium',  // [FIX] default premium — SSE com veredito completo
+  mode: 'free',
   setMode: (mode) => set({ mode }),
 
   modalOpen: null,
@@ -44,23 +44,27 @@ export const useStore = create((set, get) => ({
   running:         false,
   freeResult:      null,
   deltaResult:     null,
-  tribunal:        null,
   // [FIX] Mensagem de status para cooldown/recovery — evita 0/16 parado sem feedback
   statusMessage:   null,
+
+  // [FIX] Estado granular do Advogado do Diabo e do Juiz IA para cards visuais
+  // status: 'idle' | 'running' | 'done' | 'error'
+  devilState: { status: 'idle', analysis: '', confidence: 0 },
+  judgeState: { status: 'idle', verdict: '' },
+
+  setDevilState: (patch) => set(s => ({ devilState: { ...s.devilState, ...patch } })),
+  setJudgeState: (patch) => set(s => ({ judgeState: { ...s.judgeState, ...patch } })),
 
   resetAnalysis: () => set({
     analysisId: null, agentStates: {}, completedAgents: 0,
     verdictText: '', devilText: '', jurirScore: null,
     scoreDims: null, vetoActive: false, running: false,
-    freeResult: null, deltaResult: null, statusMessage: null, tribunal: null,
+    freeResult: null, deltaResult: null, statusMessage: null,
+    devilState: { status: 'idle', analysis: '', confidence: 0 },
+    judgeState: { status: 'idle', verdict: '' },
   }),
 
-  setAgentState: (id, data) => set(s => ({
-    agentStates: {
-      ...s.agentStates,
-      [id]: { ...(s.agentStates[id] || {}), ...data },
-    },
-  })),
+  setAgentState:      (id, data)      => set(s => ({ agentStates: { ...s.agentStates, [id]: data } })),
   incrementCompleted: ()              => set(s => ({ completedAgents: s.completedAgents + 1 })),
   setVerdict:         (text)          => set({ verdictText: text }),
   setDevil:           (text)          => set({ devilText: text }),
@@ -77,7 +81,6 @@ export const useStore = create((set, get) => ({
     analysis: r.veredito || r.free_analysis || r.analysis,
   }}),
   setDeltaResult:     (r)             => set({ deltaResult: r }),
-  setTribunal:        (t)             => set({ tribunal: t }),
   setAnalysisId:      (id)            => set({ analysisId: id }),
 
   // ── Delta ──

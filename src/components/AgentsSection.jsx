@@ -1,104 +1,162 @@
+import { useEffect, useRef, useState } from 'react';
 import { AGENT_AREAS } from '../lib/constants';
-import { ArrowRight, Cpu, Scale, Sword } from 'lucide-react';
+import { useStore } from '../store';
 
-const WORKFLOW = [
-  {
-    icon: <Cpu size={18}/>,
-    label: '16 Agentes',
-    sub: 'análise em paralelo',
-    color: 'var(--flame)',
-    bg: 'rgba(255,0,77,0.10)',
-  },
-  {
-    icon: <Sword size={18}/>,
-    label: 'Advogado do Diabo',
-    sub: 'contraditório',
-    color: 'var(--flame-lt)',
-    bg: 'rgba(255,51,112,0.08)',
-  },
-  {
-    icon: <Scale size={18}/>,
-    label: 'Juiz IA Quantum',
-    sub: 'veredicto + score',
-    color: 'var(--n1)',
-    bg: 'rgba(248,248,255,0.07)',
-  },
+const FLOW = [
+  { icon: '📋', label: 'Caso submetido', desc: 'Seu caso é processado e distribuído aos 16 agentes' },
+  { icon: '⚡', label: '16 Análises em Paralelo', desc: 'Cada especialista analisa simultaneamente' },
+  { icon: '⚔️', label: 'Advogado do Diabo', desc: 'O contraditório é apresentado com máxima rigorosidade' },
+  { icon: '🏛️', label: 'Juiz IA Quantum', desc: 'Deliberação final com base em todo o material' },
+  { icon: '📊', label: 'JURIR Score', desc: 'Pontuação dimensional multidimensional do seu caso' },
 ];
 
+const STATUS_COLOR = {
+  idle:    { border: 'var(--b-main)',               bg: 'var(--bg-card)',                  dot: 'var(--t5)' },
+  running: { border: 'rgba(20,114,217,0.4)',         bg: 'rgba(20,114,217,0.035)',           dot: 'var(--co7)' },
+  done:    { border: 'rgba(16,185,129,0.28)',        bg: 'rgba(16,185,129,0.025)',           dot: '#10b981' },
+  error:   { border: 'rgba(239,68,68,0.25)',         bg: 'rgba(239,68,68,0.02)',             dot: '#ef4444' },
+};
+
 export default function AgentsSection() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+
+  /* Live agent states from store — shows real activity if analysis running */
+  const agentStates = useStore(s => s.agentStates);
+  const running     = useStore(s => s.running);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.15 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <section id="agentes" className="agents-section">
-      <div className="page-wrap">
+    <section id="agentes" ref={ref} style={{ padding: '100px 24px', background: 'var(--bg-card2)', borderTop: '1px solid var(--b-subtle)', borderBottom: '1px solid var(--b-subtle)' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
-        <div className="section-header">
-          <div className="section-eyebrow">Arquitetura Multi-Agente</div>
-          <h2 className="section-title">
-            O Conselho de{' '}
-            <span className="outline">16</span>{' '}
-            <em>Agentes</em>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 72 }}>
+          <div className="section-label" style={{ marginBottom: 20 }}>O Conselho Jurídico</div>
+          <h2 className="t-display" style={{ fontSize: 'clamp(1.9rem,3.5vw,2.8rem)', fontWeight: 400, color: 'var(--t0)', marginBottom: 16, letterSpacing: '-.02em' }}>
+            Dezesseis especialistas.<br/>
+            <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>Um único veredicto.</span>
           </h2>
-          <p className="section-desc">
-            Cada agente é um especialista dedicado em sua área do Direito brasileiro.
-            Após o contraditório rigoroso, o Juiz IA prolata o veredicto definitivo.
+          <p style={{ color: 'var(--t3)', maxWidth: 540, margin: '0 auto', lineHeight: 1.7, fontSize: '.92rem' }}>
+            Cada agente é treinado na sua área específica do direito brasileiro. Em paralelo, simultâneos, sem compromisso.
           </p>
+
+          {/* Live indicator when analysis is running */}
+          {running && (
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              marginTop: 20, padding: '8px 16px',
+              background: 'rgba(20,114,217,0.06)', border: '1px solid var(--b-cobalt)',
+              borderRadius: 'var(--r-md)',
+              fontFamily: 'var(--f-mono)', fontSize: '.68rem', color: 'var(--co7)',
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--co7)', animation: 'pulse 1.2s ease-in-out infinite' }}/>
+              Análise em tempo real
+            </div>
+          )}
         </div>
 
-        {/* Workflow strip */}
-        <div className="workflow-strip">
-          {WORKFLOW.map((w, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div className="workflow-step">
-                <div className="workflow-step-icon" style={{ background: w.bg }}>
-                  <span style={{ color: w.color }}>{w.icon}</span>
-                </div>
-                <div className="workflow-step-text">
-                  <div className="name">{w.label}</div>
-                  <div className="sub">{w.sub}</div>
+        {/* Agents grid — cards reflect live state when running */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+          gap: 10, marginBottom: 72,
+        }}>
+          {AGENT_AREAS.map((a, i) => {
+            const agSt  = agentStates[a.id];
+            const status = agSt?.status || 'idle';
+            const sc = STATUS_COLOR[status] || STATUS_COLOR.idle;
+
+            return (
+              <div key={a.id} style={{
+                background: sc.bg,
+                border: `1px solid ${sc.border}`,
+                borderRadius: 'var(--r-md)',
+                padding: '16px 18px',
+                display: 'flex', alignItems: 'center', gap: 12,
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'translateY(0)' : 'translateY(16px)',
+                transition: `opacity .5s ${0.03 * i}s, transform .5s ${0.03 * i}s, border-color .35s, background .35s, box-shadow .35s`,
+                boxShadow: status === 'running'
+                  ? '0 0 14px rgba(20,114,217,0.12)'
+                  : status === 'done'
+                    ? '0 0 10px rgba(16,185,129,0.07)'
+                    : 'var(--shadow-card)',
+                position: 'relative', overflow: 'hidden',
+              }}>
+                {/* Running shimmer */}
+                {status === 'running' && (
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(20,114,217,0.06) 50%, transparent 100%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'agent-shimmer 1.6s ease-in-out infinite',
+                    borderRadius: 'inherit', pointerEvents: 'none',
+                  }}/>
+                )}
+
+                {/* Left status dot */}
+                <div style={{
+                  position: 'absolute', left: 0, top: 0, bottom: 0, width: 2,
+                  background: sc.dot,
+                  boxShadow: status !== 'idle' ? `0 0 6px ${sc.dot}88` : 'none',
+                  transition: 'background .3s, box-shadow .3s',
+                }}/>
+
+                <span style={{ fontSize: '1.1rem', flexShrink: 0, position: 'relative' }}>{a.icon}</span>
+                <div style={{ position: 'relative' }}>
+                  <div style={{ fontSize: '.77rem', fontWeight: 600, color: status === 'done' ? 'var(--t0)' : 'var(--t1)', lineHeight: 1.3, transition: 'color .3s' }}>
+                    {a.area}
+                  </div>
+                  <div style={{ fontSize: '.62rem', fontFamily: 'var(--f-mono)', color: status === 'running' ? 'var(--co7)' : 'var(--t5)', letterSpacing: '.08em', marginTop: 2, transition: 'color .3s' }}>
+                    {status === 'running' ? '● analisando…' : status === 'done' ? '✓ concluído' : `ESPECIALISTA #${String(i + 1).padStart(2, '0')}`}
+                  </div>
                 </div>
               </div>
-              {i < WORKFLOW.length - 1 && (
-                <ArrowRight size={13} style={{ color: 'var(--n5)', flexShrink: 0 }}/>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="flame-rule" style={{ marginBottom: 40 }}/>
-
-        {/* Agent catalog */}
-        <div className="agent-catalog">
-          {AGENT_AREAS.map(({ id, area, icon }) => (
-            <div key={id} className="catalog-card">
-              <span className="catalog-icon">{icon}</span>
-              <div>
-                <div className="catalog-name">{area}</div>
-                <div className="catalog-id">{id}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Special agents */}
-        <div className="special-agents-grid">
-          <div className="special-agent-card" style={{ border: '1px solid rgba(255,0,77,0.22)' }}>
-            <div className="special-agent-glow" style={{ background: 'radial-gradient(circle, rgba(255,0,77,0.14) 0%, transparent 70%)' }}/>
-            <div style={{ fontSize: '1.5rem', marginBottom: 14 }}>⚔️</div>
-            <div style={{ fontFamily: 'var(--f-display)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--n0)', textTransform: 'uppercase', letterSpacing: '.02em', marginBottom: 8 }}>
-              Advogado do Diabo
-            </div>
-            <p style={{ fontSize: '.82rem', color: 'var(--n4)', lineHeight: 1.7 }}>
-              Apresenta o contraditório completo — identifica todas as fraquezas da tese, riscos processuais e argumentos contrários com rigor absoluto.
-            </p>
+        {/* Process flow */}
+        <div>
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
+            <div className="section-label" style={{ marginBottom: 12 }}>Processo de Análise</div>
+            <h3 className="t-display" style={{ fontSize: '1.5rem', fontWeight: 400, color: 'var(--t0)' }}>
+              Como funciona
+            </h3>
           </div>
-          <div className="special-agent-card" style={{ border: '1px solid rgba(248,248,255,0.10)' }}>
-            <div className="special-agent-glow" style={{ background: 'radial-gradient(circle, rgba(248,248,255,0.05) 0%, transparent 70%)' }}/>
-            <div style={{ fontSize: '1.5rem', marginBottom: 14 }}>⚖️</div>
-            <div style={{ fontFamily: 'var(--f-display)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--n0)', textTransform: 'uppercase', letterSpacing: '.02em', marginBottom: 8 }}>
-              Juiz IA Quantum
-            </div>
-            <p style={{ fontSize: '.82rem', color: 'var(--n4)', lineHeight: 1.7 }}>
-              Pondera os 16 pareceres e o contraditório, prola o veredicto definitivo e calcula o JURIR Score em 4 dimensões: mérito, risco, estratégia e precedentes.
-            </p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 0, overflowX: 'auto', paddingBottom: 8 }}>
+            {FLOW.map((f, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, minWidth: 120, padding: '0 8px' }}>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: '50%',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--b-cobalt)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.3rem', marginBottom: 12,
+                    boxShadow: '0 0 0 4px rgba(20,114,217,0.04)',
+                    flexShrink: 0,
+                  }}>
+                    {f.icon}
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '.78rem', fontWeight: 600, color: 'var(--t0)', marginBottom: 4 }}>{f.label}</div>
+                    <div style={{ fontSize: '.7rem', color: 'var(--t4)', lineHeight: 1.5 }}>{f.desc}</div>
+                  </div>
+                </div>
+                {i < FLOW.length - 1 && (
+                  <div style={{ paddingTop: 24, flexShrink: 0 }}>
+                    <div style={{ width: 24, height: 1, background: 'linear-gradient(90deg, var(--b-cobalt), transparent)' }}/>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>

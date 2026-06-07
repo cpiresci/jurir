@@ -13,48 +13,11 @@ const FERRAMENTAS = [
   { to: '/verificar',     label: 'Verificar Relatório',      icon: '🛡️' },
 ];
 
-const linkStyle = {
-  color: 'var(--n4)', fontSize: '.8rem', fontWeight: 600,
-  letterSpacing: '.06em', textDecoration: 'none',
-  padding: '6px 14px', borderRadius: 'var(--r-pill)',
-  transition: 'color .18s, background .18s', textTransform: 'uppercase',
-};
-
-function NavAnchor({ href, children, onClick }) {
-  return (
-    <a href={href} onClick={onClick} style={linkStyle}
-      onMouseEnter={e => { e.currentTarget.style.color = 'var(--n0)'; e.currentTarget.style.background = 'rgba(255,0,77,0.08)'; }}
-      onMouseLeave={e => { e.currentTarget.style.color = 'var(--n4)'; e.currentTarget.style.background = 'transparent'; }}>
-      {children}
-    </a>
-  );
-}
-
-// Scales of justice logo — redrawn in crimson/white
-function JurirLogo() {
-  return (
-    <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-      {/* Vertical beam */}
-      <line x1="17" y1="3" x2="17" y2="29" stroke="rgba(255,0,77,0.6)" strokeWidth="1.2"/>
-      {/* Horizontal beam */}
-      <line x1="5" y1="10" x2="29" y2="10" stroke="rgba(255,0,77,0.7)" strokeWidth="1.4"/>
-      {/* Left pan */}
-      <path d="M5 10 L9 18 L1 18 Z" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth=".9"/>
-      {/* Right pan */}
-      <path d="M29 10 L33 18 L25 18 Z" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth=".9"/>
-      {/* Base */}
-      <line x1="13" y1="29" x2="21" y2="29" stroke="rgba(255,0,77,0.5)" strokeWidth="1.2"/>
-      {/* Center gem */}
-      <rect x="15.2" y="8.2" width="3.6" height="3.6" rx="0.5" fill="var(--flame)" transform="rotate(45 17 10)"/>
-    </svg>
-  );
-}
-
 export default function Navbar() {
   const [scrolled,     setScrolled]    = useState(false);
   const [mobileOpen,   setMobileOpen]  = useState(false);
   const [toolsOpen,    setToolsOpen]   = useState(false);
-  const [engineStatus, setEngineStatus] = useState('checking');
+  const [engineStatus, setEngineStatus]= useState('checking');
   const toolsRef = useRef(null);
   const { authToken, userData, clearAuth, openModal, addToast } = useStore();
 
@@ -63,11 +26,7 @@ export default function Navbar() {
     const check = async () => {
       try {
         const data = await checkHealth();
-        if (!cancelled) {
-          const isOk = data?.status === 'ok' || data?.db_ok === true;
-          const degraded = data?.status === 'degraded' || data?.status === 'warning';
-          setEngineStatus(isOk ? (degraded ? 'degraded' : 'online') : 'offline');
-        }
+        if (!cancelled) setEngineStatus(data?.status === 'ok' ? 'online' : 'offline');
       } catch { if (!cancelled) setEngineStatus('offline'); }
     };
     check();
@@ -82,7 +41,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const handler = (e) => {
+    const handler = e => {
       if (toolsRef.current && !toolsRef.current.contains(e.target)) setToolsOpen(false);
     };
     document.addEventListener('mousedown', handler);
@@ -91,135 +50,115 @@ export default function Navbar() {
 
   const handleLogout = () => { clearAuth(); addToast('Sessão encerrada.', 'info'); setMobileOpen(false); };
 
-  const engineColor =
-    engineStatus === 'online'   ? 'var(--emerald)' :
-    engineStatus === 'degraded' ? 'var(--amber)' :
-    engineStatus === 'offline'  ? 'var(--flame)' : 'var(--n5)';
+  const statusColor = engineStatus === 'online' ? 'var(--jade2)' : engineStatus === 'offline' ? 'var(--cr3)' : 'var(--t4)';
 
   return (
     <nav className={`jnav${scrolled ? ' scrolled' : ''}`}>
       {/* Brand */}
       <Link to="/" className="nav-brand">
-        <JurirLogo />
+        {/* SVG — Scales of Justice, clean line version */}
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="8" fill="rgba(20,114,217,0.06)" stroke="rgba(20,114,217,0.15)" strokeWidth="1"/>
+          <line x1="7" y1="17" x2="29" y2="17" stroke="var(--co7)" strokeWidth="1.3" strokeLinecap="round"/>
+          <line x1="18" y1="9" x2="18" y2="27" stroke="var(--co7)" strokeWidth="1.3" strokeLinecap="round"/>
+          <path d="M7 17 Q9 22 13 22 Q17 22 18 17" stroke="var(--co7)" strokeWidth="1" fill="rgba(20,114,217,0.06)" strokeLinecap="round"/>
+          <path d="M18 17 Q19 21 23 21 Q27 21 29 17" stroke="var(--co6)" strokeWidth="1" fill="rgba(20,114,217,0.04)" strokeLinecap="round"/>
+          <circle cx="18" cy="9" r="2" fill="var(--co7)"/>
+        </svg>
         <span className="nav-wordmark t-display">
           JUR<em>IR</em>
-          <sub>Inteligência Jurídica</sub>
+          <sub>INTELIGÊNCIA JURÍDICA</sub>
         </span>
       </Link>
 
       {/* Center links */}
       <div className="nav-links desktop-only">
-        <NavAnchor href="/#analise">Análise</NavAnchor>
-        <NavAnchor href="/#agentes">Agentes</NavAnchor>
-        <NavAnchor href="/#precos">Preços</NavAnchor>
+        <NLink href="/#analise">Análise</NLink>
+        <NLink href="/#agentes">Agentes</NLink>
+        <NLink href="/#precos">Preços</NLink>
 
+        {/* Tools dropdown */}
         <div ref={toolsRef} style={{ position: 'relative' }}>
-          <button
-            onClick={() => setToolsOpen(v => !v)}
-            style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: 5,
-              background: toolsOpen ? 'rgba(255,0,77,0.08)' : 'none',
-              border: 'none', cursor: 'pointer',
-              color: toolsOpen ? 'var(--n0)' : 'var(--n4)' }}
-          >
+          <button onClick={() => setToolsOpen(v => !v)} style={navLinkSt(toolsOpen)}>
             Ferramentas
-            <ChevronDown size={10} style={{ transition: 'transform .2s', transform: toolsOpen ? 'rotate(180deg)' : 'none' }} />
+            <ChevronDown size={11} style={{ transition: 'transform .2s', transform: toolsOpen ? 'rotate(180deg)' : 'none' }}/>
           </button>
           {toolsOpen && (
             <div style={{
-              position: 'absolute', top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)',
-              background: 'rgba(14,14,26,0.98)', border: '1px solid var(--br-n)',
-              borderRadius: 'var(--r-lg)', padding: 8, minWidth: 240,
-              backdropFilter: 'blur(24px)', boxShadow: 'var(--sh-deep)', zIndex: 300,
+              position: 'absolute', top: 'calc(100% + 10px)',
+              left: '50%', transform: 'translateX(-50%)',
+              background: 'var(--bg-glass2)', backdropFilter: 'blur(20px)',
+              border: '1px solid var(--b-main)', borderRadius: 'var(--r-md)',
+              padding: 6, minWidth: 240,
+              boxShadow: 'var(--shadow-deep)',
+              zIndex: 300, animation: 'scaleUp .18s var(--ease-spring)',
             }}>
               {FERRAMENTAS.map(({ to, label, icon }) => (
                 <Link key={to} to={to} onClick={() => setToolsOpen(false)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 14px',
-                    color: 'var(--n3)', fontSize: '.8rem', textDecoration: 'none',
-                    borderRadius: 'var(--r-sm)', transition: 'background .15s, color .15s' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,0,77,0.08)'; e.currentTarget.style.color = 'var(--n0)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--n3)'; }}
+                  style={dropItemSt}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(20,114,217,0.05)'; e.currentTarget.style.color = 'var(--co7)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--t2)'; }}
                 >
-                  <span style={{ fontSize: '.88rem' }}>{icon}</span> {label}
+                  <span style={{ fontSize: '.9rem' }}>{icon}</span>
+                  <span>{label}</span>
                 </Link>
               ))}
             </div>
           )}
         </div>
 
-        {authToken && <Link to="/historico" style={linkStyle}
-          onMouseEnter={e => { e.currentTarget.style.color='var(--n0)'; e.currentTarget.style.background='rgba(255,0,77,0.08)'; }}
-          onMouseLeave={e => { e.currentTarget.style.color='var(--n4)'; e.currentTarget.style.background='transparent'; }}>
-          Histórico
-        </Link>}
+        {authToken && <NLink href="/historico" isRouter>Histórico</NLink>}
       </div>
 
-      {/* Right actions */}
+      {/* Right */}
       <div className="nav-actions desktop-only">
         {/* Engine status */}
-        <div title={
-          engineStatus === 'checking' ? 'Verificando motor…' :
-          engineStatus === 'online'   ? 'Motor online' :
-          engineStatus === 'degraded' ? 'Motor degradado' : 'Motor offline'
-        } style={{
-          display: 'flex', alignItems: 'center', gap: 5,
-          fontSize: '.65rem', fontFamily: 'var(--f-mono)',
-          color: engineColor, letterSpacing: '.1em', cursor: 'default', userSelect: 'none',
-        }}>
-          <span style={{
-            width: 6, height: 6, borderRadius: '50%', background: engineColor,
-            boxShadow: engineStatus !== 'checking' ? `0 0 6px ${engineColor}` : 'none',
-            animation: engineStatus === 'checking' ? 'statusPulse 1.4s ease-in-out infinite' : 'none',
-          }} />
-          {engineStatus === 'checking' ? 'SYS…' :
-           engineStatus === 'online'   ? 'ONLINE' :
-           engineStatus === 'degraded' ? 'DEGRADED' : 'OFFLINE'}
+        <div title={engineStatus === 'online' ? 'Motor online' : 'Motor offline — cold start ~50s'}
+          style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: statusColor, letterSpacing: '.08em' }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusColor, boxShadow: engineStatus === 'online' ? `0 0 7px ${statusColor}` : 'none', animation: engineStatus === 'checking' ? 'pulse 1.4s ease-in-out infinite' : 'none', flexShrink: 0 }}/>
+          {engineStatus === 'checking' ? 'MOTOR…' : engineStatus === 'online' ? 'ONLINE' : 'OFFLINE'}
         </div>
 
         {authToken ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: '.76rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)' }}>
+            <span style={{ fontSize: '.78rem', color: 'var(--t3)', fontFamily: 'var(--f-mono)' }}>
               {userData?.email?.split('@')[0]}
             </span>
-            <Link to="/premium" className="btn btn-flame btn-sm">⚡ Premium</Link>
-            <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
-              <LogOut size={13}/> Sair
-            </button>
+            <Link to="/premium" className="btn btn-cobalt btn-sm">⚡ Premium</Link>
+            <button className="btn btn-ghost btn-sm" onClick={handleLogout}><LogOut size={13}/> Sair</button>
           </div>
         ) : (
           <>
-            <button className="btn btn-ghost btn-sm"  onClick={() => openModal('login')}>Entrar</button>
-            <button className="btn btn-flame btn-sm"  onClick={() => openModal('register')}>Começar Grátis</button>
+            <button className="btn btn-ghost btn-sm" onClick={() => openModal('login')}>Entrar</button>
+            <button className="btn btn-cobalt btn-sm" onClick={() => openModal('register')}>Começar Grátis</button>
           </>
         )}
       </div>
 
-      {/* Mobile burger */}
+      {/* Mobile */}
       <button className="mobile-menu-btn" onClick={() => setMobileOpen(v => !v)}>
         {mobileOpen ? <X size={20}/> : <Menu size={20}/>}
       </button>
 
       {mobileOpen && (
         <div className="mobile-menu">
-          <NavAnchor href="/#analise" onClick={() => setMobileOpen(false)}>Análise</NavAnchor>
-          <NavAnchor href="/#agentes" onClick={() => setMobileOpen(false)}>Agentes</NavAnchor>
-          <NavAnchor href="/#precos"  onClick={() => setMobileOpen(false)}>Preços</NavAnchor>
+          <a href="/#analise" style={mobileLink} onClick={() => setMobileOpen(false)}>Análise</a>
+          <a href="/#agentes" style={mobileLink} onClick={() => setMobileOpen(false)}>Agentes</a>
+          <a href="/#precos"  style={mobileLink} onClick={() => setMobileOpen(false)}>Preços</a>
           {FERRAMENTAS.map(({ to, label, icon }) => (
-            <Link key={to} to={to} onClick={() => setMobileOpen(false)}
-              style={{ ...linkStyle, display: 'flex', alignItems: 'center', gap: 8 }}>
-              {icon} {label}
+            <Link key={to} to={to} style={{ ...mobileLink, display: 'flex', gap: 8, alignItems: 'center' }} onClick={() => setMobileOpen(false)}>
+              <span>{icon}</span>{label}
             </Link>
           ))}
-          {authToken && <Link to="/historico" style={linkStyle} onClick={() => setMobileOpen(false)}>Histórico</Link>}
-          {authToken && <Link to="/premium" style={{ ...linkStyle, color: 'var(--flame)' }} onClick={() => setMobileOpen(false)}>⚡ Premium</Link>}
-          <div style={{ borderTop: '1px solid var(--br-n)', paddingTop: 12, marginTop: 8 }}>
+          {authToken && <Link to="/historico" style={mobileLink} onClick={() => setMobileOpen(false)}>Histórico</Link>}
+          {authToken && <Link to="/premium" style={{ ...mobileLink, color: 'var(--co7)' }} onClick={() => setMobileOpen(false)}>⚡ Premium</Link>}
+          <div style={{ borderTop: '1px solid var(--b-subtle)', paddingTop: 14, marginTop: 8 }}>
             {authToken ? (
-              <button className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }} onClick={handleLogout}>
-                <LogOut size={14}/> Sair
-              </button>
+              <button className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }} onClick={handleLogout}><LogOut size={14}/> Sair</button>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <button className="btn btn-ghost"  onClick={() => { openModal('login');    setMobileOpen(false); }}>Entrar</button>
-                <button className="btn btn-flame"  onClick={() => { openModal('register'); setMobileOpen(false); }}>Começar Grátis</button>
+                <button className="btn btn-ghost" onClick={() => { openModal('login'); setMobileOpen(false); }}>Entrar</button>
+                <button className="btn btn-cobalt" onClick={() => { openModal('register'); setMobileOpen(false); }}>Começar Grátis</button>
               </div>
             )}
           </div>
@@ -227,4 +166,30 @@ export default function Navbar() {
       )}
     </nav>
   );
+}
+
+const navLinkSt = (active = false) => ({
+  fontFamily: 'var(--f-sans)', color: active ? 'var(--co7)' : 'var(--t2)',
+  fontSize: '.81rem', fontWeight: 500, letterSpacing: '.03em',
+  textDecoration: 'none', padding: '7px 13px',
+  borderRadius: 'var(--r-sm)', background: 'none', border: 'none',
+  display: 'flex', alignItems: 'center', gap: 4,
+  cursor: 'pointer', transition: 'color .15s',
+});
+const dropItemSt = {
+  display: 'flex', alignItems: 'center', gap: 10,
+  padding: '9px 12px', color: 'var(--t2)', fontSize: '.81rem',
+  textDecoration: 'none', borderRadius: 'var(--r-sm)',
+  transition: 'all .15s', fontFamily: 'var(--f-sans)',
+  letterSpacing: '.02em',
+};
+const mobileLink = {
+  color: 'var(--t2)', fontSize: '.875rem', fontWeight: 500,
+  letterSpacing: '.02em', textDecoration: 'none', padding: '10px 4px',
+  borderBottom: '1px solid var(--b-subtle)', display: 'block',
+};
+function NLink({ href, children, isRouter }) {
+  const st = navLinkSt();
+  if (isRouter) return <Link to={href} style={st} onMouseEnter={e => e.currentTarget.style.color='var(--co7)'} onMouseLeave={e => e.currentTarget.style.color='var(--t2)'}>{children}</Link>;
+  return <a href={href} style={st} onMouseEnter={e => e.currentTarget.style.color='var(--co7)'} onMouseLeave={e => e.currentTarget.style.color='var(--t2)'}>{children}</a>;
 }

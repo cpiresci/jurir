@@ -33,9 +33,9 @@ export default function HistoricoPage() {
         minHeight: '100vh', display: 'flex', alignItems: 'center',
         justifyContent: 'center', flexDirection: 'column', gap: 16,
       }}>
-        <Clock size={32} style={{ color: 'var(--n5)' }}/>
-        <p style={{ color: 'var(--n4)' }}>Faça login para ver seu histórico.</p>
-        <button className="btn btn-flame" onClick={() => openModal('login')}>Entrar</button>
+        <Clock size={32} style={{ color: 'var(--p5)' }}/>
+        <p style={{ color: 'var(--p4)' }}>Faça login para ver seu histórico.</p>
+        <button className="btn btn-crimson" onClick={() => openModal('login')}>Entrar</button>
       </div>
     );
   }
@@ -45,19 +45,19 @@ export default function HistoricoPage() {
       <h1 className="t-display" style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 8 }}>
         Histórico de Análises
       </h1>
-      <p style={{ color: 'var(--n4)', fontSize: '.88rem', marginBottom: 32 }}>
+      <p style={{ color: 'var(--p4)', fontSize: '.88rem', marginBottom: 32 }}>
         Todas as suas análises jurídicas anteriores.
       </p>
 
       {loading ? (
-        <div style={{ textAlign: 'center', color: 'var(--n5)', padding: 60 }}>Carregando…</div>
+        <div style={{ textAlign: 'center', color: 'var(--p5)', padding: 60 }}>Carregando…</div>
       ) : analyses.length === 0 ? (
         <div style={{
-          background: 'var(--surface)', border: '1px solid var(--bn)',
+          background: 'var(--surface)', border: '1px solid var(--b-neutral)',
           borderRadius: 'var(--r-lg)', padding: 48, textAlign: 'center',
         }}>
-          <FileText size={32} style={{ color: 'var(--n5)', marginBottom: 12 }}/>
-          <p style={{ color: 'var(--n4)' }}>Nenhuma análise encontrada.</p>
+          <FileText size={32} style={{ color: 'var(--p5)', marginBottom: 12 }}/>
+          <p style={{ color: 'var(--p4)' }}>Nenhuma análise encontrada.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -65,26 +65,26 @@ export default function HistoricoPage() {
             <div
               key={a.id}
               style={{
-                background: 'var(--surface)', border: '1px solid var(--bn)',
+                background: 'var(--surface)', border: '1px solid var(--b-neutral)',
                 borderRadius: 'var(--r-md)', padding: '16px 20px',
                 display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer',
                 transition: 'border-color .2s',
               }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--br)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--bn)'}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--b-crimson)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--b-neutral)'}
               onClick={() => viewAnalysis(a.id)}
             >
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '.88rem', color: 'var(--n1)', marginBottom: 4, fontWeight: 500 }}>
+                <div style={{ fontSize: '.88rem', color: 'var(--p1)', marginBottom: 4, fontWeight: 500 }}>
                   {a.prompt?.slice(0, 100) || `Análise #${a.id}`}
                   {(a.prompt?.length || 0) > 100 ? '…' : ''}
                 </div>
-                <div style={{ fontSize: '.72rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)' }}>
+                <div style={{ fontSize: '.72rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>
                   {a.created_at ? new Date(a.created_at).toLocaleString('pt-BR') : '—'}
                   {a.jurir_score != null && ` · Score: ${a.jurir_score}`}
                 </div>
               </div>
-              <ChevronRight size={16} style={{ color: 'var(--n5)' }}/>
+              <ChevronRight size={16} style={{ color: 'var(--p5)' }}/>
             </div>
           ))}
         </div>
@@ -112,11 +112,11 @@ export default function HistoricoPage() {
                 <button className="btn btn-ghost btn-sm" onClick={() => setSelected(null)}>✕</button>
               </div>
             </div>
-            <p style={{ fontSize: '.82rem', color: 'var(--n4)', marginBottom: 16, fontStyle: 'italic' }}>{selected.prompt}</p>
+            <p style={{ fontSize: '.82rem', color: 'var(--p4)', marginBottom: 16, fontStyle: 'italic' }}>{selected.prompt}</p>
             {selected.verdict && (
               <div>
-                <div style={{ fontSize: '.72rem', color: 'var(--g4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VEREDICTO</div>
-                <p style={{ fontSize: '.88rem', color: 'var(--n2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{selected.verdict}</p>
+                <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VEREDICTO</div>
+                <p style={{ fontSize: '.88rem', color: 'var(--p2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{selected.verdict}</p>
               </div>
             )}
           </div>
