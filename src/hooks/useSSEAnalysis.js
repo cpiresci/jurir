@@ -10,8 +10,16 @@ export function useSSEAnalysis() {
     const {
       authToken, resetAnalysis, setRunning, setAgentState,
       incrementCompleted, setVerdict, setDevil, setScore,
-      setVeto, setAnalysisId, addToast, setStatusMessage, setTribunal,
+      setVeto, setAnalysisId, addToast, setStatusMessage,
+      setDevilState, setJudgeState,
     } = useStore.getState();
+
+    // [FIX v2] Verifica token ANTES de iniciar — evita request sem auth que retorna 401 silencioso
+    if (!authToken) {
+      addToast('Faça login para usar análise premium.', 'error');
+      useStore.getState().openModal('login');
+      return;
+    }
 
     resetAnalysis();
     setRunning(true);
@@ -77,36 +85,32 @@ export function useSSEAnalysis() {
           const t = ev.type;
 
           if (t === 'start') {
-            // Primeiro evento — stream conectado, agentes prestes a iniciar
             setStatusMessage(ev.message || '⚖ Conectado. Iniciando agentes…');
-            if (ev.tribunal) setTribunal(ev.tribunal);
 
           } else if (t === 'cooldown') {
-            // Cooldown de rate-limit entre análises — pode durar até 60s
             setStatusMessage(ev.message || `⏳ Aguardando ${ev.seconds}s para garantir qualidade dos providers…`);
 
           } else if (t === 'recovery') {
-            // Recovery wait pós-agentes — providers se recuperam antes do Diabo/Juiz
             setStatusMessage(ev.message || `⏳ Consolidando análises… aguarde ${ev.seconds}s para síntese final.`);
 
           } else if (t === 'keepalive') {
-            // Heartbeat — não faz nada visualmente, só mantém conexão viva
+            // Heartbeat — mantém conexão viva, sem ação visual
 
           } else if (t === 'agent_start' || t === 'agent_thinking') {
-            // Primeiro agente chegou — limpa mensagem de status, grid toma conta
             setStatusMessage(null);
             setAgentState(ev.agent_id, { status: 'running', area: ev.area });
 
           } else if (t === 'agent_done') {
+            // [FIX v2] Garante que confidence seja número válido ≥ 0
+            const conf = typeof ev.confidence === 'number' ? ev.confidence : 0;
             setAgentState(ev.agent_id, {
-              status: 'done',
-              area: ev.area,
-              confidence: ev.confidence,
-              confidenceEstimated: ev.confidence_estimated || false,  // [FIX v7.0]
-              analysis: ev.analysis,
-              topRisk: ev.top_risk,
-              riskLevel: ev.risk_level || null,
-              durationMs: ev.duration_ms || null,
+              status:     'done',
+              area:       ev.area,
+              confidence: conf,
+              analysis:   ev.analysis,
+              topRisk:    ev.top_risk,
+              // [FIX] Salva riskLevel do backend para semáforo visual no card
+              riskLevel:  ev.risk_level || null,
             });
             incrementCompleted();
 
@@ -114,31 +118,52 @@ export function useSSEAnalysis() {
             setAgentState(ev.agent_id, { status: 'error', area: ev.area });
 
           } else if (t === 'devil_thinking' || t === 'devil_start') {
-            setStatusMessage('⚔️ Advogado do Diabo analisando contraditório…');
-            setDevil('⚔️ Advogado do Diabo analisando…');
+            // [FIX] Alimenta card do Diabo com estado running
+            setStatusMessage(null);
+            setDevilState({ status: 'running', analysis: '', confidence: 0 });
+            setDevil('⚔️ Advogado do Diabo analisando o contraditório — aguarde…');
 
           } else if (t === 'devil_done') {
             setStatusMessage(null);
-            setDevil(ev.analysis || ev.text || ev.result || '');
+            // [FIX v2] devil_done pode chegar com analysis vazia se backend usou emergência
+            const devilText = (ev.analysis || '').trim();
+            const devilConf = typeof ev.confidence === 'number' ? ev.confidence : 0;
+            // [FIX] Atualiza card do Diabo com resultado final
+            setDevilState({
+              status:     'done',
+              analysis:   devilText || '⚔️ Contraditório processado.',
+              confidence: devilConf,
+            });
+            setDevil(devilText || '⚔️ Contraditório processado.');
+
+          } else if (t === 'judge_thinking') {
+            // [FIX] Alimenta card do Juiz com estado running
+            setStatusMessage(null);
+            setJudgeState({ status: 'running', verdict: '' });
 
           } else if (t === 'veto') {
             setVeto(true);
 
-          } else if (t === 'judge_thinking') {
-            setStatusMessage(ev.message || '⚖️ Juiz IA deliberando…');
-
           } else if (t === 'verdict') {
             setStatusMessage(null);
-            setVerdict(ev.verdict || ev.text || ev.result || ev.analysis || '');
+            const verdictText = ev.verdict || ev.text || '';
+            // [FIX] Atualiza card do Juiz com veredito final
+            setJudgeState({ status: 'done', verdict: verdictText });
+            setVerdict(verdictText);
+            // [FIX] Para o botão imediatamente ao receber o veredito.
+            useStore.getState().setRunning(false);
 
           } else if (t === 'saved') {
             if (ev.analysis_id) setAnalysisId(ev.analysis_id);
-            if (ev.tribunal) setTribunal(ev.tribunal);
 
           } else if (t === 'score') {
             setScore(ev.jurir_score ?? ev.score ?? null, ev.dimensions ?? null);
 
           } else if (t === 'error') {
+            // [FIX] Marca diabo/juiz como erro se ainda estavam rodando
+            const { devilState, judgeState } = useStore.getState();
+            if (devilState.status === 'running') setDevilState({ status: 'error' });
+            if (judgeState.status === 'running') setJudgeState({ status: 'error' });
             addToast(ev.message || 'Erro no streaming', 'error');
           }
         }
@@ -147,6 +172,10 @@ export function useSSEAnalysis() {
       if (e.name !== 'AbortError') {
         useStore.getState().addToast(`Erro: ${e.message}`, 'error');
       }
+      // [FIX] Marca agentes especiais como erro em caso de exceção
+      const { devilState, judgeState } = useStore.getState();
+      if (devilState.status === 'running') useStore.getState().setDevilState({ status: 'error' });
+      if (judgeState.status === 'running') useStore.getState().setJudgeState({ status: 'error' });
     } finally {
       clearTimeout(timeout);
       useStore.getState().setRunning(false);

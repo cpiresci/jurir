@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
-import { login, register, getMe } from '../lib/api';
+import { login, register, getMe, wakeUp } from '../lib/api';
 
 export default function AuthModal() {
   const { modalOpen, closeModal, setAuth, addToast } = useStore();
@@ -10,12 +10,21 @@ export default function AuthModal() {
   const [pwd,     setPwd]     = useState('');
   const [loading, setLoading] = useState(false);
   const [err,     setErr]     = useState('');
+  const [wakeMsg, setWakeMsg] = useState('');
+  const abortRef = useRef(null);
 
   if (!modalOpen) return null;
 
   const handleLogin = async () => {
     if (!email || !pwd) { setErr('Preencha todos os campos.'); return; }
-    setLoading(true); setErr('');
+    setLoading(true); setErr(''); setWakeMsg('');
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    setWakeMsg('Conectando ao servidor…');
+    const awake = await wakeUp(ctrl.signal);
+    setWakeMsg('');
+    if (ctrl.signal.aborted) { setLoading(false); return; }
+    if (!awake) { setErr('Servidor indisponível. Tente em instantes.'); setLoading(false); return; }
     try {
       const { access_token } = await login(email, pwd);
       const user = await getMe(access_token);
@@ -29,7 +38,14 @@ export default function AuthModal() {
   const handleRegister = async () => {
     if (!email || !pwd) { setErr('Preencha todos os campos.'); return; }
     if (pwd.length < 8) { setErr('Senha mínima de 8 caracteres.'); return; }
-    setLoading(true); setErr('');
+    setLoading(true); setErr(''); setWakeMsg('');
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    setWakeMsg('Conectando ao servidor…');
+    const awake = await wakeUp(ctrl.signal);
+    setWakeMsg('');
+    if (ctrl.signal.aborted) { setLoading(false); return; }
+    if (!awake) { setErr('Servidor indisponível. Tente em instantes.'); setLoading(false); return; }
     try {
       await register(email, pwd);
       addToast('Conta criada! Faça login.', 'success');
@@ -38,92 +54,83 @@ export default function AuthModal() {
     finally { setLoading(false); }
   };
 
-  const onKeyDown = (e) => {
-    if (e.key === 'Enter') tab === 'login' ? handleLogin() : handleRegister();
-  };
+  const onKeyDown = e => { if (e.key === 'Enter') tab === 'login' ? handleLogin() : handleRegister(); };
 
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
       <div className="modal-box">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
           <div>
-            <h2 style={{ fontFamily: 'var(--f-display)', fontSize: '1.7rem', fontWeight: 700, color: 'var(--n0)' }}>
-              {tab === 'login' ? 'Entrar' : 'Criar conta'}
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)', letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 8 }}>
+              JURIR · ACESSO
+            </div>
+            <h2 className="t-display" style={{ fontSize: '1.7rem', fontWeight: 400, color: 'var(--t0)' }}>
+              {tab === 'login' ? 'Bem-vindo de volta' : 'Criar conta'}
             </h2>
-            <p style={{ fontSize: '.78rem', color: 'var(--n5)', marginTop: 4 }}>
-              {tab === 'login' ? 'Bem-vindo de volta.' : 'Comece sua análise jurídica.'}
-            </p>
           </div>
-          <button onClick={closeModal} style={{ background: 'none', border: 'none', color: 'var(--n4)', cursor: 'pointer', padding: 4 }}>
-            <X size={18}/>
+          <button onClick={closeModal} style={{ background: 'var(--bg-card2)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-sm)', color: 'var(--t3)', padding: 6, cursor: 'pointer', display: 'flex', transition: 'all .15s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--b-cobalt)'; e.currentTarget.style.color = 'var(--co7)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--b-main)'; e.currentTarget.style.color = 'var(--t3)'; }}
+          >
+            <X size={15}/>
           </button>
         </div>
 
-        {/* Tabs */}
-        <div style={{
-          display: 'flex', gap: 3, marginBottom: 28,
-          background: 'rgba(9,8,15,0.6)', border: '1px solid var(--br-n)',
-          borderRadius: 'var(--r-pill)', padding: 4,
-        }}>
+        {/* Tab */}
+        <div className="mode-pill" style={{ width: '100%', marginBottom: 24 }}>
           {['login', 'register'].map(t => (
-            <button key={t} onClick={() => { setTab(t); setErr(''); }} style={{
-              flex: 1, padding: '9px', border: 'none', cursor: 'pointer',
-              borderRadius: 'var(--r-pill)',
-              background: tab === t ? 'var(--surface)' : 'transparent',
-              color: tab === t ? 'var(--n0)' : 'var(--n5)',
-              fontFamily: 'var(--f-sans)', fontSize: '.85rem', fontWeight: 600,
-              transition: 'all .2s',
-            }}>
+            <button key={t} className={`mode-pill-btn${tab === t ? ' active' : ''}`}
+              onClick={() => { setTab(t); setErr(''); }}
+              style={{ flex: 1, justifyContent: 'center' }}>
               {t === 'login' ? 'Entrar' : 'Cadastrar'}
             </button>
           ))}
         </div>
 
+        {/* Fields */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
-            <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)', letterSpacing: '.1em', marginBottom: 7 }}>
-              E-MAIL
+            <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)', letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 7, display: 'block' }}>
+              E-mail
             </label>
-            <input
-              className="fg-input"
-              type="email" value={email}
-              onChange={e => setEmail(e.target.value)}
-              onKeyDown={onKeyDown}
-              placeholder="seu@email.com"
-              autoFocus
-            />
+            <input type="email" className="modal-input" placeholder="seu@email.com"
+              value={email} onChange={e => setEmail(e.target.value)} onKeyDown={onKeyDown}/>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)', letterSpacing: '.1em', marginBottom: 7 }}>
-              SENHA
+            <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)', letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 7, display: 'block' }}>
+              Senha
             </label>
-            <input
-              className="fg-input"
-              type="password" value={pwd}
-              onChange={e => setPwd(e.target.value)}
-              onKeyDown={onKeyDown}
-              placeholder={tab === 'register' ? 'Mínimo 8 caracteres' : '••••••••'}
-            />
+            <input type="password" className="modal-input" placeholder="••••••••"
+              value={pwd} onChange={e => setPwd(e.target.value)} onKeyDown={onKeyDown}/>
           </div>
 
+          {wakeMsg && (
+            <p style={{ color: 'var(--co7)', fontSize: '.78rem', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--f-mono)' }}>
+              <Loader2 size={12} className="spin"/> {wakeMsg}
+            </p>
+          )}
           {err && (
-            <div style={{ background: 'rgba(176,30,30,0.1)', border: '1px solid var(--br-cr)', borderRadius: 'var(--r-sm)', padding: '10px 14px', fontSize: '.82rem', color: 'var(--cr5)' }}>
+            <p style={{ color: 'var(--cr3)', fontSize: '.8rem', padding: '9px 12px', background: 'rgba(192,24,24,0.05)', border: '1px solid rgba(192,24,24,0.2)', borderRadius: 'var(--r-sm)' }}>
               {err}
-            </div>
+            </p>
           )}
 
-          <button
-            className="btn btn-flame"
-            style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}
-            disabled={loading}
-            onClick={tab === 'login' ? handleLogin : handleRegister}
-          >
+          <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}
+            disabled={loading} onClick={tab === 'login' ? handleLogin : handleRegister}>
             {loading
-              ? <><Loader2 size={14} className="spin"/> Aguarde…</>
+              ? <><Loader2 size={15} className="spin"/> Aguarde…</>
               : tab === 'login' ? 'Entrar' : 'Criar conta'
             }
           </button>
         </div>
+
+        <p style={{ textAlign: 'center', fontSize: '.78rem', color: 'var(--t4)', marginTop: 20 }}>
+          {tab === 'login'
+            ? <>Não tem conta?{' '}<button onClick={() => setTab('register')} style={{ background: 'none', border: 'none', color: 'var(--co7)', fontSize: 'inherit', cursor: 'pointer' }}>Cadastrar</button></>
+            : <>Já tem conta?{' '}<button onClick={() => setTab('login')} style={{ background: 'none', border: 'none', color: 'var(--co7)', fontSize: 'inherit', cursor: 'pointer' }}>Entrar</button></>
+          }
+        </p>
       </div>
     </div>
   );

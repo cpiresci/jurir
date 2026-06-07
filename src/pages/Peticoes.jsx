@@ -31,7 +31,7 @@ export default function PeticoesPage() {
 
   const F = (key, label, placeholder = '') => (
     <div>
-      <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>{label}</label>
+      <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>{label}</label>
       <input className="fg-input" value={form[key]} placeholder={placeholder}
         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} />
     </div>
@@ -53,9 +53,9 @@ export default function PeticoesPage() {
 
   if (!authToken) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
-      <Scroll size={32} style={{ color: 'var(--n5)' }}/>
-      <p style={{ color: 'var(--n4)' }}>Faça login para gerar petições.</p>
-      <button className="btn btn-flame" onClick={() => openModal('login')}>Entrar</button>
+      <Scroll size={32} style={{ color: 'var(--p5)' }}/>
+      <p style={{ color: 'var(--p4)' }}>Faça login para gerar petições.</p>
+      <button className="btn btn-crimson" onClick={() => openModal('login')}>Entrar</button>
     </div>
   );
 
@@ -63,19 +63,19 @@ export default function PeticoesPage() {
     <div style={{ maxWidth: 860, margin: '0 auto', padding: '100px 24px 60px' }}>
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
-          background: 'var(--lift)', border: '1px solid var(--br)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.72rem', color: 'var(--r3)', fontFamily: 'var(--f-mono)',
+          background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
+          padding: '5px 14px', fontSize: '.72rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <Scroll size={11}/> GERADOR DE PETIÇÕES
         </div>
         <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.4rem)', fontWeight: 700, marginBottom: 8 }}>Gerar Petição</h1>
-        <p style={{ color: 'var(--n4)', fontSize: '.9rem' }}>Gera petição .docx a partir de uma análise existente.</p>
+        <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>Gera petição .docx a partir de uma análise existente.</p>
       </div>
 
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--bn)', borderRadius: 'var(--r-xl)', padding: 28 }}>
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 28 }}>
         <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
-          {loadingA ? <div style={{ color: 'var(--n5)', fontSize: '.85rem' }}>Carregando…</div> : (
+          <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
+          {loadingA ? <div style={{ color: 'var(--p5)', fontSize: '.85rem' }}>Carregando…</div> : (
             <select className="fg-input" value={form.analysis_id} onChange={e => setForm(f => ({ ...f, analysis_id: e.target.value }))}>
               <option value="">Selecione uma análise…</option>
               {analyses.map(a => <option key={a.id} value={a.id}>#{a.id} — {a.prompt?.slice(0, 80) || 'Análise'}</option>)}
@@ -83,12 +83,12 @@ export default function PeticoesPage() {
           )}
         </div>
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--n4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TIPO DE PETIÇÃO</label>
+          <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TIPO DE PETIÇÃO</label>
           <select className="fg-input" value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}>
             {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
-        <div style={{ height: 1, background: 'var(--bn)', marginBottom: 24 }}/>
+        <div style={{ height: 1, background: 'var(--b-neutral)', marginBottom: 24 }}/>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 24 }}>
           {F('autor_nome',    'NOME DO AUTOR',       'Ex: João da Silva')}
           {F('autor_qualif',  'QUALIFICAÇÃO DO AUTOR','brasileiro, casado, CPF…')}
@@ -100,7 +100,7 @@ export default function PeticoesPage() {
           {F('numero_processo','Nº DO PROCESSO',      '1234567-89.2024.8.26.0100')}
           {F('cidade',        'CIDADE',               'São Paulo')}
         </div>
-        <button className="btn btn-flame btn-lg" onClick={run} disabled={loading} style={{ width: '100%', justifyContent: 'center' }}>
+        <button className="btn btn-crimson btn-lg" onClick={run} disabled={loading} style={{ width: '100%', justifyContent: 'center' }}>
           {loading ? <><Loader2 size={15} className="spin"/> Gerando…</> : <><FileDown size={14}/> Gerar e Baixar .docx</>}
         </button>
       </div>

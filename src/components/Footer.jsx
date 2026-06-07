@@ -1,80 +1,75 @@
 import { Link } from 'react-router-dom';
 
-const LINKS = {
-  'Produto': [
-    { label: 'Análise Jurídica',  to: '/#analise' },
-    { label: 'Os 16 Agentes',    to: '/#agentes' },
-    { label: 'Planos',           to: '/#precos'  },
-  ],
-  'Ferramentas': [
-    { label: 'Delta Analysis',       to: '/delta' },
-    { label: 'Upload Documentos',    to: '/documentos' },
-    { label: 'Gerador Petições',     to: '/peticoes' },
-    { label: 'Simulador Instâncias', to: '/simulador' },
-    { label: 'Monitoramento',        to: '/monitoramento' },
-  ],
-  'Conta': [
-    { label: 'Histórico',        to: '/historico' },
-    { label: 'Premium',          to: '/premium' },
-    { label: 'Verificar Serial', to: '/verificar' },
-  ],
-};
-
-// Scales logo for footer
-function FooterLogo() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 34 34" fill="none" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 10 }}>
-      <line x1="17" y1="3" x2="17" y2="29" stroke="rgba(255,0,77,0.5)" strokeWidth="1.2"/>
-      <line x1="5" y1="10" x2="29" y2="10" stroke="rgba(255,0,77,0.6)" strokeWidth="1.3"/>
-      <path d="M5 10 L9 18 L1 18 Z" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth=".9"/>
-      <path d="M29 10 L33 18 L25 18 Z" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth=".9"/>
-      <line x1="13" y1="29" x2="21" y2="29" stroke="rgba(255,0,77,0.4)" strokeWidth="1.2"/>
-      <rect x="15.2" y="8.2" width="3.6" height="3.6" rx="0.4" fill="var(--flame)" transform="rotate(45 17 10)"/>
-    </svg>
-  );
-}
+const LINKS = [
+  { label: 'Análise',      href: '/#analise' },
+  { label: 'Agentes',      href: '/#agentes' },
+  { label: 'Preços',       href: '/#precos' },
+  { label: 'Delta',        href: '/delta' },
+  { label: 'Documentos',   href: '/documentos' },
+  { label: 'Petições',     href: '/peticoes' },
+  { label: 'Simulador',    href: '/simulador' },
+  { label: 'Monitoramento',href: '/monitoramento' },
+  { label: 'Verificar',    href: '/verificar' },
+];
 
 export default function Footer() {
   return (
-    <footer className="site-footer">
-      <div className="footer-inner">
-        <div className="footer-grid">
+    <footer className="footer">
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        {/* Top */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 40, flexWrap: 'wrap', marginBottom: 48 }}>
           {/* Brand */}
-          <div>
-            <div style={{ fontFamily: 'var(--f-display)', fontSize: '1.7rem', fontWeight: 900, marginBottom: 12, color: 'var(--n0)', textTransform: 'uppercase', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center' }}>
-              <FooterLogo />
-              JUR<span style={{ color: 'var(--flame)' }}>IR</span>
+          <div style={{ maxWidth: 340 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+                <rect width="36" height="36" rx="8" fill="rgba(20,114,217,0.06)" stroke="rgba(20,114,217,0.15)" strokeWidth="1"/>
+                <line x1="7" y1="17" x2="29" y2="17" stroke="var(--co7)" strokeWidth="1.3" strokeLinecap="round"/>
+                <line x1="18" y1="9" x2="18" y2="27" stroke="var(--co7)" strokeWidth="1.3" strokeLinecap="round"/>
+                <path d="M7 17 Q9 22 13 22 Q17 22 18 17" stroke="var(--co7)" strokeWidth="1" fill="rgba(20,114,217,0.06)" strokeLinecap="round"/>
+                <path d="M18 17 Q19 21 23 21 Q27 21 29 17" stroke="var(--co6)" strokeWidth="1" fill="rgba(20,114,217,0.04)" strokeLinecap="round"/>
+                <circle cx="18" cy="9" r="2" fill="var(--co7)"/>
+              </svg>
+              <span className="t-display" style={{ fontSize: '1.3rem', fontWeight: 600, color: 'var(--t0)' }}>
+                JUR<em style={{ fontStyle: 'italic', color: 'var(--co7)' }}>IR</em>
+              </span>
             </div>
-            <p style={{ fontSize: '.78rem', color: 'var(--n5)', maxWidth: 220, lineHeight: 1.75 }}>
-              Inteligência Jurídica Quântica — análise multidisciplinar por 16 agentes de IA especializados.
+            <p style={{ fontSize: '.82rem', color: 'var(--t4)', lineHeight: 1.7 }}>
+              A plataforma de inteligência jurídica de nova geração. 16 agentes especializados, análise em minutos, veredicto preciso.
             </p>
-            <div style={{ marginTop: 20, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              <span style={{ background: 'var(--n8)', border: '1px solid var(--br-n)', borderRadius: 'var(--r-pill)', padding: '3px 10px', fontSize: '.6rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em' }}>
-                v12.0
-              </span>
-              <span style={{ background: 'rgba(0,208,132,0.07)', border: '1px solid rgba(0,208,132,0.18)', borderRadius: 'var(--r-pill)', padding: '3px 10px', fontSize: '.6rem', color: 'var(--emerald)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em' }}>
-                ONLINE
-              </span>
-            </div>
+            <p style={{ fontFamily: 'var(--f-display)', fontStyle: 'italic', fontSize: '.8rem', color: 'var(--t5)', marginTop: 12 }}>
+              "Fiat iustitia, ruat caelum"
+            </p>
           </div>
 
           {/* Links */}
-          {Object.entries(LINKS).map(([cat, links]) => (
-            <div key={cat}>
-              <div className="footer-cat">{cat}</div>
-              {links.map(({ label, to }) => (
-                <Link key={to} to={to} className="footer-link">{label}</Link>
+          <div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)', letterSpacing: '.18em', marginBottom: 14 }}>
+              PLATAFORMA
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {LINKS.map(l => (
+                <a key={l.label} href={l.href} style={{
+                  fontSize: '.82rem', color: 'var(--t3)',
+                  textDecoration: 'none', transition: 'color .15s',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--co7)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'var(--t3)'}
+                >
+                  {l.label}
+                </a>
               ))}
             </div>
-          ))}
+          </div>
         </div>
 
-        <div className="footer-bottom">
-          <div className="footer-copy">© 2025 JURIR — Todos os direitos reservados</div>
-          <div className="footer-disclaimer">
-            O JURIR fornece análise jurídica por IA como ferramenta de suporte.
-            Não substitui consultoria jurídica profissional. Consulte um advogado habilitado.
-          </div>
+        {/* Bottom */}
+        <div style={{ borderTop: '1px solid var(--b-subtle)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)', letterSpacing: '.08em' }}>
+            © {new Date().getFullYear()} JURIR · INTELIGÊNCIA JURÍDICA · TODOS OS DIREITOS RESERVADOS
+          </span>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)', letterSpacing: '.08em' }}>
+            NÃO SUBSTITUI ACONSELHAMENTO JURÍDICO PROFISSIONAL
+          </span>
         </div>
       </div>
     </footer>
