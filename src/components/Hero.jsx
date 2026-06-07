@@ -133,9 +133,9 @@ export default function Hero() {
         .hero-section {
   
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
-          padding: clamp(88px, 11vh, 110px) 48px 40px;
+          padding: clamp(88px, 11vh, 110px) 48px 0px;
           position: relative;
           overflow: hidden;
         }
@@ -369,7 +369,7 @@ export default function Hero() {
 
           {/* Scroll hint */}
           <div style={{
-            marginTop:'clamp(32px,5vw,52px)', opacity:visible?0.4:0,
+            marginTop:'clamp(16px,2vw,24px)', opacity:visible?0.4:0,
             transition:'opacity .7s 1.4s',
             display:'flex', flexDirection:'column', alignItems:'center', gap:8,
           }}>
