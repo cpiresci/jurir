@@ -132,7 +132,7 @@ export default function Hero() {
       <style>{`
         .hero-section {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
           padding: clamp(88px, 11vh, 110px) 48px 60px;
           position: relative;
