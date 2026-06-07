@@ -854,3 +854,12 @@ a { color: inherit; }
   box-shadow: var(--shadow-cobalt);
 }
 [conteúdo do hero_mobile_patch.css]
+
+/* ══ HERO MOBILE PATCH ══ */
+@media (max-width: 768px) {
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3.6rem) !important; }
+  .hero-badge { font-size: .58rem !important; padding: 5px 14px !important; flex-wrap: wrap; justify-content: center; }
+}
+@media (max-width: 420px) {
+  .hero-title { font-size: clamp(1.9rem, 8vw, 2.8rem) !important; }
+}

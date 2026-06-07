@@ -179,9 +179,9 @@ export default function Hero() {
 
   return (
     <section style={{
-      minHeight: '100vh',
+      minHeight: '100dvh',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '0 28px', paddingTop: 72,
+      padding: 'clamp(80px,10vw,100px) clamp(20px,5vw,48px) clamp(40px,6vw,60px)',
       position: 'relative',
       overflow: 'hidden',
     }}>
@@ -388,7 +388,7 @@ export default function Hero() {
           ].map((item, i) => (
             <div key={i} style={{
               display:'flex', alignItems:'center', gap:5,
-              fontFamily:'var(--f-mono)', fontSize:'.62rem', color:'var(--t4)',
+              fontFamily:'var(--f-mono)', fontSize:'.62rem', color:'var(--t3)',
               letterSpacing:'.07em',
             }}>
               <span>{item.icon}</span>
