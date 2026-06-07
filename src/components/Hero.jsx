@@ -199,7 +199,7 @@ export default function Hero() {
 
         {/* Score ring — desktop */}
         <div className="hero-float" style={{
-          position:'absolute', bottom:'clamp(60px, 8vh, 90px)', left:'2%',
+          position:'absolute', top:'clamp(120px, 14vh, 150px)', left:'2%',
           background:'var(--bg-card)', border:'1px solid var(--b-main)',
           borderRadius:'var(--r-lg)', padding:'22px 24px',
           boxShadow:'var(--shadow-float)',
