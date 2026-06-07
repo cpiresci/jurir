@@ -1,0 +1,126 @@
+name: Build Android APK — Jurir
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'capacitor.config.ts'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - 'android/**'
+  workflow_dispatch:
+    inputs:
+      release_track:
+        description: 'Play Store track'
+        required: true
+        default: 'internal'
+        type: choice
+        options: [internal, alpha, beta, production]
+
+env:
+  JAVA_VERSION: '17'
+  NODE_VERSION: '20'
+
+jobs:
+  build-web:
+    name: Build React
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: dist/
+          retention-days: 1
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: build-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist/
+      - run: npm install -g @capacitor/cli
+      - run: npx cap sync android
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager "build-tools;34.0.0" "platforms;android-34"
+      - name: Decode Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 --decode > android/app/jurir-release-key.jks
+      - run: chmod +x android/gradlew
+      - name: Build Release APK
+        working-directory: android
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/jurir-release-key.jks \
+            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --no-daemon
+      - name: Build Release AAB
+        working-directory: android
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/jurir-release-key.jks \
+            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jurir-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jurir-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+  deploy-play-store:
+    name: Deploy Play Store
+    runs-on: ubuntu-latest
+    needs: build-android
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: jurir-release-aab
+          path: .
+      - uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: br.com.jurir.app
+          releaseFiles: app-release.aab
+          track: ${{ github.event.inputs.release_track || 'internal' }}
+          status: completed
+          whatsNewDirectory: whatsnew/
