@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jurir</string>
+    <string name="title_activity_main">Jurir — IA Jurídica</string>
+    <string name="package_name">br.com.jurir.app</string>
+    <string name="custom_url_scheme">jurir</string>
+</resources>
