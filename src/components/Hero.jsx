@@ -135,7 +135,7 @@ export default function Hero() {
           display: flex;
           align-items: flex-start;
           justify-content: center;
-          padding: clamp(88px, 11vh, 110px) 48px 0px;
+          padding: clamp(88px, 11vh, 110px) 48px 0;
           position: relative;
           overflow: hidden;
         }
@@ -191,84 +191,6 @@ export default function Hero() {
           <span style={{ color:'var(--t3)',marginRight:2 }}>ÁREA ATIVA</span>
           <span style={{ color:'var(--co7)',fontWeight:600 }}>{AREAS[activeArea]}</span>
         </div>
-
-        {/* Score ring — desktop */}
-        <div className="hero-float" style={{
-          position:'absolute', top:'clamp(260px, 34vh, 370px)', left:'4%',
-          background:'var(--bg-card)', border:'1px solid var(--b-main)',
-          borderRadius:'var(--r-lg)', padding:'22px 24px',
-          boxShadow:'var(--shadow-float)',
-          opacity:visible?1:0, transition:'opacity .7s .8s',
-          pointerEvents:'none', flexDirection:'column', alignItems:'center', gap:10,
-        }}>
-          <ScoreRing size={110} score={87} visible={visible}/>
-          <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.54rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.5rem',color:'var(--jade2)',letterSpacing:'.1em' }}>FORTEMENTE FAVORÁVEL</span>
-          </div>
-        </div>
-
-        {/* Live feed — desktop */}
-        <div className="hero-float" style={{
-          position:'absolute', top:'clamp(300px, 40vh, 430px)', right:'4%',
-          background:'var(--bg-card)', border:'1px solid var(--b-main)',
-          borderRadius:'var(--r-md)', padding:'16px 20px',
-          boxShadow:'var(--shadow-float)',
-          opacity:visible?1:0, transition:'opacity .7s 1.0s',
-          pointerEvents:'none', minWidth:220,
-          flexDirection:'column', gap:10,
-        }}>
-          <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.18em',marginBottom:2 }}>TRIBUNAL AO VIVO</div>
-          <LiveFeed visible={visible}/>
-        </div>
-
-        {/* ── MAIN ── */}
-        <div className="hero-inner">
-
-          {/* Badge */}
-          <div className="hero-badge fade-up" style={{ marginBottom:'clamp(28px,5vw,44px)', opacity:visible?1:0 }}>
-            <Zap size={9} style={{ color:'var(--co7)' }}/>
-            <span style={{ color:'var(--t2)' }}>Inteligência Jurídica Quântica</span>
-            <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
-            <span style={{ color:'var(--co7)',fontWeight:600 }}>Plataforma v10.0</span>
-            <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
-            <span style={{ color:'var(--am4)',fontWeight:500 }}>16 AGENTES</span>
-          </div>
-
-          {/* Headline */}
-          <h1 className="hero-title fade-up fade-up-1" style={{ marginBottom:6, opacity:visible?1:0 }}>
-            O tribunal do futuro
-          </h1>
-          <h1 className="hero-title fade-up fade-up-1" style={{
-            marginBottom:'clamp(22px,4vw,36px)', opacity:visible?1:0,
-            background:'linear-gradient(135deg,var(--co8) 0%,var(--co7) 40%,var(--am4) 100%)',
-            WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-            fontStyle:'italic',
-          }}>
-            analisa o seu caso.
-          </h1>
-
-          {/* Subline */}
-          <p className="fade-up fade-up-2" style={{
-            fontSize:'clamp(1rem,2.4vw,1.12rem)', color:'var(--t1)',
-            maxWidth:1100, margin:'0 auto 12px',
-            lineHeight:1.8, opacity:visible?1:0,
-            fontFamily:'var(--f-display)', fontWeight:400, letterSpacing:'.01em',
-          }}>
-            Dezesseis agentes de IA especializados analisam cada faceta do seu processo em paralelo.
-            O <em style={{ color:'var(--cr3)' }}>Advogado do Diabo</em> confronta. O{' '}
-            <em style={{ color:'var(--co7)' }}>Juiz IA Quantum</em> prolata o veredicto final.
-          </p>
-
-          {/* Latim */}
-          <div className="fade-up fade-up-3" style={{ opacity:visible?1:0, marginBottom:'clamp(32px,5vw,52px)' }}>
-            <span style={{ fontFamily:'var(--f-display)',fontStyle:'italic',fontSize:'clamp(.8rem,2vw,.9rem)',color:'var(--t3)',letterSpacing:'.04em' }}>
-              "Iustitia est constans et perpetua voluntas ius suum cuique tribuendi"
-            </span>
-            <div style={{ fontFamily:'var(--f-mono)',fontSize:'.52rem',color:'var(--t4)',letterSpacing:'.18em',marginTop:5,textTransform:'uppercase' }}>
-              — Ulpiano, Digesto
-            </div>
-          </div>
 
           {/* CTAs */}
           <div className="fade-up fade-up-3" style={{
