@@ -1,4 +1,4 @@
-package br.com.jurir.app;
+package com.jurir.app;
 import android.content.Intent;
 import android.net.Uri;
 import android.webkit.JavascriptInterface;

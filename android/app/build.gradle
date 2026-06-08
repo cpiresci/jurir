@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'br.com.jurir.app'
+    namespace 'com.jurir.app'
     compileSdk 36
     defaultConfig {
-        applicationId "br.com.jurir.app"
+        applicationId "com.jurir.app"
         minSdk 24
         targetSdk 36
         versionCode 1

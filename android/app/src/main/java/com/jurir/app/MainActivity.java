@@ -1,4 +1,4 @@
-package br.com.jurir.app;
+package com.jurir.app;
 import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity {
