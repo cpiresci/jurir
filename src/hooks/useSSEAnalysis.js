@@ -151,10 +151,9 @@ export function useSSEAnalysis() {
             setJudgeState({ status: 'done', verdict: verdictText });
             setVerdict(verdictText);
             // [FIX] Para o botão imediatamente ao receber o veredito.
-            useStore.getState().setRunning(false);
 
-          } else if (t === 'saved') {
             if (ev.analysis_id) setAnalysisId(ev.analysis_id);
+          useStore.getState().setRunning(false);
 
           } else if (t === 'score') {
             setScore(ev.jurir_score ?? ev.score ?? null, ev.dimensions ?? null);
