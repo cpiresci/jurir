@@ -90,7 +90,8 @@ export default function VerdictSection() {
 
   // [FIX v7.0] Mantém seção visível se devil já chegou mas juiz ainda não
   // (evita que VerdictSection desapareça quando running=false antes do verdict)
-  if (!verdictText && !devilText && !running) return null;
+  const judgeState = useStore(s => s.judgeState);
+  if (!verdictText && !devilText && !running && judgeState.status !== "done") return null;
 
   return (
     <div style={{ marginTop: 36 }}>
