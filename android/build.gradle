@@ -1,9 +1,13 @@
 buildscript {
-    repositories { google(); mavenCentral() }
-    dependencies { classpath 'com.android.tools.build:gradle:8.6.0' }
+    repositories { google(); mavenCentral()
+        maven { url "https://maven.google.com" }
+        maven { url "https://jcenter.bintray.com" } }
+    dependencies { classpath 'com.android.tools.build:gradle:8.9.1' }
 }
 apply from: "variables.gradle"
-allprojects { repositories { google(); mavenCentral() } }
+allprojects { repositories { google(); mavenCentral()
+        maven { url "https://maven.google.com" }
+        maven { url "https://jcenter.bintray.com" } } }
 
 subprojects {
     afterEvaluate { project ->
