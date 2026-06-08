@@ -1,225 +1,208 @@
-import { useEffect, useRef, useState } from 'react';
-import { Scale, Download, CheckCircle2, Zap, Brain, Gavel, Swords, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
 
-const SCORE_LABEL = s =>
+const SCORE_LABEL = (s) =>
   s >= 80 ? 'Fortemente Favorável' :
   s >= 65 ? 'Favorável' :
   s >= 50 ? 'Parcialmente Favorável' :
-  s >= 35 ? 'Risco Moderado' : 'Alto Risco';
+  s >= 35 ? 'Risco Moderado' :
+  'Alto Risco';
 
-const scoreColor = s => s >= 70 ? '#10B981' : s >= 40 ? '#EAB308' : '#EF4444';
-
-function ScoreRing({ score }) {
-  const r = 44; const cx = 52; const cy = 52;
-  const circ = 2 * Math.PI * r;
-  const color = scoreColor(score);
-  const [anim, setAnim] = useState(0);
-
-  useEffect(() => {
-    let raf;
-    const start = performance.now();
-    const dur = 1400;
-    const run = now => {
-      const t = Math.min((now - start) / dur, 1);
-      const ease = 1 - Math.pow(1 - t, 3);
-      setAnim(ease * score);
-      if (t < 1) raf = requestAnimationFrame(run);
-    };
-    raf = requestAnimationFrame(run);
-    return () => cancelAnimationFrame(raf);
-  }, [score]);
-
-  const animDash = (anim / 100) * circ;
+function ScoreGauge({ score }) {
+  const angle = (score / 100) * 360;
+  const color =
+    score >= 70 ? 'var(--emerald2)' :
+    score >= 40 ? 'var(--flame)' : 'var(--flame)';
+  const ringClass =
+    score >= 70 ? 'score-ring-high' :
+    score >= 40 ? 'score-ring-mid' : 'score-ring-low';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-      <div style={{ position: 'relative', width: 104, height: 104 }}>
+      <div className={ringClass} style={{
+        width: 104, height: 104, borderRadius: '50%',
+        background: `conic-gradient(${color} ${angle}deg, rgba(250,248,244,0.04) 0deg)`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'relative',
+      }}>
         <div style={{
-          position: 'absolute', inset: -8, borderRadius: '50%',
-          background: `radial-gradient(circle, ${color}22 0%, transparent 70%)`,
-          filter: 'blur(8px)', animation: 'haloBreath 3s ease-in-out infinite',
-          pointerEvents: 'none',
-        }}/>
-        <svg width={104} height={104} viewBox="0 0 104 104" style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(180,188,210,0.20)" strokeWidth={7}/>
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={6}
-            strokeDasharray={`${animDash} ${circ - animDash}`} strokeLinecap="round"
-            style={{ filter: `drop-shadow(0 0 6px ${color})`, transition: 'stroke .1s' }}/>
-        </svg>
-        <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute', inset: 8, borderRadius: '50%',
+          background: 'var(--deep)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span style={{ fontFamily: 'var(--f-display)', fontSize: '1.7rem', fontWeight: 600, color, lineHeight: 1 }}>
-            {Math.round(anim)}
+          <span style={{ fontFamily: 'var(--f-display)', fontSize: '1.6rem', fontWeight: 700, color: 'var(--n0)', lineHeight: 1 }}>
+            {score}
           </span>
-          <span style={{ fontSize: '.48rem', color: 'var(--t5)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em' }}>/100</span>
+          <span style={{ fontSize: '.5rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em' }}>
+            / 100
+          </span>
         </div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '.7rem', fontWeight: 600, color, fontFamily: 'var(--f-mono)', letterSpacing: '.06em' }}>
-          {SCORE_LABEL(score)}
-        </div>
-        <div style={{ fontSize: '.6rem', color: 'var(--t5)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginTop: 2 }}>
-          JURIR SCORE
-        </div>
-      </div>
+      <span style={{ fontSize: '.6rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em', textAlign: 'center' }}>
+        JURIR SCORE
+      </span>
+      <span style={{ fontSize: '.72rem', color, fontWeight: 600, textAlign: 'center' }}>
+        {SCORE_LABEL(score)}
+      </span>
     </div>
   );
 }
 
-function TextBlock({ text, label, color = 'var(--co7)' }) {
-  const [expanded, setExpanded] = useState(false);
-  const PREVIEW = 600;
-  const needsExpand = text.length > PREVIEW;
-  const displayText = expanded ? text : text.slice(0, PREVIEW);
-
+function DimBar({ label, value }) {
+  const color =
+    value >= 70 ? 'var(--emerald2)' :
+    value >= 40 ? 'var(--flame)' : 'var(--flame)';
   return (
-    <div>
-      <div style={{
-        fontFamily: 'var(--f-display)', fontSize: '.98rem', fontWeight: 400,
-        color: 'var(--t1)', lineHeight: 1.8, whiteSpace: 'pre-wrap',
-      }}>
-        {displayText}
-        {!expanded && needsExpand && <span style={{ color: 'var(--t5)' }}>…</span>}
+    <div className="dim-bar-wrap">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+        <span style={{ fontSize: '.65rem', color: 'var(--n4)', textTransform: 'uppercase', letterSpacing: '.1em' }}>
+          {label}
+        </span>
+        <span style={{ fontSize: '.68rem', color, fontFamily: 'var(--f-mono)', fontWeight: 600 }}>
+          {value}
+        </span>
       </div>
-      {needsExpand && (
-        <button onClick={() => setExpanded(v => !v)} style={{
-          marginTop: 10, background: 'none', border: 'none',
-          color, fontSize: '.7rem', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', gap: 4,
-          fontFamily: 'var(--f-mono)', padding: 0,
-        }}>
-          {expanded ? <><ChevronUp size={12}/> Recolher</> : <><ChevronDown size={12}/> Ler completo</>}
-        </button>
-      )}
+      <div className="conf-bar">
+        <div className="conf-fill" style={{ width: `${value}%`, background: color }}/>
+      </div>
     </div>
   );
 }
 
 export default function VerdictSection() {
-  const { verdictText, devilText, jurirScore, scoreDims, vetoActive, analysisId, authToken, addToast, running, devilState, judgeState } = useStore();
+  const {
+    verdictText, devilText, jurirScore, scoreDims,
+    vetoActive, analysisId, authToken, addToast, running,
+  } = useStore(s => ({
+    verdictText: s.verdictText, devilText: s.devilText,
+    jurirScore: s.jurirScore,   scoreDims: s.scoreDims,
+    vetoActive: s.vetoActive,   analysisId: s.analysisId,
+    authToken: s.authToken,     addToast: s.addToast,
+    running: s.running,
+  }));
 
-  const hasVerdict = !!verdictText;
-  const hasDevil   = !!devilText;
-  const [downloading, setDownloading] = useState(false);
-
-  if (!hasVerdict && !hasDevil && jurirScore === null) return null;
-
-  const handleDownload = async () => {
-    if (!analysisId || !authToken) { addToast('Faça login para baixar o PDF.', 'info'); return; }
-    setDownloading(true);
-    try { await downloadPdf(analysisId, authToken); addToast('✅ PDF gerado!', 'success'); }
-    catch (e) { addToast(`Erro ao gerar PDF: ${e.message}`, 'error'); }
-    finally { setDownloading(false); }
+  const handlePdf = async () => {
+    if (!authToken || !analysisId) { addToast('Faça login para baixar o PDF.', 'info'); return; }
+    try { await downloadPdf(analysisId, authToken); addToast('PDF gerado!', 'success'); }
+    catch (e) { addToast(`Erro PDF: ${e.message}`, 'error'); }
   };
 
+  // [FIX v7.0] Mantém seção visível se devil já chegou mas juiz ainda não
+  // (evita que VerdictSection desapareça quando running=false antes do verdict)
+  if (!verdictText && !devilText && !running) return null;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginTop: 20 }}>
+    <div style={{ marginTop: 36 }}>
 
-      {/* Verdict + Score row */}
-      {(hasVerdict || jurirScore !== null) && (
+      {/* Veto */}
+      {vetoActive && (
         <div style={{
-          background: 'var(--bg-card)', border: '1px solid var(--b-cobalt)',
-          borderRadius: 'var(--r-xl)', padding: 32,
-          boxShadow: 'var(--shadow-cobalt)',
-          display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 40, overflow: 'visible',
-          alignItems: 'start',
+          display: 'flex', alignItems: 'center', gap: 10,
+          background: 'rgba(176,30,30,0.10)', border: '1px solid var(--br-cr)',
+          borderRadius: 'var(--r-sm)', padding: '13px 18px', marginBottom: 16,
         }}>
-          {/* Score ring */}
-          {jurirScore !== null && (
-                <div style={{ paddingTop: 8, position: 'relative', zIndex: 10 }}>
-              <ScoreRing score={jurirScore}/>
-              {/* Dimensions */}
-              {scoreDims && (
-                <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 6, minWidth: 130 }}>
-                  {Object.entries(scoreDims).map(([k, v]) => (
-                    <div key={k}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.56rem', color: 'var(--t4)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
-                          {k.replace(/_/g, ' ')}
-                        </span>
-                        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.56rem', color: scoreColor(v) }}>{v}</span>
-                      </div>
-                      <div style={{ height: 2, background: 'var(--shell)', borderRadius: 9, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${v}%`, background: scoreColor(v), borderRadius: 9, transition: 'width .8s var(--ease-out-expo)' }}/>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Verdict text */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: 'var(--r-sm)',
-                background: 'rgba(20,114,217,0.08)', border: '1px solid var(--b-cobalt)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem',
-              }}>🏛️</div>
-              <div>
-                <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.78rem', fontWeight: 600, color: 'var(--t0)', letterSpacing: '.02em' }}>
-                  Veredicto Final — Juiz IA Quantum
-                </div>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--co7)', letterSpacing: '.1em' }}>
-                  {judgeState?.status === 'running' ? 'DELIBERANDO…' : 'PROLATO'}
-                </div>
-              </div>
-              {judgeState?.status === 'running' && <Loader2 size={14} className="spin" style={{ color: 'var(--co7)', marginLeft: 'auto' }}/>}
-            </div>
-
-            {vetoActive && (
-              <div style={{
-                background: 'rgba(192,24,24,0.05)', border: '1px solid rgba(192,24,24,0.2)',
-                borderRadius: 'var(--r-sm)', padding: '10px 14px',
-                fontFamily: 'var(--f-mono)', fontSize: '.7rem', color: 'var(--cr3)',
-                letterSpacing: '.06em', marginBottom: 16,
-                display: 'flex', alignItems: 'center', gap: 6,
-              }}>
-                <span>⚠</span> CASO VETADO PELO TRIBUNAL — ILEGALIDADE DETECTADA
-              </div>
-            )}
-
-            {hasVerdict && <TextBlock text={verdictText} color="var(--co7)"/>}
-
-            {/* PDF button */}
-            {analysisId && (
-              <button className="btn btn-ghost btn-sm" onClick={handleDownload} disabled={downloading}
-                style={{ marginTop: 20, opacity: downloading ? 0.7 : 1 }}>
-                {downloading ? <><Loader2 size={12} className="spin"/> Gerando…</> : <><Download size={12}/> Baixar PDF</>}
-              </button>
-            )}
-          </div>
+          <AlertTriangle size={14} style={{ color: 'var(--flame-lt)', flexShrink: 0 }}/>
+          <span style={{ fontSize: '.82rem', color: 'var(--flame-lt)' }}>
+            VETO ATIVADO — Caso de alta criticidade detectado. Consulte um advogado imediatamente.
+          </span>
         </div>
       )}
 
-      {/* Devil's Advocate */}
-      {hasDevil && (
+      {/* Devil */}
+      {devilText && (
+        <div className="devil-card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Shield size={13} style={{ color: 'var(--flame)' }}/>
+            <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--flame)', letterSpacing: '.12em', fontFamily: 'var(--f-mono)' }}>
+              ADVOGADO DO DIABO · CONTRADITÓRIO
+            </span>
+          </div>
+          <p style={{ fontSize: '.86rem', color: 'var(--n3)', lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0 }}>
+            {devilText}
+          </p>
+        </div>
+      )}
+
+      {/* Loading do Juiz — devil chegou mas veredito ainda não */}
+      {devilText && !verdictText && running && (
         <div style={{
-          background: 'var(--bg-card)', border: '1px solid rgba(192,24,24,0.18)',
-          borderRadius: 'var(--r-xl)', padding: 32,
-          boxShadow: '0 0 0 1px rgba(192,24,24,0.08), 0 4px 24px rgba(192,24,24,0.06)',
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '14px 18px', marginTop: 16,
+          background: 'rgba(194,136,10,0.06)',
+          border: '1px solid var(--br-flame)', borderRadius: 'var(--r-sm)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 'var(--r-sm)',
-              background: 'rgba(192,24,24,0.06)', border: '1px solid rgba(192,24,24,0.18)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem',
-            }}>⚔️</div>
-            <div>
-              <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.78rem', fontWeight: 600, color: 'var(--t0)' }}>
-                Advogado do Diabo
+          <Loader2 size={13} className="spin" style={{ color: 'var(--flame)', flexShrink: 0 }}/>
+          <span style={{ fontSize: '.82rem', color: 'var(--n4)' }}>
+            ⚖️ Juiz IA deliberando o veredito final…
+          </span>
+        </div>
+      )}
+
+      {/* Verdict */}
+      {verdictText && (
+        <div className="verdict-box">
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                <Scale size={14} style={{ color: 'var(--flame)' }}/>
+                <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--flame)', letterSpacing: '.12em', fontFamily: 'var(--f-mono)' }}>
+                  VEREDICTO DO JUIZ IA QUANTUM
+                </span>
+                {jurirScore != null && (
+                  <span style={{
+                    marginLeft: 'auto',
+                    background: 'rgba(194,136,10,0.08)', border: '1px solid var(--br-flame)',
+                    borderRadius: 'var(--r-pill)', padding: '2px 10px',
+                    fontSize: '.62rem', color: 'var(--flame)', fontFamily: 'var(--f-mono)',
+                  }}>
+                    {SCORE_LABEL(jurirScore).toUpperCase()}
+                  </span>
+                )}
               </div>
-              <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--cr3)', letterSpacing: '.1em' }}>
-                CONTRADITÓRIO COMPLETO
+              <p style={{ fontSize: '.9rem', color: 'var(--n1)', lineHeight: 1.85, whiteSpace: 'pre-wrap', margin: 0 }}>
+                {verdictText}
+              </p>
+            </div>
+
+            {jurirScore != null && (
+              <div style={{ flexShrink: 0, paddingTop: 2 }}>
+                <ScoreGauge score={jurirScore}/>
+              </div>
+            )}
+          </div>
+
+          {/* Dimensions */}
+          {scoreDims && Object.keys(scoreDims).length > 0 && (
+            <div style={{ marginTop: 24, borderTop: '1px solid var(--br-n2)', paddingTop: 20 }}>
+              <div style={{ fontSize: '.65rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em', marginBottom: 12 }}>
+                DIMENSÕES DO SCORE
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px,1fr))', gap: 8 }}>
+                {Object.entries(scoreDims).map(([k, v]) => (
+                  <DimBar key={k} label={k} value={v}/>
+                ))}
               </div>
             </div>
+          )}
+
+          {/* Actions */}
+          <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--br-n2)', display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+            {analysisId && (
+              <button className="btn btn-ghost btn-sm" onClick={handlePdf}>
+                <Download size={13}/> Baixar PDF
+              </button>
+            )}
+            {analysisId && (
+              <span style={{ fontSize: '.68rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)' }}>
+                ID: #{analysisId}
+              </span>
+            )}
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CheckCircle2 size={12} style={{ color: 'var(--emerald2)' }}/>
+              <span style={{ fontSize: '.68rem', color: 'var(--n5)' }}>Análise concluída</span>
+            </div>
           </div>
-          <TextBlock text={devilText} color="var(--cr3)"/>
         </div>
       )}
     </div>
