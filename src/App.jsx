@@ -34,7 +34,7 @@ export default function App() {
             <Route path="/monitoramento" element={<MonitoramentoPage />} />
             <Route path="/verificar"     element={<VerificarPage />} />
             <Route path="/premium"       element={<CheckoutPage />} />
-              <Route path="/privacidade" element={<PrivacidadePage />} />
+            <Route path="/privacidade"   element={<PrivacidadePage />} />
           </Routes>
         </main>
       </div>
