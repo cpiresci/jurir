@@ -24,8 +24,13 @@ export async function checkHealth() {
  * e em paralelo tenta pings normais com CORS para confirmar que o servidor acordou.
  */
 export async function wakeUp(signal) {
+  // [FIX v10.3] No Capacitor Android o ping CORS de confirmação falha antes do
+  // androidScheme estar resolvido — wakeUp retornava false bloqueando o login.
+  // Estratégia: tenta ping normal primeiro; se falhar 2x seguidas, assume acordado
+  // após no-cors e deixa o login tentar (o backend já está de pé).
   const MAX_TRIES = 12;
   const INTERVAL  = 5000;
+  let corsFails = 0;
   const url = `${API_BASE}/wake`;
 
   for (let i = 0; i < MAX_TRIES; i++) {
@@ -43,7 +48,12 @@ export async function wakeUp(signal) {
     try {
       const r = await fetch(url, { cache: 'no-store', signal });
       if (r.ok) return true;
-    } catch { /* ainda acordando */ }
+    } catch {
+      corsFails++;
+      // [FIX v10.3] Após 2 falhas CORS (típico no Capacitor Android),
+      // assume servidor acordado — o no-cors já o acordou.
+      if (corsFails >= 2) return true;
+    }
 
     // Aguarda o restante do intervalo antes da próxima tentativa
     if (i < MAX_TRIES - 1) {
