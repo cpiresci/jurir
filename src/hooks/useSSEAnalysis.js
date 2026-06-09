@@ -14,7 +14,6 @@ export function useSSEAnalysis() {
       setDevilState, setJudgeState,
     } = useStore.getState();
 
-    // [FIX v2] Verifica token ANTES de iniciar — evita request sem auth que retorna 401 silencioso
     if (!authToken) {
       addToast('Faça login para usar análise premium.', 'error');
       useStore.getState().openModal('login');
@@ -93,7 +92,7 @@ export function useSSEAnalysis() {
           } else if (t === 'recovery') {
             setStatusMessage(ev.message || `⏳ Consolidando análises… aguarde ${ev.seconds}s para síntese final.`);
 
-          } else if (t === 'keepalive') {
+          } else if (t === 'keepalive' || t === 'ping') {
             // Heartbeat — mantém conexão viva, sem ação visual
 
           } else if (t === 'agent_start' || t === 'agent_thinking') {
@@ -101,7 +100,6 @@ export function useSSEAnalysis() {
             setAgentState(ev.agent_id, { status: 'running', area: ev.area });
 
           } else if (t === 'agent_done') {
-            // [FIX v2] Garante que confidence seja número válido ≥ 0
             const conf = typeof ev.confidence === 'number' ? ev.confidence : 0;
             setAgentState(ev.agent_id, {
               status:     'done',
@@ -109,7 +107,6 @@ export function useSSEAnalysis() {
               confidence: conf,
               analysis:   ev.analysis,
               topRisk:    ev.top_risk,
-              // [FIX] Salva riskLevel do backend para semáforo visual no card
               riskLevel:  ev.risk_level || null,
             });
             incrementCompleted();
@@ -118,17 +115,14 @@ export function useSSEAnalysis() {
             setAgentState(ev.agent_id, { status: 'error', area: ev.area });
 
           } else if (t === 'devil_thinking' || t === 'devil_start') {
-            // [FIX] Alimenta card do Diabo com estado running
             setStatusMessage(null);
             setDevilState({ status: 'running', analysis: '', confidence: 0 });
             setDevil('⚔️ Advogado do Diabo analisando o contraditório — aguarde…');
 
           } else if (t === 'devil_done') {
             setStatusMessage(null);
-            // [FIX v2] devil_done pode chegar com analysis vazia se backend usou emergência
             const devilText = (ev.analysis || '').trim();
             const devilConf = typeof ev.confidence === 'number' ? ev.confidence : 0;
-            // [FIX] Atualiza card do Diabo com resultado final
             setDevilState({
               status:     'done',
               analysis:   devilText || '⚔️ Contraditório processado.',
@@ -137,8 +131,9 @@ export function useSSEAnalysis() {
             setDevil(devilText || '⚔️ Contraditório processado.');
 
           } else if (t === 'judge_thinking') {
-            // [FIX] Alimenta card do Juiz com estado running
             setStatusMessage(null);
+            // [FIX] Garante que running=true enquanto juiz delibera
+            useStore.getState().setRunning(true);
             setJudgeState({ status: 'running', verdict: '' });
 
           } else if (t === 'veto') {
@@ -147,23 +142,27 @@ export function useSSEAnalysis() {
           } else if (t === 'verdict') {
             setStatusMessage(null);
             const verdictText = ev.verdict || ev.text || '';
-            // [FIX] Atualiza card do Juiz com veredito final
             setJudgeState({ status: 'done', verdict: verdictText });
             setVerdict(verdictText);
-            // [FIX] Para o botão imediatamente ao receber o veredito.
-        useStore.getState().setRunning(false);
-
+            // NÃO para running aqui — aguarda o evento 'saved' para ter o analysis_id
+            // Se 'saved' não chegar (fallback), para no finally
             if (ev.analysis_id) setAnalysisId(ev.analysis_id);
 
           } else if (t === 'score') {
             setScore(ev.jurir_score ?? ev.score ?? null, ev.dimensions ?? null);
 
+          // [FIX CRÍTICO] Backend emite 'saved' APÓS o verdict com o analysis_id real
+          } else if (t === 'saved') {
+            setStatusMessage(null);
+            if (ev.analysis_id) setAnalysisId(ev.analysis_id);
+            useStore.getState().setRunning(false);
+
           } else if (t === 'error') {
-            // [FIX] Marca diabo/juiz como erro se ainda estavam rodando
             const { devilState, judgeState } = useStore.getState();
             if (devilState.status === 'running') setDevilState({ status: 'error' });
             if (judgeState.status === 'running') setJudgeState({ status: 'error' });
             addToast(ev.message || 'Erro no streaming', 'error');
+            useStore.getState().setRunning(false);
           }
         }
       }
@@ -171,7 +170,6 @@ export function useSSEAnalysis() {
       if (e.name !== 'AbortError') {
         useStore.getState().addToast(`Erro: ${e.message}`, 'error');
       }
-      // [FIX] Marca agentes especiais como erro em caso de exceção
       const { devilState, judgeState } = useStore.getState();
       if (devilState.status === 'running') useStore.getState().setDevilState({ status: 'error' });
       if (judgeState.status === 'running') useStore.getState().setJudgeState({ status: 'error' });
