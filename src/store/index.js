@@ -2,8 +2,8 @@ import { create } from 'zustand';
 
 export const useStore = create((set, get) => ({
   // ── Auth ──
-  authToken: localStorage.getItem('jurir_token') || null,
-  userData:  JSON.parse(localStorage.getItem('jurir_user') || 'null'),
+  authToken: (() => { try { return localStorage.getItem('jurir_token') || null; } catch { return null; } })(),
+  userData:  (() => { try { return JSON.parse(localStorage.getItem('jurir_user') || 'null'); } catch { return null; } })(),
 
   setAuth: (token, user) => {
     localStorage.setItem('jurir_token', token);
