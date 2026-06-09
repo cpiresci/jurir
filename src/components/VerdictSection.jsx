@@ -126,7 +126,7 @@ export default function VerdictSection() {
       )}
 
       {/* Loading do Juiz — devil chegou mas veredito ainda não */}
-      {devilText && !verdictText && running && (
+      {devilText && !verdictText && (running || judgeState.status === 'running') && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
           padding: '14px 18px', marginTop: 16,
