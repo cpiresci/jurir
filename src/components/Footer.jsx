@@ -12,6 +12,10 @@ const LINKS = [
   { label: 'Verificar Relatório',  href: '/verificar' },
 ];
 
+const LEGAL_LINKS = [
+  { label: 'Política de Privacidade', href: '/privacidade' },
+];
+
 const PRINCIPLES = [
   { icon: '⚖️', label: 'Contraditório Real',     desc: 'Todo caso passa pelo Advogado do Diabo' },
   { icon: '🏛️', label: 'Veredicto Imparcial',   desc: 'Juiz IA Quantum prolata sem viés' },
@@ -156,9 +160,23 @@ export default function Footer() {
           display:'flex', alignItems:'center', justifyContent:'space-between',
           flexWrap:'wrap', gap:12,
         }}>
-          <span style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t3)', letterSpacing:'.1em' }}>
-            © {new Date().getFullYear()} JURIR · INTELIGÊNCIA JURÍDICA QUÂNTICA · TODOS OS DIREITOS RESERVADOS
-          </span>
+          <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', gap:16 }}>
+            <span style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t3)', letterSpacing:'.1em' }}>
+              © {new Date().getFullYear()} JURIR · INTELIGÊNCIA JURÍDICA QUÂNTICA · TODOS OS DIREITOS RESERVADOS
+            </span>
+            {LEGAL_LINKS.map(l => (
+              <a key={l.label} href={l.href} style={{
+                fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--co7)',
+                textDecoration:'none', letterSpacing:'.08em',
+                transition:'opacity .15s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '.7'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
           <div style={{ display:'flex', gap:20 }}>
             {['SambaNova AI', 'Cerebras', 'Google Gemini', 'OpenRouter'].map(p => (
               <span key={p} style={{ fontFamily:'var(--f-mono)', fontSize:'.55rem', color:'var(--t5)', letterSpacing:'.08em', opacity:0.7 }}>
