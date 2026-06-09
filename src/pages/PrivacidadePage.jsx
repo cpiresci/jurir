@@ -138,7 +138,7 @@ const rights = [
 
 export default function PrivacidadePage() {
   return (
-    <div style={{ maxWidth: 780, margin: '0 auto', padding: '100px 24px 80px', background: 'var(--bg-main)', minHeight: '100vh' }}>
+    <div style={{ maxWidth: 780, margin: '0 auto', padding: '100px 24px 80px', background: '#0a0a0f', minHeight: '100vh' }}>
 
       {/* ── HEADER ── */}
       <div style={{ marginBottom: 56 }}>
