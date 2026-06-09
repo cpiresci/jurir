@@ -9,7 +9,7 @@ export function useSSEAnalysis() {
   const run = useCallback(async (prompt, language = 'pt') => {
     const {
       authToken, resetAnalysis, setRunning, setAgentState,
-      incrementCompleted, setVerdict, setDevil, setScore,
+      incrementCompleted, setVerdict, setDevilDone, setScore,
       setVeto, setAnalysisId, addToast, setStatusMessage, setTribunal,
     } = useStore.getState();
 
@@ -77,23 +77,19 @@ export function useSSEAnalysis() {
           const t = ev.type;
 
           if (t === 'start') {
-            // Primeiro evento — stream conectado, agentes prestes a iniciar
             setStatusMessage(ev.message || '⚖ Conectado. Iniciando agentes…');
             if (ev.tribunal) setTribunal(ev.tribunal);
 
           } else if (t === 'cooldown') {
-            // Cooldown de rate-limit entre análises — pode durar até 60s
-            setStatusMessage(ev.message || `⏳ Aguardando ${ev.seconds}s para garantir qualidade dos providers…`);
+            setStatusMessage(ev.message || `⏳ Aguardando ${ev.seconds}s…`);
 
           } else if (t === 'recovery') {
-            // Recovery wait pós-agentes — providers se recuperam antes do Diabo/Juiz
-            setStatusMessage(ev.message || `⏳ Consolidando análises… aguarde ${ev.seconds}s para síntese final.`);
+            setStatusMessage(ev.message || `⏳ Consolidando análises… aguarde ${ev.seconds}s.`);
 
           } else if (t === 'keepalive') {
-            // Heartbeat — não faz nada visualmente, só mantém conexão viva
+            // heartbeat
 
           } else if (t === 'agent_start' || t === 'agent_thinking') {
-            // Primeiro agente chegou — limpa mensagem de status, grid toma conta
             setStatusMessage(null);
             setAgentState(ev.agent_id, { status: 'running', area: ev.area });
 
@@ -113,26 +109,27 @@ export function useSSEAnalysis() {
             setAgentState(ev.agent_id, { status: 'error', area: ev.area });
 
           } else if (t === 'devil_thinking' || t === 'devil_start') {
-            setStatusMessage('⚔️ Advogado do Diabo analisando contraditório…');
-            setDevil('⚔️ Advogado do Diabo analisando…');
+            setStatusMessage(null);
+            useStore.setState({ devilRunning: true, devilDone: false });
 
           } else if (t === 'devil_done') {
+            setDevilDone(ev.analysis || '');
             setStatusMessage(null);
-            setDevil(ev.analysis || '');
 
           } else if (t === 'veto') {
             setVeto(true);
 
           } else if (t === 'judge_thinking') {
-            setStatusMessage(ev.message || '⚖️ Juiz IA deliberando…');
+            setStatusMessage(null);
+            useStore.setState({ judgeDone: false });
 
           } else if (t === 'verdict') {
-            setStatusMessage(null);
             setVerdict(ev.verdict || ev.text || '');
+            setStatusMessage(null);
 
           } else if (t === 'saved') {
             if (ev.analysis_id) setAnalysisId(ev.analysis_id);
-            if (ev.tribunal) setTribunal(ev.tribunal);
+            if (ev.tribunal)    setTribunal(ev.tribunal);
 
           } else if (t === 'score') {
             setScore(ev.jurir_score ?? ev.score ?? null, ev.dimensions ?? null);

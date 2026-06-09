@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { CheckCircle, Loader2, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import { AGENT_AREAS } from '../lib/constants';
 import { useStore } from '../store';
@@ -20,38 +21,85 @@ function ConfBar({ confidence }) {
   const color = confidence >= 70 ? 'var(--emerald2)' : confidence >= 40 ? 'var(--g4)' : 'var(--r3)';
   return (
     <div className="conf-bar">
-      <div
-        className="conf-fill"
-        style={{ width: `${confidence}%`, background: color }}
-      />
+      <div className="conf-fill" style={{ width: `${confidence}%`, background: color }}/>
     </div>
   );
 }
 
-function AgentSkeleton() {
+const AgentCard = memo(function AgentCard({ id, area, icon, agentState }) {
+  const s      = agentState;
+  const status = s?.status || 'idle';
+  const conf   = s?.confidence ?? null;
+  const risk   = s?.riskLevel || null;
+
   return (
-    <div style={{
-      background: 'var(--surface)', border: '1px solid var(--bn)',
-      borderRadius: 'var(--r-md)', padding: 16,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <div className="skeleton" style={{ width: 22, height: 22, borderRadius: '50%' }}/>
-        <div className="skeleton" style={{ flex: 1, height: 12 }}/>
+    <div className={`agent-card ${status}`} style={{ cursor: 'default' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: conf != null ? 8 : 0 }}>
+        <span style={{ fontSize: '.9rem', flexShrink: 0 }}>{icon}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontSize: '.76rem', fontWeight: 600,
+            color: status === 'done' ? 'var(--n1)' : 'var(--n3)',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>
+            {area}
+          </div>
+          {conf != null && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+              <span style={{ fontSize: '.65rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)' }}>
+                {conf}%
+              </span>
+              {risk && (
+                <span style={{
+                  fontSize: '.6rem', fontFamily: 'var(--f-mono)',
+                  color: RISK_COLOR[risk] || 'var(--n5)',
+                  letterSpacing: '.06em',
+                }}>
+                  · {risk}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <div style={{ flexShrink: 0 }}>{STATUS_ICON[status]}</div>
       </div>
-      <div className="skeleton" style={{ height: 3, marginBottom: 8 }}/>
-      <div className="skeleton" style={{ height: 10, width: '80%' }}/>
+
+      {conf != null && <ConfBar confidence={conf}/>}
+
+      {s?.analysis && status === 'done' && (
+        <p style={{
+          fontSize: '.72rem', color: 'var(--n4)', lineHeight: 1.5, margin: 0,
+          borderTop: '1px solid var(--bn2)', paddingTop: 8, marginTop: 8,
+        }}>
+          {s.analysis.slice(0, 160)}{s.analysis.length > 160 ? '…' : ''}
+        </p>
+      )}
+
+      {status === 'running' && (
+        <div style={{ marginTop: 8 }}>
+          <div className="skeleton" style={{ height: 8, width: '60%', marginBottom: 4 }}/>
+          <div className="skeleton" style={{ height: 8, width: '85%' }}/>
+        </div>
+      )}
     </div>
   );
-}
+}, (prev, next) => prev.agentState === next.agentState);
 
 export default function AgentsGrid() {
-  const { agentStates, completedAgents, running } = useStore();
-  const total = AGENT_AREAS.length;
+  const agentStates     = useStore(s => s.agentStates);
+  const completedAgents = useStore(s => s.completedAgents);
+  const running         = useStore(s => s.running);
+
+  const total       = AGENT_AREAS.length;
   const progressPct = (completedAgents / total) * 100;
+
+  const stats = useMemo(() => ({
+    done:  Object.values(agentStates).filter(a => a?.status === 'done').length,
+    error: Object.values(agentStates).filter(a => a?.status === 'error').length,
+  }), [agentStates]);
 
   return (
     <div>
-      {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <h3 style={{ fontFamily: 'var(--f-display)', fontSize: '1.2rem', fontWeight: 600 }}>
@@ -68,14 +116,11 @@ export default function AgentsGrid() {
             </span>
           )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--n4)' }}>
-            {completedAgents}/{total} concluídos
-          </span>
-        </div>
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--n4)' }}>
+          {completedAgents}/{total} concluídos
+        </span>
       </div>
 
-      {/* Progress bar */}
       <div className="progress-bar" style={{ marginBottom: 18 }}>
         <div
           className="progress-fill"
@@ -83,88 +128,32 @@ export default function AgentsGrid() {
         />
       </div>
 
-      {/* Agents grid */}
       <div className="agents-grid">
-        {AGENT_AREAS.map(({ id, area, icon }) => {
-          const s = agentStates[id];
-          const status = s?.status || 'idle';
-          const conf = s?.confidence ?? null;
-          const risk = s?.riskLevel || null;
-
-          return (
-            <div key={id} className={`agent-card ${status}`} style={{ cursor: 'default' }}>
-              {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: conf != null ? 8 : 0 }}>
-                <span style={{ fontSize: '.9rem', flexShrink: 0 }}>{icon}</span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: '.76rem', fontWeight: 600,
-                    color: status === 'done' ? 'var(--n1)' : 'var(--n3)',
-                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                  }}>
-                    {area}
-                  </div>
-                  {conf != null && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                      <span style={{ fontSize: '.65rem', color: 'var(--n5)', fontFamily: 'var(--f-mono)' }}>
-                        {conf}%
-                      </span>
-                      {risk && (
-                        <span style={{
-                          fontSize: '.6rem', fontFamily: 'var(--f-mono)',
-                          color: RISK_COLOR[risk] || 'var(--n5)',
-                          letterSpacing: '.06em',
-                        }}>
-                          · {risk}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div style={{ flexShrink: 0 }}>{STATUS_ICON[status]}</div>
-              </div>
-
-              {/* Confidence bar */}
-              {conf != null && <ConfBar confidence={conf}/>}
-
-              {/* Analysis excerpt */}
-              {s?.analysis && status === 'done' && (
-                <p style={{
-                  fontSize: '.72rem', color: 'var(--n4)', lineHeight: 1.5, margin: 0,
-                  borderTop: '1px solid var(--bn2)', paddingTop: 8, marginTop: 8,
-                }}>
-                  {s.analysis.slice(0, 160)}{s.analysis.length > 160 ? '…' : ''}
-                </p>
-              )}
-
-              {/* Running shimmer */}
-              {status === 'running' && (
-                <div style={{ marginTop: 8 }}>
-                  <div className="skeleton" style={{ height: 8, width: '60%', marginBottom: 4 }}/>
-                  <div className="skeleton" style={{ height: 8, width: '85%' }}/>
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {AGENT_AREAS.map(({ id, area, icon }) => (
+          <AgentCard
+            key={id}
+            id={id}
+            area={area}
+            icon={icon}
+            agentState={agentStates[id]}
+          />
+        ))}
       </div>
 
-      {/* Footer stats */}
       {completedAgents > 0 && (
-        <div style={{
-          marginTop: 16, display: 'flex', gap: 20, justifyContent: 'flex-end',
-          flexWrap: 'wrap',
-        }}>
-          {(['done', 'error']).map(st => {
-            const count = Object.values(agentStates).filter(a => a?.status === st).length;
-            if (!count) return null;
-            return (
-              <div key={st} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '.72rem', color: 'var(--n5)' }}>
-                {STATUS_ICON[st]}
-                <span>{count} {st === 'done' ? 'concluídos' : 'com erro'}</span>
-              </div>
-            );
-          })}
+        <div style={{ marginTop: 16, display: 'flex', gap: 20, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+          {stats.done > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '.72rem', color: 'var(--n5)' }}>
+              {STATUS_ICON.done}
+              <span>{stats.done} concluídos</span>
+            </div>
+          )}
+          {stats.error > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '.72rem', color: 'var(--n5)' }}>
+              {STATUS_ICON.error}
+              <span>{stats.error} com erro</span>
+            </div>
+          )}
         </div>
       )}
     </div>
