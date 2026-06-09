@@ -1,17 +1,19 @@
 {
-  "appId": "com.jurir.app",
-  "appName": "Jurir",
-  "webDir": "dist",
-  "server": {
-    "androidScheme": "https",
-    "hostname": "jurir.app",
-    "allowNavigation": ["jusaii-app-daqr.onrender.com"]
-  },
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 1500,
-      "backgroundColor": "#0a0a0f",
-      "showSpinner": false
-    }
-  }
+	"appId": "com.jurir.app",
+	"appName": "Jurir",
+	"webDir": "dist",
+	"server": {
+		"androidScheme": "https",
+		"hostname": "jurir.app",
+		"allowNavigation": [
+			"jusaii-app-daqr.onrender.com"
+		]
+	},
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 1500,
+			"backgroundColor": "#0a0a0f",
+			"showSpinner": false
+		}
+	}
 }
