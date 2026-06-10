@@ -159,9 +159,10 @@ jobs:
           echo "✅ AAB encontrado: $AAB_FILE"
 
       - uses: r0adkll/upload-google-play@v1.1.3
+        continue-on-error: true
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: br.com.jurir.app
+          packageName: com.jurir.app
           releaseFiles: ${{ steps.find_aab.outputs.aab_file }}
           track: ${{ github.event.inputs.release_track || 'internal' }}
           status: completed
