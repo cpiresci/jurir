@@ -10,7 +10,7 @@ export default function HomePage() {
       <Hero />
       <div id="analise"><AnalysisPanel /></div>
       <div id="agentes"><AgentsSection /></div>
-      <div id="precos"><Pricing /></div>
+      <Pricing />
       <Footer />
     </>
   );
