@@ -108,6 +108,7 @@ export default function Navbar() {
         </div>
 
         {authToken && <NLink href="/historico" isRouter>Histórico</NLink>}
+          {authToken && userData?.is_admin && <NLink href="/admin" isRouter style={{ color: 'var(--cr3)' }}>Admin</NLink>}
       </div>
 
       {/* Right */}
