@@ -40,12 +40,24 @@ export default function AdminPage() {
   async function loadAll() {
     setLoading(true); setErr('');
     try {
+      // Wake-up: acorda o backend antes dos fetches reais
+      try { await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(8000) }); } catch (_) {}
       const [s, u] = await Promise.all([
         adminFetch('/api/admin/stats', authToken),
         adminFetch('/api/admin/users', authToken),
       ]);
       setStats(s); setUsers(u);
-    } catch (e) { setErr(e.message); }
+    } catch (e) {
+      // Retry único após 4s (cold start pode demorar até 50s no free tier)
+      try {
+        await new Promise(r => setTimeout(r, 4000));
+        const [s, u] = await Promise.all([
+          adminFetch('/api/admin/stats', authToken),
+          adminFetch('/api/admin/users', authToken),
+        ]);
+        setStats(s); setUsers(u);
+      } catch (e2) { setErr(e2.message); }
+    }
     finally { setLoading(false); }
   }
 
