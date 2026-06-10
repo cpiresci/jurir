@@ -144,7 +144,7 @@ export default function Navbar() {
         <div className="mobile-menu">
           <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("analise")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Análise</a>
           <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("agentes")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Agentes</a>
-          <a href="/#precos"  style={mobileLink} onClick={() => setMobileOpen(false)}>Preços</a>
+          <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("precos")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Preços</a>
           {FERRAMENTAS.map(({ to, label, icon }) => (
             <Link key={to} to={to} style={{ ...mobileLink, display: 'flex', gap: 8, alignItems: 'center' }} onClick={() => setMobileOpen(false)}>
               <span>{icon}</span>{label}
