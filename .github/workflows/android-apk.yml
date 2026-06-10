@@ -9,6 +9,7 @@ on:
       - 'capacitor.config.json'
       - 'package.json'
       - 'android/**'
+      - '.github/workflows/android-apk.yml'
   workflow_dispatch:
     inputs:
       release_track:
