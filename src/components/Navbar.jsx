@@ -73,9 +73,9 @@ export default function Navbar() {
 
       {/* Center links */}
       <div className="nav-links desktop-only">
-        <NLink href="/#analise">Análise</NLink>
-        <NLink href="/#agentes">Agentes</NLink>
-        <NLink href="/#precos">Preços</NLink>
+        <NLink href="/#analise" onClick={() => setTimeout(() => document.getElementById("analise")?.scrollIntoView({ behavior: "smooth" }), 100)}>Análise</NLink>
+        <NLink href="/#agentes" onClick={() => setTimeout(() => document.getElementById("agentes")?.scrollIntoView({ behavior: "smooth" }), 100)}>Agentes</NLink>
+        <NLink href="/#precos" onClick={() => setTimeout(() => document.getElementById("precos")?.scrollIntoView({ behavior: "smooth" }), 100)}>Preços</NLink>
 
         {/* Tools dropdown */}
         <div ref={toolsRef} style={{ position: 'relative' }}>
@@ -142,8 +142,8 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="mobile-menu">
-          <a href="/#analise" style={mobileLink} onClick={() => setMobileOpen(false)}>Análise</a>
-          <a href="/#agentes" style={mobileLink} onClick={() => setMobileOpen(false)}>Agentes</a>
+          <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("analise")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Análise</a>
+          <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("agentes")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Agentes</a>
           <a href="/#precos"  style={mobileLink} onClick={() => setMobileOpen(false)}>Preços</a>
           {FERRAMENTAS.map(({ to, label, icon }) => (
             <Link key={to} to={to} style={{ ...mobileLink, display: 'flex', gap: 8, alignItems: 'center' }} onClick={() => setMobileOpen(false)}>
