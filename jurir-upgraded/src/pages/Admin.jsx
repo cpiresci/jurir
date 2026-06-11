@@ -34,13 +34,19 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!authToken) { navigate('/'); return; }
-    // Busca /api/auth/me para garantir is_admin atualizado
     apiFetch('/api/auth/me', {}, authToken)
       .then(me => {
-        if (!me?.is_admin) { navigate('/'); return; }
+        if (!me?.is_admin) {
+          setErr('Acesso negado. Apenas administradores.');
+          setLoading(false);
+          return;
+        }
         loadAll();
       })
-      .catch(() => navigate('/'));
+      .catch(e => {
+        setErr(`Erro ao verificar permissões: ${e.message}`);
+        setLoading(false);
+      });
   }, [authToken]);
 
   async function loadAll() {
