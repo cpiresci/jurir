@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, BarChart3, Zap, RefreshCw, Search, ChevronDown, ChevronUp, Plus, Minus, Settings } from 'lucide-react';
 import { useStore } from '../store';
+import { apiFetch } from '../lib/api';
 import { API_BASE } from '../lib/constants';
 
 const INTERNAL_KEY = import.meta.env.VITE_JURIR_INTERNAL_KEY || '';
@@ -32,8 +33,14 @@ export default function AdminPage() {
   const [creditInput, setCreditInput] = useState('');
 
   useEffect(() => {
-    if (!authToken || !userData?.is_admin) { navigate('/'); return; }
-    loadAll();
+    if (!authToken) { navigate('/'); return; }
+    // Busca /api/auth/me para garantir is_admin atualizado
+    apiFetch('/api/auth/me', {}, authToken)
+      .then(me => {
+        if (!me?.is_admin) { navigate('/'); return; }
+        loadAll();
+      })
+      .catch(() => navigate('/'));
   }, [authToken]);
 
   async function loadAll() {
