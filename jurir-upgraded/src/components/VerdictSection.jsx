@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, Brain, Zap } from 'lucide-react';
+import { Scale, Shield, Download, CheckCircle2, Loader2, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
 
@@ -24,8 +24,7 @@ const SCORE_LABEL = (s) =>
   s >= 80 ? 'Fortemente Favorável' :
   s >= 65 ? 'Favorável' :
   s >= 50 ? 'Parcialmente Favorável' :
-  s >= 35 ? 'Risco Moderado' :
-  'Alto Risco';
+  s >= 35 ? 'Risco Moderado' : 'Alto Risco';
 
 const ScoreGauge = memo(function ScoreGauge({ score }) {
   const angle = (score / 100) * 360;
@@ -96,3 +95,87 @@ const DevilCard = memo(function DevilCard() {
     </div>
   );
 });
+
+const JudgeCard = memo(function JudgeCard() {
+  const { verdictText, judgeDone, jurirScore, scoreDims, vetoActive, analysisId, authToken, running } = useJudgeState();
+  const judgeRunning = running && !judgeDone;
+  if (!judgeRunning && !judgeDone) return null;
+
+  const handlePdf = async () => {
+    if (!analysisId || !authToken) return;
+    try { await downloadPdf(analysisId, authToken); }
+    catch (e) { console.error('PDF error:', e); }
+  };
+
+  return (
+    <div style={{
+      background: 'var(--surface)', border: '1px solid var(--br)',
+      borderRadius: 'var(--r-lg)', padding: '24px 28px', marginTop: 8,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+        <Scale size={15} style={{ color: 'var(--r3)' }}/>
+        <span style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--r3)', letterSpacing: '.12em', fontFamily: 'var(--f-mono)' }}>
+          VEREDITO DO JUIZ IA
+        </span>
+        {judgeRunning && <Loader2 size={13} className="spin" style={{ color: 'var(--r3)', marginLeft: 'auto' }}/>}
+        {judgeDone && <CheckCircle2 size={12} style={{ color: 'var(--r3)', marginLeft: 'auto', opacity: 0.7 }}/>}
+      </div>
+      {vetoActive && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+          borderRadius: 'var(--r-sm)', padding: '10px 14px', marginBottom: 16,
+        }}>
+          <AlertTriangle size={13} style={{ color: 'var(--r3)', flexShrink: 0 }}/>
+          <span style={{ fontSize: '.78rem', color: 'var(--r3)', fontFamily: 'var(--f-mono)' }}>
+            VETO ATIVO — caso com risco jurídico crítico identificado
+          </span>
+        </div>
+      )}
+      {judgeRunning && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+          <div className="skeleton" style={{ height: 11, width: '95%' }}/>
+          <div className="skeleton" style={{ height: 11, width: '88%' }}/>
+          <div className="skeleton" style={{ height: 11, width: '92%' }}/>
+          <div className="skeleton" style={{ height: 11, width: '70%' }}/>
+          <div className="skeleton" style={{ height: 11, width: '80%' }}/>
+        </div>
+      )}
+      {judgeDone && verdictText && (
+        <p style={{ fontSize: '.88rem', color: 'var(--n2)', lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: '0 0 20px' }}>
+          {verdictText}
+        </p>
+      )}
+      {judgeDone && jurirScore != null && (
+        <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--bn2)' }}>
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+            <ScoreGauge score={jurirScore}/>
+            {scoreDims && Object.keys(scoreDims).length > 0 && (
+              <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {Object.entries(scoreDims).map(([label, value]) => (
+                  <DimBar key={label} label={label} value={value}/>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {judgeDone && analysisId && authToken && (
+        <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--bn2)', display: 'flex', justifyContent: 'flex-end' }}>
+          <button className="btn btn-ghost btn-sm" onClick={handlePdf} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Download size={13}/> Baixar PDF
+          </button>
+        </div>
+      )}
+    </div>
+  );
+});
+
+export default function VerdictSection() {
+  return (
+    <div style={{ marginTop: 24 }}>
+      <DevilCard/>
+      <JudgeCard/>
+    </div>
+  );
+}
