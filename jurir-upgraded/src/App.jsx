@@ -12,6 +12,7 @@ import SimuladorPage from './pages/Simulador';
 import MonitoramentoPage from './pages/Monitoramento';
 import VerificarPage from './pages/Verificar';
 import CheckoutPage from './pages/Checkout';
+import AdminPage from './pages/Admin';
 import { useStore } from './store';
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/monitoramento" element={<MonitoramentoPage />} />
             <Route path="/verificar"     element={<VerificarPage />} />
             <Route path="/premium"       element={<CheckoutPage />} />
+            <Route path="/admin"         element={<AdminPage />} />
           </Routes>
         </main>
       </div>
