@@ -38,6 +38,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_JURIR_INTERNAL_KEY: ${{ secrets.JURIR_INTERNAL_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
