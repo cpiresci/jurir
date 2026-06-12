@@ -106,9 +106,9 @@ function DashboardTab({ api }) {
         <Stat label="Usuários" value={stats?.total_users} accent={T.cobalt} />
         <Stat label="Análises Total" value={stats?.total_analyses} accent={T.cobaltDim} />
         <Stat label="Análises Hoje" value={stats?.analyses_today} accent={T.gold} />
-        <Stat label="Análises Total" value={stats?.total_analyses} accent={T.gold} />
         <Stat label="SSE Ativos" value={stats?.sse_active} accent={T.gold} />
         <Stat label="Jobs Ativos" value={stats?.active_jobs} accent={T.success} />
+        <Stat label="Max Jobs" value={stats?.max_concurrent_jobs} accent={T.textMuted} />
       </div>
       {loading && <div style={{ color: T.textMuted }}>Carregando…</div>}
     </div>
