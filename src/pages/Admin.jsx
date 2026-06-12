@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const API = "https://jusaii-app.onrender.com";
+const API = "https://jusaii-app-daqr.onrender.com";
 
 const T = {
   bg: "#F8F7F4", surface: "#FFFFFF", surfaceAlt: "#F2F0EB",
