@@ -42,25 +42,25 @@ export default function CheckoutPage() {
         <h1 className="t-display" style={{ fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 700, marginBottom: 12 }}>
           Ativar Acesso Premium
         </h1>
-        <p style={{ color: 'var(--p4)', fontSize: '.95rem', lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--n4)', fontSize: '.95rem', lineHeight: 1.6 }}>
           Acesso completo a todos os recursos da plataforma jurídica mais avançada do Brasil.
         </p>
       </div>
 
-      <div style={{ background: 'linear-gradient(145deg, var(--surface), var(--ridge))',
-        border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-xl)', padding: 36,
+      <div style={{ background: 'linear-gradient(145deg, var(--surface), var(--lift))',
+        border: '1px solid var(--br)', borderRadius: 'var(--r-xl)', padding: 36,
         boxShadow: 'var(--shadow-crimson)', position: 'relative', overflow: 'hidden', marginBottom: 20 }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-          background: 'linear-gradient(90deg, transparent, var(--au5), transparent)' }}/>
+          background: 'linear-gradient(90deg, transparent, var(--g3), transparent)' }}/>
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em', marginBottom: 8 }}>PLANO PREMIUM</div>
-          <div className="t-display" style={{ fontSize: '3rem', fontWeight: 700, color: 'var(--p0)', lineHeight: 1 }}>Sob consulta</div>
-          <div style={{ fontSize: '.82rem', color: 'var(--p4)', marginTop: 6 }}>acesso completo · sem limite de análises</div>
+          <div style={{ fontSize: '.72rem', color: 'var(--g4)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em', marginBottom: 8 }}>PLANO PREMIUM</div>
+          <div className="t-display" style={{ fontSize: '3rem', fontWeight: 700, color: 'var(--n0)', lineHeight: 1 }}>Sob consulta</div>
+          <div style={{ fontSize: '.82rem', color: 'var(--n4)', marginTop: 6 }}>acesso completo · sem limite de análises</div>
         </div>
         <ul style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px', marginBottom: 28 }}>
           {FEATURES.map((f, i) => (
-            <li key={i} style={{ display: 'flex', gap: 8, fontSize: '.83rem', color: 'var(--p2)', alignItems: 'flex-start' }}>
-              <Check size={13} style={{ color: 'var(--au6)', flexShrink: 0, marginTop: 2 }}/> {f}
+            <li key={i} style={{ display: 'flex', gap: 8, fontSize: '.83rem', color: 'var(--n2)', alignItems: 'flex-start' }}>
+              <Check size={13} style={{ color: 'var(--g4)', flexShrink: 0, marginTop: 2 }}/> {f}
             </li>
           ))}
         </ul>
@@ -70,7 +70,7 @@ export default function CheckoutPage() {
         </button>
       </div>
 
-      <p style={{ textAlign: 'center', fontSize: '.75rem', color: 'var(--p5)', lineHeight: 1.6 }}>
+      <p style={{ textAlign: 'center', fontSize: '.75rem', color: 'var(--n5)', lineHeight: 1.6 }}>
         Pagamento seguro processado pelo Stripe. Cancele a qualquer momento.
       </p>
     </div>

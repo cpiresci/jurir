@@ -1,0 +1,169 @@
+name: Build Android APK — Jurir
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - 'android/**'
+      - '.github/workflows/android-apk.yml'
+  workflow_dispatch:
+    inputs:
+      release_track:
+        description: 'Play Store track'
+        required: true
+        default: 'internal'
+        type: choice
+        options: [internal, alpha, beta, production]
+
+env:
+  JAVA_VERSION: '17'
+  NODE_VERSION: '22'
+
+jobs:
+  build-web:
+    name: Build React
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: dist/
+          retention-days: 1
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: build-web
+    outputs:
+      version_code: ${{ steps.versioning.outputs.version_code }}
+      version_name: ${{ steps.versioning.outputs.version_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+      - run: npm ci
+
+      - name: Set version from package.json + run number
+        id: versioning
+        run: |
+          VERSION_NAME=$(node -p "require('./package.json').version")
+          VERSION_CODE=${{ github.run_number }}
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
+          # Patch build.gradle dinamicamente
+          sed -i "s/versionCode [0-9]*/versionCode $VERSION_CODE/" android/app/build.gradle
+          sed -i "s/versionName \".*\"/versionName \"$VERSION_NAME\"/" android/app/build.gradle
+          echo "✅ versionCode=$VERSION_CODE  versionName=$VERSION_NAME"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist/
+      - run: npm install -g @capacitor/cli
+      - run: npx cap sync android
+      - uses: android-actions/setup-android@v3
+        env:
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      - run: sdkmanager "build-tools;34.0.0" "platforms;android-36"
+
+      - name: Decode Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 --decode > android/app/jurir-release-key.jks
+
+      - run: chmod +x android/gradlew
+
+      - name: Build Release APK
+        working-directory: android
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/jurir-release-key.jks \
+            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --no-daemon
+
+      - name: Build Release AAB
+        working-directory: android
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/jurir-release-key.jks \
+            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --no-daemon
+
+      - name: Rename artifacts with version
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk \
+             android/app/build/outputs/apk/release/jurir-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab \
+             android/app/build/outputs/bundle/release/jurir-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.aab
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jurir-release-apk-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}
+          path: android/app/build/outputs/apk/release/jurir-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.apk
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jurir-release-aab-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}
+          path: android/app/build/outputs/bundle/release/jurir-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.aab
+          retention-days: 30
+
+  deploy-play-store:
+    name: Deploy Play Store
+    runs-on: ubuntu-latest
+    needs: build-android
+    continue-on-error: true
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: jurir-release-aab-v${{ needs.build-android.outputs.version_name }}-build${{ needs.build-android.outputs.version_code }}
+          path: .
+
+      - name: Find AAB file
+        id: find_aab
+        run: |
+          AAB_FILE=$(find . -name "*.aab" | head -1)
+          echo "aab_file=$AAB_FILE" >> $GITHUB_OUTPUT
+          echo "✅ AAB encontrado: $AAB_FILE"
+
+      - uses: r0adkll/upload-google-play@v1.1.3
+        continue-on-error: true
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.jurir.app
+          releaseFiles: ${{ steps.find_aab.outputs.aab_file }}
+          track: ${{ github.event.inputs.release_track || 'internal' }}
+          status: completed
+          whatsNewDirectory: whatsnew/
