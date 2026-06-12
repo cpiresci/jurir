@@ -257,7 +257,7 @@ export default function AdminPage() {
   function handleLogin(t, u) { setToken(t); setUser(u); localStorage.setItem("jurir_admin_token", t); }
   function handleLogout() { setToken(""); setUser(null); localStorage.removeItem("jurir_admin_token"); }
 
-  useEffect(() => { if (token && !user) { api("/api/auth/me").then(setUser).catch(handleLogout); } }, [token]);
+  useEffect(() => { if (token && !user) { api("/api/auth/me").then(setUser).catch(() => {}); } }, [token]);
 
   if (!token) return <Login onLogin={handleLogin} />;
 
