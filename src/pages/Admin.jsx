@@ -1,196 +1,289 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Users, BarChart3, Zap, RefreshCw, Search, ChevronDown, ChevronUp, Plus, Minus, Settings } from 'lucide-react';
-import { useStore } from '../store';
-import { API_BASE } from '../lib/constants';
+import { useState, useEffect, useCallback } from "react";
 
-const INTERNAL_KEY = import.meta.env.VITE_JURIR_INTERNAL_KEY || '';
+const API = "https://jusaii-app.onrender.com";
 
-async function adminFetch(path, token, opts = {}) {
-  const r = await fetch(`${API_BASE}${path}`, {
-    ...opts,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'X-Internal-Key': INTERNAL_KEY,
-      ...opts.headers,
-    },
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
+const T = {
+  bg: "#F8F7F4", surface: "#FFFFFF", surfaceAlt: "#F2F0EB",
+  border: "#E2DDD6", cobalt: "#0047AB", cobaltLight: "#E8EEFA",
+  cobaltDim: "#3369C4", gold: "#C9A84C", text: "#1A1814",
+  textMuted: "#6B6560", danger: "#C0392B", dangerLight: "#FDECEA",
+  success: "#1A7A4A", successLight: "#E8F5EE", warning: "#C47A00",
+  warningLight: "#FEF6E4",
+};
+
+function useApi(token) {
+  return useCallback(async (path, opts = {}) => {
+    const res = await fetch(`${API}${path}`, {
+      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      ...opts,
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    return res.json();
+  }, [token]);
 }
 
-export default function AdminPage() {
-  const { authToken, userData } = useStore();
-  const navigate = useNavigate();
-  const [stats, setStats] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState('');
-  const [expandedUser, setExpandedUser] = useState(null);
-  const [creditInput, setCreditInput] = useState('');
-  const [creditAction, setCreditAction] = useState(null);
+function Badge({ color = T.cobalt, bg = T.cobaltLight, children }) {
+  return <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color, background: bg, fontFamily: "monospace" }}>{children}</span>;
+}
 
-  useEffect(() => {
-    if (!authToken || !userData?.is_admin) { navigate('/'); return; }
-    loadAll();
-  }, [authToken]);
-
-  async function loadAll() {
-    setLoading(true); setErr('');
-    try {
-      // Wake-up: acorda o backend antes dos fetches reais
-      try { await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(8000) }); } catch (_) {}
-      const [s, u] = await Promise.all([
-        adminFetch('/api/admin/stats', authToken),
-        adminFetch('/api/admin/users', authToken),
-      ]);
-      setStats(s); setUsers(u);
-    } catch (e) {
-      // Retry único após 4s (cold start pode demorar até 50s no free tier)
-      try {
-        await new Promise(r => setTimeout(r, 4000));
-        const [s, u] = await Promise.all([
-          adminFetch('/api/admin/stats', authToken),
-          adminFetch('/api/admin/users', authToken),
-        ]);
-        setStats(s); setUsers(u);
-      } catch (e2) { setErr(e2.message); }
-    }
-    finally { setLoading(false); }
-  }
-
-  async function handleCredits(userId, action) {
-    const amount = parseInt(creditInput);
-    if (!amount || amount < 1) return;
-    try {
-      await adminFetch(`/api/admin/${action}-credits`, authToken, {
-        method: 'POST',
-        body: JSON.stringify({ user_id: userId, amount }),
-      });
-      setCreditInput(''); setCreditAction(null);
-      loadAll();
-    } catch (e) { setErr(e.message); }
-  }
-
-  const filtered = users.filter(u =>
-    u.email.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (loading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)' }}>
-      <RefreshCw size={24} className="spin" style={{ color: 'var(--co7)' }} />
-    </div>
-  );
-
-  if (err) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)', flexDirection: 'column', gap: 12 }}>
-      <p style={{ color: 'var(--cr3)' }}>{err}</p>
-      <button className="btn btn-cobalt" onClick={loadAll}>Tentar novamente</button>
-    </div>
-  );
-
+function Stat({ label, value, accent = T.cobalt }) {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-main)', padding: '80px 16px 40px' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "20px 24px", borderTop: `3px solid ${accent}` }}>
+      <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: T.textMuted, marginBottom: 8 }}>{label}</div>
+      <div style={{ fontSize: 28, fontWeight: 700, fontFamily: "monospace", color: T.text }}>{value ?? "—"}</div>
+    </div>
+  );
+}
 
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
-          <div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)', letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 6 }}>JURIR · ADMIN</div>
-            <h1 style={{ fontFamily: 'var(--f-display)', fontSize: '1.8rem', fontWeight: 400, color: 'var(--t0)', margin: 0 }}>Painel Administrativo</h1>
-          </div>
-          <button onClick={loadAll} style={{ background: 'none', border: '1px solid var(--b-main)', borderRadius: 'var(--r-sm)', padding: '8px 12px', cursor: 'pointer', color: 'var(--t3)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <RefreshCw size={14} /> Atualizar
-          </button>
+function Btn({ onClick, children, variant = "primary", small, disabled }) {
+  const s = { primary: { background: T.cobalt, color: "#fff", border: `1px solid ${T.cobalt}` }, secondary: { background: T.surface, color: T.cobalt, border: `1px solid ${T.cobalt}` }, danger: { background: T.danger, color: "#fff", border: `1px solid ${T.danger}` }, ghost: { background: "transparent", color: T.textMuted, border: `1px solid ${T.border}` } };
+  return <button onClick={onClick} disabled={disabled} style={{ ...s[variant], padding: small ? "4px 12px" : "8px 18px", borderRadius: 6, fontSize: small ? 12 : 13, fontWeight: 600, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1 }}>{children}</button>;
+}
+
+function Table({ columns, data, loading, empty = "Nenhum resultado." }) {
+  return (
+    <div style={{ overflowX: "auto", border: `1px solid ${T.border}`, borderRadius: 8 }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead><tr style={{ background: T.surfaceAlt }}>{columns.map(c => <th key={c.key} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: T.textMuted, borderBottom: `1px solid ${T.border}`, whiteSpace: "nowrap" }}>{c.label}</th>)}</tr></thead>
+        <tbody>
+          {loading ? <tr><td colSpan={columns.length} style={{ padding: 32, textAlign: "center", color: T.textMuted }}>Carregando…</td></tr>
+          : data.length === 0 ? <tr><td colSpan={columns.length} style={{ padding: 32, textAlign: "center", color: T.textMuted }}>{empty}</td></tr>
+          : data.map((row, i) => <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.surface : T.bg }}>{columns.map(c => <td key={c.key} style={{ padding: "10px 16px", fontSize: 13 }}>{c.render ? c.render(row[c.key], row) : row[c.key] ?? "—"}</td>)}</tr>)}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+const TABS = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "users", label: "Usuários" },
+  { id: "analyses", label: "Análises" },
+  { id: "financial", label: "Financeiro" },
+  { id: "system", label: "Sistema" },
+];
+
+function Login({ onLogin }) {
+  const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
+  async function submit() {
+    setLoading(true); setError("");
+    try {
+      const res = await fetch(`${API}/api/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Falha");
+      if (!data.user?.is_admin) throw new Error("Acesso restrito a administradores");
+      onLogin(data.token, data.user);
+    } catch (e) { setError(e.message); } finally { setLoading(false); }
+  }
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: T.bg, fontFamily: "system-ui, sans-serif" }}>
+      <div style={{ width: 380, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 40, borderTop: `4px solid ${T.cobalt}` }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: 32, fontWeight: 300, letterSpacing: "0.15em", color: T.cobalt }}>JURIR</div>
+          <div style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: T.textMuted, marginTop: 4 }}>Painel Administrativo</div>
         </div>
+        {error && <div style={{ background: T.dangerLight, border: `1px solid ${T.danger}`, borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: T.danger }}>{error}</div>}
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: T.textMuted, marginBottom: 6 }}>E-mail</label>
+          <input value={email} onChange={e => setEmail(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 14, background: T.bg, color: T.text, outline: "none", boxSizing: "border-box" }} />
+        </div>
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: T.textMuted, marginBottom: 6 }}>Senha</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && submit()} style={{ width: "100%", padding: "10px 12px", border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 14, background: T.bg, color: T.text, outline: "none", boxSizing: "border-box" }} />
+        </div>
+        <Btn onClick={submit} disabled={loading}>{loading ? "Entrando…" : "Entrar"}</Btn>
+      </div>
+    </div>
+  );
+}
 
-        {/* Stats cards */}
-        {stats && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 32 }}>
-            {[
-              { label: 'Usuários', value: stats.total_users, icon: <Users size={16} /> },
-              { label: 'Análises', value: stats.total_analyses, icon: <BarChart3 size={16} /> },
-              { label: 'Hoje', value: stats.analyses_today, icon: <BarChart3 size={16} /> },
-              { label: 'Jobs Ativos', value: stats.active_jobs, icon: <Zap size={16} /> },
-              { label: 'SSE Conexões', value: stats.sse_active, icon: <Zap size={16} /> },
-            ].map(({ label, value, icon }) => (
-              <div key={label} style={{ background: 'var(--bg-card)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-md)', padding: '16px 20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--t4)', marginBottom: 8, fontFamily: 'var(--f-mono)', fontSize: '.65rem', letterSpacing: '.1em', textTransform: 'uppercase' }}>
-                  {icon} {label}
+function DashboardTab({ api }) {
+  const [stats, setStats] = useState(null); const [loading, setLoading] = useState(true);
+  useEffect(() => { api("/api/admin/stats").then(setStats).catch(() => {}).finally(() => setLoading(false)); }, [api]);
+  return (
+    <div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 16, marginBottom: 24 }}>
+        <Stat label="Usuários" value={stats?.total_users} accent={T.cobalt} />
+        <Stat label="Ativos 30d" value={stats?.active_users_30d} accent={T.cobaltDim} />
+        <Stat label="Análises Hoje" value={stats?.analyses_today} accent={T.gold} />
+        <Stat label="Análises Total" value={stats?.total_analyses} accent={T.gold} />
+        <Stat label="Receita Mês" value={stats?.revenue_month ? `R$${stats.revenue_month}` : null} accent={T.success} />
+        <Stat label="Assinantes Pro" value={stats?.pro_subscribers} accent={T.success} />
+      </div>
+      {loading && <div style={{ color: T.textMuted }}>Carregando…</div>}
+    </div>
+  );
+}
+
+function UsersTab({ api }) {
+  const [users, setUsers] = useState([]); const [loading, setLoading] = useState(true); const [search, setSearch] = useState("");
+  const load = useCallback(() => { setLoading(true); api("/api/admin/users").then(d => setUsers(d.users || d)).catch(() => setUsers([])).finally(() => setLoading(false)); }, [api]);
+  useEffect(() => { load(); }, [load]);
+  const filtered = users.filter(u => !search || u.email?.toLowerCase().includes(search.toLowerCase()) || u.name?.toLowerCase().includes(search.toLowerCase()));
+  async function toggleBan(u) { try { await api(`/api/admin/users/${u.id}/ban`, { method: "POST", body: JSON.stringify({ banned: !u.is_banned }) }); load(); } catch(e) { alert(e.message); } }
+  async function adjustCredits(u) { const v = prompt(`Créditos atuais: ${u.credits}\nNovo valor:`); if (!v) return; try { await api(`/api/admin/users/${u.id}/credits`, { method: "POST", body: JSON.stringify({ credits: parseInt(v) }) }); load(); } catch(e) { alert(e.message); } }
+  return (
+    <div>
+      <div style={{ marginBottom: 16 }}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por e-mail ou nome…" style={{ padding: "7px 12px", border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 13, background: T.bg, color: T.text, width: 280 }} />
+      </div>
+      <Table loading={loading} data={filtered} empty="Nenhum usuário."
+        columns={[
+          { key: "id", label: "ID", render: v => <span style={{ fontFamily: "monospace", fontSize: 11, color: T.textMuted }}>#{v}</span> },
+          { key: "name", label: "Nome" },
+          { key: "email", label: "E-mail" },
+          { key: "plan", label: "Plano", render: v => <Badge color={v === "pro" ? T.gold : T.cobalt} bg={v === "pro" ? T.warningLight : T.cobaltLight}>{v || "free"}</Badge> },
+          { key: "credits", label: "Créditos", render: v => <span style={{ fontFamily: "monospace" }}>{v ?? 0}</span> },
+          { key: "is_banned", label: "Status", render: v => v ? <Badge color={T.danger} bg={T.dangerLight}>Banido</Badge> : <Badge color={T.success} bg={T.successLight}>Ativo</Badge> },
+          { key: "created_at", label: "Cadastro", render: v => v ? new Date(v).toLocaleDateString("pt-BR") : "—" },
+          { key: "_a", label: "Ações", render: (_, row) => <div style={{ display: "flex", gap: 6 }}><Btn small variant={row.is_banned ? "secondary" : "danger"} onClick={() => toggleBan(row)}>{row.is_banned ? "Desbanir" : "Banir"}</Btn><Btn small variant="ghost" onClick={() => adjustCredits(row)}>Créditos</Btn></div> },
+        ]}
+      />
+    </div>
+  );
+}
+
+function AnalysesTab({ api }) {
+  const [analyses, setAnalyses] = useState([]); const [loading, setLoading] = useState(true); const [filter, setFilter] = useState("all");
+  useEffect(() => { setLoading(true); api(`/api/admin/analyses?status=${filter}`).then(d => setAnalyses(d.analyses || d)).catch(() => setAnalyses([])).finally(() => setLoading(false)); }, [api, filter]);
+  async function del(id) { if (!confirm("Deletar?")) return; try { await api(`/api/admin/analyses/${id}`, { method: "DELETE" }); setAnalyses(p => p.filter(a => a.id !== id)); } catch(e) { alert(e.message); } }
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+        {["all","completed","failed","processing"].map(f => <Btn key={f} small variant={filter===f?"primary":"ghost"} onClick={() => setFilter(f)}>{f==="all"?"Todas":f==="completed"?"Concluídas":f==="failed"?"Falhas":"Em andamento"}</Btn>)}
+      </div>
+      <Table loading={loading} data={analyses} empty="Nenhuma análise."
+        columns={[
+          { key: "id", label: "ID", render: v => <span style={{ fontFamily: "monospace", fontSize: 11 }}>#{v}</span> },
+          { key: "user_email", label: "Usuário" },
+          { key: "caso_nome", label: "Caso" },
+          { key: "status", label: "Status", render: v => { const m={completed:[T.success,T.successLight],failed:[T.danger,T.dangerLight],processing:[T.warning,T.warningLight]}; const [c,bg]=m[v]||[T.textMuted,T.surfaceAlt]; return <Badge color={c} bg={bg}>{v||"—"}</Badge>; } },
+          { key: "jurir_score", label: "Score", render: v => v ? <span style={{ fontFamily: "monospace", color: T.cobalt }}>{v}</span> : "—" },
+          { key: "created_at", label: "Data", render: v => v ? new Date(v).toLocaleDateString("pt-BR") : "—" },
+          { key: "_d", label: "", render: (_, row) => <Btn small variant="danger" onClick={() => del(row.id)}>Deletar</Btn> },
+        ]}
+      />
+    </div>
+  );
+}
+
+function FinancialTab({ api }) {
+  const [data, setData] = useState(null); const [payments, setPayments] = useState([]); const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    Promise.all([api("/api/admin/financial/summary").catch(()=>null), api("/api/admin/financial/payments").catch(()=>[])])
+      .then(([s,p]) => { setData(s); setPayments(p.payments||p||[]); }).finally(() => setLoading(false));
+  }, [api]);
+  return (
+    <div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 16, marginBottom: 24 }}>
+        <Stat label="Receita Hoje" value={data?.revenue_today ? `R$${data.revenue_today}` : null} accent={T.success} />
+        <Stat label="Receita Mês" value={data?.revenue_month ? `R$${data.revenue_month}` : null} accent={T.success} />
+        <Stat label="Receita Total" value={data?.revenue_total ? `R$${data.revenue_total}` : null} accent={T.gold} />
+        <Stat label="Assinantes Pro" value={data?.pro_count} accent={T.cobalt} />
+        <Stat label="MRR" value={data?.mrr ? `R$${data.mrr}` : null} accent={T.cobalt} />
+        <Stat label="Churn 30d" value={data?.churn_rate ? `${data.churn_rate}%` : null} accent={T.danger} />
+      </div>
+      {loading && <div style={{ color: T.textMuted }}>Carregando…</div>}
+      <Table loading={loading} data={payments} empty="Nenhum pagamento."
+        columns={[
+          { key: "stripe_payment_id", label: "ID Stripe", render: v => <span style={{ fontFamily: "monospace", fontSize: 11 }}>{v||"—"}</span> },
+          { key: "user_email", label: "Usuário" },
+          { key: "amount", label: "Valor", render: v => v ? <span style={{ fontFamily: "monospace" }}>R${(v/100).toFixed(2)}</span> : "—" },
+          { key: "plan", label: "Plano", render: v => <Badge>{v||"—"}</Badge> },
+          { key: "status", label: "Status", render: v => { const m={succeeded:[T.success,T.successLight],failed:[T.danger,T.dangerLight],pending:[T.warning,T.warningLight]}; const [c,bg]=m[v]||[T.textMuted,T.surfaceAlt]; return <Badge color={c} bg={bg}>{v||"—"}</Badge>; } },
+          { key: "created_at", label: "Data", render: v => v ? new Date(v).toLocaleString("pt-BR") : "—" },
+        ]}
+      />
+    </div>
+  );
+}
+
+function SystemTab({ api }) {
+  const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
+  const load = useCallback(() => {
+    setLoading(true);
+    Promise.all([api("/api/health").catch(()=>null), api("/api/admin/llm/status").catch(()=>null), api("/api/admin/logs?limit=50").catch(()=>[])])
+      .then(([h,l,lg]) => { setHealth(h); setLlm(l); setLogs(lg.logs||lg||[]); }).finally(() => setLoading(false));
+  }, [api]);
+  useEffect(() => { load(); }, [load]);
+  async function resetCB(name) { try { await api(`/api/admin/llm/${name}/reset`, { method: "POST" }); load(); } catch(e) { alert(e.message); } }
+  const providers = llm ? Object.entries(llm) : [];
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}><Btn small variant="secondary" onClick={load}>↺ Atualizar</Btn></div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `4px solid ${health?.status==="ok"?T.success:T.danger}` }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.textMuted }}>Backend</div>
+          <div style={{ marginTop: 8 }}><Badge color={health?.status==="ok"?T.success:T.danger} bg={health?.status==="ok"?T.successLight:T.dangerLight}>{health?.status||(loading?"…":"offline")}</Badge></div>
+          {health?.uptime && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Uptime: {health.uptime}</div>}
+        </div>
+      </div>
+      {providers.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted, marginBottom: 12 }}>Circuit Breakers LLM</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
+            {providers.map(([name, info]) => (
+              <div key={name} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <span style={{ fontWeight: 700, fontSize: 13 }}>{name}</span>
+                  <Badge color={info.state==="closed"?T.success:info.state==="open"?T.danger:T.warning} bg={info.state==="closed"?T.successLight:info.state==="open"?T.dangerLight:T.warningLight}>{info.state||"—"}</Badge>
                 </div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 600, color: 'var(--t0)', fontFamily: 'var(--f-display)' }}>{value ?? '—'}</div>
+                <div style={{ fontSize: 12, color: T.textMuted }}>Falhas: {info.failures??0}</div>
+                {info.state!=="closed" && <div style={{ marginTop: 10 }}><Btn small variant="secondary" onClick={() => resetCB(name)}>Resetar</Btn></div>}
               </div>
             ))}
           </div>
-        )}
-
-        {/* Providers */}
-        {stats?.providers && (
-          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-md)', padding: '16px 20px', marginBottom: 32 }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)', letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 12 }}>Providers Ativos</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {stats.providers.map(p => (
-                <span key={p} style={{ background: 'var(--bg-card2)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-sm)', padding: '4px 10px', fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)' }}>{p}</span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Users table */}
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-md)', overflow: 'hidden' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--b-main)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)', letterSpacing: '.1em', textTransform: 'uppercase' }}>
-              Usuários ({filtered.length})
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-main)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-sm)', padding: '6px 12px' }}>
-              <Search size={13} style={{ color: 'var(--t4)' }} />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar email..." style={{ background: 'none', border: 'none', outline: 'none', color: 'var(--t1)', fontSize: '.85rem', width: 180 }} />
-            </div>
-          </div>
-
-          {filtered.map(u => (
-            <div key={u.id} style={{ borderBottom: '1px solid var(--b-main)' }}>
-              <div onClick={() => setExpandedUser(expandedUser === u.id ? null : u.id)}
-                style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', gap: 8 }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '.85rem', color: 'var(--t1)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email}</div>
-                  <div style={{ fontSize: '.75rem', color: 'var(--t4)', fontFamily: 'var(--f-mono)', marginTop: 2 }}>
-                    {u.created_at} · {u.analyses_count} análises
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-                  <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)' }}>{u.credits}cr</span>
-                  {u.premium_credits > 0 && <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co9)' }}>{u.premium_credits}pr</span>}
-                  {expandedUser === u.id ? <ChevronUp size={14} style={{ color: 'var(--t4)' }} /> : <ChevronDown size={14} style={{ color: 'var(--t4)' }} />}
-                </div>
-              </div>
-
-              {expandedUser === u.id && (
-                <div style={{ padding: '0 20px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <input type="number" min="1" value={creditInput} onChange={e => setCreditInput(e.target.value)}
-                      placeholder="Quantidade" style={{ background: 'var(--bg-main)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-sm)', padding: '6px 10px', color: 'var(--t1)', fontSize: '.85rem', width: 120, outline: 'none' }} />
-                    <button onClick={() => handleCredits(u.id, 'add')}
-                      style={{ background: 'var(--co9)', border: 'none', borderRadius: 'var(--r-sm)', padding: '6px 14px', color: '#fff', cursor: 'pointer', fontSize: '.8rem', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <Plus size={13} /> Adicionar
-                    </button>
-                    <button onClick={() => handleCredits(u.id, 'remove')}
-                      style={{ background: 'var(--cr3)', border: 'none', borderRadius: 'var(--r-sm)', padding: '6px 14px', color: '#fff', cursor: 'pointer', fontSize: '.8rem', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <Minus size={13} /> Remover
-                    </button>
-                    <button onClick={async () => { await adminFetch('/api/admin/set-credits', authToken, { method: 'POST', body: JSON.stringify({ user_id: u.id, amount: parseInt(creditInput) }) }); loadAll(); }}
-                      style={{ background: 'var(--bg-card2)', border: '1px solid var(--b-main)', borderRadius: 'var(--r-sm)', padding: '6px 14px', color: 'var(--t2)', cursor: 'pointer', fontSize: '.8rem', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <Settings size={13} /> Definir
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
         </div>
+      )}
+      <div style={{ background: "#0F0F0F", borderRadius: 8, padding: 16, maxHeight: 300, overflowY: "auto", fontFamily: "monospace", fontSize: 12, lineHeight: 1.6 }}>
+        {logs.length===0 ? <span style={{ color: "#666" }}>Sem logs.</span> : logs.map((log,i) => (
+          <div key={i} style={{ color: log.level==="error"?"#FF6B6B":log.level==="warn"?"#FFD93D":"#8BE078", marginBottom: 2 }}>
+            <span style={{ color: "#666" }}>{log.timestamp ? new Date(log.timestamp).toLocaleTimeString("pt-BR") : ""} </span>
+            <span>[{(log.level||"info").toUpperCase()}] </span>
+            {log.message||JSON.stringify(log)}
+          </div>
+        ))}
       </div>
+    </div>
+  );
+}
+
+export default function AdminPage() {
+  const [token, setToken] = useState(() => localStorage.getItem("jurir_admin_token") || "");
+  const [user, setUser] = useState(null);
+  const [tab, setTab] = useState("dashboard");
+  const api = useApi(token);
+
+  function handleLogin(t, u) { setToken(t); setUser(u); localStorage.setItem("jurir_admin_token", t); }
+  function handleLogout() { setToken(""); setUser(null); localStorage.removeItem("jurir_admin_token"); }
+
+  useEffect(() => { if (token && !user) { api("/api/auth/me").then(setUser).catch(handleLogout); } }, [token]);
+
+  if (!token) return <Login onLogin={handleLogin} />;
+
+  const CONTENT = { dashboard: <DashboardTab api={api} />, users: <UsersTab api={api} />, analyses: <AnalysesTab api={api} />, financial: <FinancialTab api={api} />, system: <SystemTab api={api} /> };
+
+  return (
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", background: T.bg }}>
+      <aside style={{ width: 200, background: T.surface, borderRight: `1px solid ${T.border}`, display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0 }}>
+        <div style={{ padding: "24px 20px 16px", borderBottom: `1px solid ${T.border}` }}>
+          <div style={{ fontSize: 24, fontWeight: 300, letterSpacing: "0.15em", color: T.cobalt }}>JURIR</div>
+          <div style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: T.textMuted, marginTop: 2 }}>Admin</div>
+        </div>
+        <nav style={{ flex: 1, padding: "12px 10px" }}>
+          {TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "block", width: "100%", padding: "9px 10px", borderRadius: 6, border: "none", cursor: "pointer", background: tab===t.id ? T.cobaltLight : "transparent", color: tab===t.id ? T.cobalt : T.textMuted, fontSize: 13, fontWeight: tab===t.id ? 600 : 400, textAlign: "left", marginBottom: 2 }}>{t.label}</button>
+          ))}
+        </nav>
+        <div style={{ padding: "12px 10px", borderTop: `1px solid ${T.border}` }}>
+          {user && <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 8, padding: "0 2px", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</div>}
+          <Btn variant="ghost" small onClick={handleLogout}>Sair</Btn>
+        </div>
+      </aside>
+      <main style={{ marginLeft: 200, flex: 1, padding: "28px 32px", minWidth: 0 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 400, color: T.text, marginBottom: 24 }}>{TABS.find(t => t.id===tab)?.label}</h1>
+        {CONTENT[tab]}
+      </main>
     </div>
   );
 }
