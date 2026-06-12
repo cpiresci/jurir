@@ -104,11 +104,11 @@ function DashboardTab({ api }) {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 16, marginBottom: 24 }}>
         <Stat label="Usuários" value={stats?.total_users} accent={T.cobalt} />
-        <Stat label="Ativos 30d" value={stats?.active_users_30d} accent={T.cobaltDim} />
+        <Stat label="Análises Total" value={stats?.total_analyses} accent={T.cobaltDim} />
         <Stat label="Análises Hoje" value={stats?.analyses_today} accent={T.gold} />
         <Stat label="Análises Total" value={stats?.total_analyses} accent={T.gold} />
-        <Stat label="Receita Mês" value={stats?.revenue_month ? `R$${stats.revenue_month}` : null} accent={T.success} />
-        <Stat label="Assinantes Pro" value={stats?.pro_subscribers} accent={T.success} />
+        <Stat label="SSE Ativos" value={stats?.sse_active} accent={T.gold} />
+        <Stat label="Jobs Ativos" value={stats?.active_jobs} accent={T.success} />
       </div>
       {loading && <div style={{ color: T.textMuted }}>Carregando…</div>}
     </div>
