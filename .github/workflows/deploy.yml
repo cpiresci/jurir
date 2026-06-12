@@ -35,9 +35,11 @@ jobs:
 
       - name: Install
         run: npm ci
+      working-directory: jurir-upgraded
 
       - name: Build
         run: npm run build
+      working-directory: jurir-upgraded
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
