@@ -1,29 +1,25 @@
 import { create } from 'zustand';
 
-const ls = (k, fallback = null) => {
-  try { const v = localStorage.getItem(k); return v !== null ? v : fallback; }
-  catch { return fallback; }
-};
-const lsParse = (k) => {
-  try { return JSON.parse(localStorage.getItem(k) || 'null'); }
-  catch { return null; }
-};
-
 export const useStore = create((set, get) => ({
-  authToken: ls('jurir_token'),
-  userData:  lsParse('jurir_user'),
+  // ── Auth ──
+  authToken: (() => { try { return localStorage.getItem('jurir_token') || null; } catch { return null; } })(),
+  userData:  (() => { try { return JSON.parse(localStorage.getItem('jurir_user') || 'null'); } catch { return null; } })(),
 
   setAuth: (token, user) => {
-    try { localStorage.setItem('jurir_token', token); localStorage.setItem('jurir_user', JSON.stringify(user)); } catch {}
+    localStorage.setItem('jurir_token', token);
+    localStorage.setItem('jurir_user', JSON.stringify(user));
     set({ authToken: token, userData: user });
   },
   clearAuth: () => {
-    try { localStorage.removeItem('jurir_token'); localStorage.removeItem('jurir_user'); } catch {}
+    localStorage.removeItem('jurir_token');
+    localStorage.removeItem('jurir_user');
     set({ authToken: null, userData: null });
   },
 
+  // ── UI ──
   mode: 'free',
   setMode: (mode) => set({ mode }),
+
   modalOpen: null,
   openModal:  (tab) => set({ modalOpen: tab }),
   closeModal: ()    => set({ modalOpen: null }),
@@ -36,6 +32,7 @@ export const useStore = create((set, get) => ({
   },
   removeToast: (id) => set(s => ({ toasts: s.toasts.filter(t => t.id !== id) })),
 
+  // ── Analysis ──
   analysisId:      null,
   agentStates:     {},
   completedAgents: 0,
@@ -47,52 +44,62 @@ export const useStore = create((set, get) => ({
   running:         false,
   freeResult:      null,
   deltaResult:     null,
-  tribunal:        null,
+  // [FIX] Mensagem de status para cooldown/recovery — evita 0/16 parado sem feedback
   statusMessage:   null,
-  devilDone:       false,
-  judgeDone:       false,
-  devilRunning:    false,
+
+  // [FIX] Estado granular do Advogado do Diabo e do Juiz IA para cards visuais
+  // status: 'idle' | 'running' | 'done' | 'error'
+  devilState: { status: 'idle', analysis: '', confidence: 0 },
+  judgeState: { status: 'idle', verdict: '' },
+
+  setDevilState: (patch) => set(s => ({ devilState: { ...s.devilState, ...patch } })),
+  setJudgeState: (patch) => set(s => ({ judgeState: { ...s.judgeState, ...patch } })),
 
   resetAnalysis: () => set({
     analysisId: null, agentStates: {}, completedAgents: 0,
     verdictText: '', devilText: '', jurirScore: null,
     scoreDims: null, vetoActive: false, running: false,
-    freeResult: null, deltaResult: null, statusMessage: null, tribunal: null,
-    devilDone: false, judgeDone: false, devilRunning: false,
+    freeResult: null, deltaResult: null, statusMessage: null,
+    devilState: { status: 'idle', analysis: '', confidence: 0 },
+    judgeState: { status: 'idle', verdict: '' },
   }),
 
-  setAgentState: (id, data) => set(s => ({
-    agentStates: { ...s.agentStates, [id]: { ...(s.agentStates[id] || {}), ...data } },
-  })),
-  incrementCompleted: ()            => set(s => ({ completedAgents: s.completedAgents + 1 })),
-  setVerdict:         (text)        => set({ verdictText: text, judgeDone: true }),
-  setDevil:           (text)        => set(s => ({
-    devilText: text,
-    devilDone: text && !text.startsWith('⚔️ Advogado do Diabo analisando'),
-    devilRunning: text && text.startsWith('⚔️ Advogado do Diabo analisando'),
-  })),
-  setDevilDone:       (text)        => set({ devilText: text, devilDone: true, devilRunning: false }),
-  setScore:           (score, dims) => set({ jurirScore: score, scoreDims: dims }),
-  setVeto:            (v)           => set({ vetoActive: v }),
-  setRunning:         (v)           => set({ running: v }),
-  setStatusMessage:   (msg)         => set({ statusMessage: msg }),
+  setAgentState:      (id, data)      => set(s => ({ agentStates: { ...s.agentStates, [id]: data } })),
+  incrementCompleted: ()              => set(s => ({ completedAgents: s.completedAgents + 1 })),
+  setVerdict:         (text)          => set({ verdictText: text }),
+  setDevil:           (text)          => set({ devilText: text }),
+  setScore:           (score, dims)   => set({ jurirScore: score, scoreDims: dims }),
+  setVeto:            (v)             => set({ vetoActive: v }),
+  setRunning:         (v)             => set({ running: v }),
+  // [FIX] statusMessage para cooldown/recovery — limpar ao receber primeiro agent_thinking
+  setStatusMessage:   (msg)           => set({ statusMessage: msg }),
+  // [FIX] Prioridade corrigida: veredito (juiz) > free_analysis (agente preview)
   setFreeResult: (r) => set({ freeResult: {
     ...r,
     agent_area: r.area_especialista || r.agent_area,
+    // veredito é o resultado do Juiz IA — mais completo que free_analysis (preview 500 chars)
     analysis: r.veredito || r.free_analysis || r.analysis,
   }}),
-  setDeltaResult:  (r)  => set({ deltaResult: r }),
-  setTribunal:     (t)  => set({ tribunal: t }),
-  setAnalysisId:   (id) => set({ analysisId: id }),
+  setDeltaResult:     (r)             => set({ deltaResult: r }),
+  setAnalysisId:      (id)            => set({ analysisId: id }),
 
+  // ── Delta ──
   deltaLoading: false,
   setDeltaLoading: (v) => set({ deltaLoading: v }),
-  docResult: null, docLoading: false,
+
+  // ── Documento ──
+  docResult:    null,
+  docLoading:   false,
   setDocResult: (r) => set({ docResult: r }),
-  setDocLoading: (v) => set({ docLoading: v }),
-  simResult: null, simLoading: false,
+  setDocLoading:(v) => set({ docLoading: v }),
+
+  // ── Simulador ──
+  simResult:    null,
+  simLoading:   false,
   setSimResult: (r) => set({ simResult: r }),
-  setSimLoading: (v) => set({ simLoading: v }),
-  monitored: [],
+  setSimLoading:(v) => set({ simLoading: v }),
+
+  // ── Monitoramento ──
+  monitored:    [],
   setMonitored: (list) => set({ monitored: list }),
 }));

@@ -8,8 +8,8 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <AnalysisPanel />
-      <AgentsSection />
+      <div id="analise"><AnalysisPanel /></div>
+      <div id="agentes"><AgentsSection /></div>
       <Pricing />
       <Footer />
     </>
