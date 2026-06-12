@@ -23,7 +23,6 @@
         if (redirect && redirect !== '/') {
           sessionStorage.removeItem('spa_redirect');
           window.history.replaceState(null, "", redirect);
-        window.dispatchEvent(new PopStateEvent('popstate'));
         }
       })();
     </script>
