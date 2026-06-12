@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'jurir-upgraded/src/**'
-      - 'jurir-upgraded/public/**'
-      - 'jurir-upgraded/index.html'
-      - 'jurir-upgraded/vite.config.*'
-      - 'jurir-upgraded/package.json'
-      - 'jurir-upgraded/package-lock.json'
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'vite.config.*'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 permissions:
@@ -34,14 +34,10 @@ jobs:
           cache: npm
 
       - name: Install
-        working-directory: jurir-upgraded
         run: npm ci
 
       - name: Build
-        working-directory: jurir-upgraded
         run: npm run build
-        env:
-          VITE_JURIR_INTERNAL_KEY: ${{ secrets.JURIR_INTERNAL_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -49,7 +45,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: jurir-upgraded/dist
+          path: dist
 
   deploy:
     environment:
