@@ -1,4 +1,4 @@
-export const JURIR_VERSION = 'v10.0-react';
+export const JURIR_VERSION = 'v10.0-quantum';
 export const API_BASE = 'https://jusaii-app-daqr.onrender.com';
 
 export const AGENT_AREAS = [

@@ -12,6 +12,7 @@ import SimuladorPage from './pages/Simulador';
 import MonitoramentoPage from './pages/Monitoramento';
 import VerificarPage from './pages/Verificar';
 import CheckoutPage from './pages/Checkout';
+import PrivacidadePage from './pages/Privacidade';
 import AdminPage from './pages/Admin';
 import { useStore } from './store';
 
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="/monitoramento" element={<MonitoramentoPage />} />
             <Route path="/verificar"     element={<VerificarPage />} />
             <Route path="/premium"       element={<CheckoutPage />} />
+            <Route path="/privacidade"   element={<PrivacidadePage />} />
             <Route path="/admin"         element={<AdminPage />} />
           </Routes>
         </main>
@@ -43,4 +45,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
- 
