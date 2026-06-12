@@ -13,17 +13,62 @@ export async function apiFetch(path, opts = {}, token = null) {
 
 export async function checkHealth() {
   try {
-    // /api/status is lighter and returns richer provider data
-    const r = await fetch(`${API_BASE}/api/status`, { cache: 'no-store' });
-    if (r.ok) return r.json();
-  } catch { /* fallthrough */ }
-  // Fallback to /health if /api/status unavailable (older backend)
-  try {
-    const r = await fetch(`${API_BASE}/health`, { cache: 'no-store' });
-    return r.json().catch(() => ({}));
-  } catch {
-    return {};
+    const r = await fetch(`${API_BASE}/wake`, { cache: 'no-store', mode: 'no-cors' });
+    return { status: 'ok' };
+  } catch { return {}; }
+}
+
+/**
+ * [v10.2] Wake-up com no-cors para evitar CORS preflight bloqueado durante cold start.
+ * Estratégia: envia pings no-cors (acorda o servidor sem precisar de resposta legível)
+ * e em paralelo tenta pings normais com CORS para confirmar que o servidor acordou.
+ */
+export async function wakeUp(signal) {
+  // [FIX v10.3] No Capacitor Android o ping CORS de confirmação falha antes do
+  // androidScheme estar resolvido — wakeUp retornava false bloqueando o login.
+  // Estratégia: tenta ping normal primeiro; se falhar 2x seguidas, assume acordado
+  // após no-cors e deixa o login tentar (o backend já está de pé).
+  const MAX_TRIES = 12;
+  const INTERVAL  = 5000;
+  let corsFails = 0;
+  const url = `${API_BASE}/wake`;
+
+  for (let i = 0; i < MAX_TRIES; i++) {
+    if (signal?.aborted) return false;
+
+    // Ping no-cors — acorda o servidor sem precisar de resposta legível
+    // (nunca falha por CORS, mesmo durante cold start)
+    fetch(url, { cache: 'no-store', mode: 'no-cors' }).catch(() => {});
+
+    // Pequena espera para dar tempo ao servidor de processar o ping acima
+    await new Promise(res => setTimeout(res, 800));
+    if (signal?.aborted) return false;
+
+    // Tenta ping normal para confirmar que acordou (com CORS)
+    try {
+      const r = await fetch(url, { cache: 'no-store', signal });
+      if (r.ok) return true;
+    } catch {
+      corsFails++;
+      // [FIX v10.3] Após 2 falhas CORS (típico no Capacitor Android),
+      // assume servidor acordado — o no-cors já o acordou.
+      if (corsFails >= 2) return true;
+    }
+
+    // Aguarda o restante do intervalo antes da próxima tentativa
+    if (i < MAX_TRIES - 1) {
+      const remaining = INTERVAL - 800;
+      await new Promise(res => {
+        let elapsed = 0;
+        const tick = setInterval(() => {
+          elapsed += 500;
+          if (signal?.aborted || elapsed >= remaining) { clearInterval(tick); res(elapsed); }
+        }, 500);
+      });
+      if (signal?.aborted) return false;
+    }
   }
+  return false;
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────

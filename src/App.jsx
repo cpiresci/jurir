@@ -36,7 +36,7 @@ export default function App() {
             <Route path="/verificar"     element={<VerificarPage />} />
             <Route path="/premium"       element={<CheckoutPage />} />
             <Route path="/privacidade"   element={<PrivacidadePage />} />
-            <Route path="/admin"         element={<AdminPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </main>
       </div>
