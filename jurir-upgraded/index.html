@@ -22,7 +22,7 @@
         var redirect = sessionStorage.getItem('spa_redirect');
         if (redirect && redirect !== '/') {
           sessionStorage.removeItem('spa_redirect');
-          window.history.replaceState(null, "", redirect);
+          window.history.replaceState(null, '', redirect);
         }
       })();
     </script>
