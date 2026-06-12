@@ -8,3 +8,20 @@ android/local.properties
 android/app/jurir-release-key.jks
 .env
 .env.local
+
+# Builds gerados pelo CI
+web-dist/
+dist/
+
+# Scripts de patch temporários
+patch_*.py
+*_patch.sh
+*_ultra_patch.sh
+
+# Keystores e segredos
+*.jks
+keystore_*.txt
+
+# Backups
+*.bak
+*.backup
