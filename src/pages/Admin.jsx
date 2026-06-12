@@ -14,7 +14,7 @@ const T = {
 function useApi(token) {
   return useCallback(async (path, opts = {}) => {
     const res = await fetch(`${API}${path}`, {
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: { "Content-Type": "application/json", "X-Jurir-Key": "jurir-admin-key-2026", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       ...opts,
     });
     if (!res.ok) throw new Error(`${res.status}`);
