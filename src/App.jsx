@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Background from './components/Background';
 import AuthModal from './components/AuthModal';
@@ -12,15 +12,14 @@ import SimuladorPage from './pages/Simulador';
 import MonitoramentoPage from './pages/Monitoramento';
 import VerificarPage from './pages/Verificar';
 import CheckoutPage from './pages/Checkout';
-import PrivacidadePage from './pages/Privacidade';
+import PrivacidadePage from './pages/PrivacidadePage';
 import AdminPage from './pages/Admin';
 import { useStore } from './store';
 
 export default function App() {
   const { modalOpen } = useStore();
-
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Background />
       <div style={{ position: 'relative', zIndex: 10 }}>
         <Navbar />
@@ -36,12 +35,12 @@ export default function App() {
             <Route path="/verificar"     element={<VerificarPage />} />
             <Route path="/premium"       element={<CheckoutPage />} />
             <Route path="/privacidade"   element={<PrivacidadePage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin"         element={<AdminPage />} />
           </Routes>
         </main>
       </div>
       {modalOpen && <AuthModal />}
       <Toast />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
