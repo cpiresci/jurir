@@ -79,6 +79,7 @@ export const useStore = create((set, get) => ({
     agent_area: r.area_especialista || r.agent_area,
     // veredito é o resultado do Juiz IA — mais completo que free_analysis (preview 500 chars)
     analysis: r.veredito || r.free_analysis || r.analysis,
+    jurir_score: r.jurir_score || r.score || null,
   }}),
   setDeltaResult:     (r)             => set({ deltaResult: r }),
   setAnalysisId:      (id)            => set({ analysisId: id }),
