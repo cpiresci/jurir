@@ -24,10 +24,10 @@ function CountUp({ target, suffix = '' }) {
 }
 
 const STATS = [
-  { val: '16',    suffix: '',    label: 'Agentes\nEspecialistas', icon: '⚖️',  color: 'var(--co7)' },
-  { val: '3',     suffix: 'min', label: 'Análise\nCompleta',      icon: '⚡',  color: 'var(--jade2)' },
-  { val: '100',   suffix: '%',   label: 'Contraditório\nReal',    icon: '🛡️', color: 'var(--am4)' },
-  { val: '50000', suffix: '+',   label: 'Análises\nRealizadas',   icon: '📋',  color: 'var(--au6)' },
+  { val: '16',  suffix: '',    label: 'Agentes\nEspecialistas', icon: '⚖️',  color: 'var(--co7)' },
+  { val: '3',   suffix: 'min', label: 'Análise\nCompleta',      icon: '⚡',  color: 'var(--jade2)' },
+  { val: '100', suffix: '%',   label: 'Contraditório\nReal',    icon: '🛡️', color: 'var(--am4)' },
+  { val: '10',  suffix: '+',   label: 'Áreas do\nDireito',      icon: '📋',  color: 'var(--au6)' },
 ];
 
 const AREAS = [
@@ -233,16 +233,16 @@ export default function Hero() {
           {/* Badge */}
           <div className="hero-badge fade-up" style={{ marginBottom:'clamp(14px,2.5vw,20px)', opacity:visible?1:0 }}>
             <Zap size={9} style={{ color:'var(--co7)' }}/>
-            <span style={{ color:'var(--t2)' }}>Inteligência Jurídica Quântica</span>
+            <span style={{ color:'var(--t2)' }}>Análise Jurídica por IA</span>
             <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
-            <span style={{ color:'var(--co7)',fontWeight:600 }}>Plataforma v10.0</span>
+            <span style={{ color:'var(--co7)',fontWeight:600 }}>16 Agentes Especializados</span>
             <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
-            <span style={{ color:'var(--am4)',fontWeight:500 }}>16 AGENTES</span>
+            <span style={{ color:'var(--am4)',fontWeight:500 }}>JURIR SCORE</span>
           </div>
 
           {/* Headline */}
           <h1 className="hero-title fade-up fade-up-1" style={{ marginBottom:6, opacity:visible?1:0 }}>
-            O tribunal do futuro
+            Você tem chance
           </h1>
           <h1 className="hero-title fade-up fade-up-1" style={{
             marginBottom:'clamp(22px,4vw,36px)', opacity:visible?1:0,
@@ -250,30 +250,21 @@ export default function Hero() {
             WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
             fontStyle:'italic',
           }}>
-            analisa o seu caso.
+            de ganhar?
           </h1>
 
           {/* Subline */}
           <p className="fade-up fade-up-2" style={{
             fontSize:'clamp(1rem,2.4vw,1.12rem)', color:'var(--t1)',
-            maxWidth:1100, margin:'0 auto 12px',
+            maxWidth:780, margin:'0 auto clamp(22px,3.5vw,32px)',
             lineHeight:1.8, opacity:visible?1:0,
             fontFamily:'var(--f-display)', fontWeight:400, letterSpacing:'.01em',
           }}>
-            Dezesseis agentes de IA especializados analisam cada faceta do seu processo em paralelo.
-            O <em style={{ color:'var(--cr3)' }}>Advogado do Diabo</em> confronta. O{' '}
-            <em style={{ color:'var(--co7)' }}>Juiz IA Quantum</em> prolata o veredicto final.
+            Cole seu caso. Em até 3 minutos, dezesseis agentes especializados analisam cada faceta
+            do seu processo. O{' '}
+            <em style={{ color:'var(--cr3)' }}>Advogado do Diabo</em> confronta. O{' '}
+            <em style={{ color:'var(--co7)' }}>Juiz IA</em> prolata o veredicto — com JURIR Score.
           </p>
-
-          {/* Latim */}
-          <div className="fade-up fade-up-3" style={{ opacity:visible?1:0, marginBottom:'clamp(16px,2.5vw,24px)' }}>
-            <span style={{ fontFamily:'var(--f-display)',fontStyle:'italic',fontSize:'clamp(.8rem,2vw,.9rem)',color:'var(--t3)',letterSpacing:'.04em' }}>
-              "Iustitia est constans et perpetua voluntas ius suum cuique tribuendi"
-            </span>
-            <div style={{ fontFamily:'var(--f-mono)',fontSize:'.52rem',color:'var(--t4)',letterSpacing:'.18em',marginTop:5,textTransform:'uppercase' }}>
-              — Ulpiano, Digesto
-            </div>
-          </div>
 
           {/* CTAs */}
           <div className="fade-up fade-up-3" style={{
@@ -283,7 +274,7 @@ export default function Hero() {
           }}>
             <button className="btn btn-cobalt-ultra btn-lg" onClick={() => scrollTo('analise')}
               style={{ fontSize:'clamp(.86rem,2.5vw,.96rem)',padding:'clamp(13px,3vw,16px) clamp(26px,5vw,38px)' }}>
-              Analisar Meu Caso Agora <ArrowRight size={16}/>
+              Descobrir Minhas Chances <ArrowRight size={16}/>
             </button>
             <button className="btn btn-ghost btn-lg" onClick={() => openModal('register')}
               style={{ fontSize:'clamp(.86rem,2.5vw,.96rem)',padding:'clamp(13px,3vw,16px) clamp(26px,5vw,38px)' }}>
