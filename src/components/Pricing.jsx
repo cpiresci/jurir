@@ -1,43 +1,27 @@
-import { Check, Zap, ArrowRight, Building2, Code2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useStore } from '../store';
 
 const PLANS = [
   {
-    id: 'free',
-    name: 'Free',
-    price: 'R$ 0',
-    period: '',
-    desc: 'Para conhecer o Jurir',
-    icon: '⚡',
-    color: '#6b7280',
-    highlight: false,
+    id: 'free', name: 'Free', price: 'R$ 0', period: '', icon: '⚡',
+    desc: 'Para conhecer o Jurir', highlight: false,
     features: [
       '1 agente especialista por análise',
-      'Análise jurídica da área mais relevante',
+      'Análise da área mais relevante',
       'Resultado em até 3 minutos',
       '5 análises gratuitas ao cadastrar',
       'Acesso via web e app Android',
     ],
     cta: 'Começar grátis',
-    ctaRoute: null,
   },
   {
-    id: 'solo',
-    name: 'Solo',
-    price: 'R$ 49',
-    period: '/mês',
-    desc: 'Para advogados autônomos',
-    icon: '⚖️',
-    color: 'var(--am4)',
-    highlight: true,
-    badge: 'Mais popular',
+    id: 'solo', name: 'Solo', price: 'R$ 49', period: '/mês', icon: '⚖️',
+    desc: 'Para advogados autônomos', highlight: true, badge: 'Mais popular',
     features: [
       '16 agentes especializados em paralelo',
       'Advogado do Diabo + Juiz IA Quantum',
       'JURIR Score dimensional',
       'Streaming SSE em tempo real',
-      'Delta Analysis (comparativo de casos)',
+      'Delta Analysis — comparativo de casos',
       'Análise de documentos PDF/Word',
       'Gerador de Petições (.docx)',
       'Simulador de Instâncias judiciais',
@@ -47,17 +31,10 @@ const PLANS = [
       'Verificação de autenticidade (serial)',
     ],
     cta: 'Assinar Solo',
-    ctaRoute: '/checkout',
   },
   {
-    id: 'escritorio',
-    name: 'Escritório',
-    price: 'R$ 299',
-    period: '/mês',
-    desc: 'Para escritórios e equipes',
-    icon: '🏢',
-    color: '#8b5cf6',
-    highlight: false,
+    id: 'escritorio', name: 'Escritório', price: 'R$ 299', period: '/mês', icon: '🏢',
+    desc: 'Para escritórios e equipes', highlight: false,
     features: [
       'Tudo do plano Solo',
       'Até 10 usuários simultâneos',
@@ -69,18 +46,11 @@ const PLANS = [
       'SLA garantido de 99,9%',
     ],
     cta: 'Falar com equipe',
-    ctaRoute: null,
-    ctaHref: 'https://wa.me/5511999999999',
+    href: 'https://wa.me/5511999999999',
   },
   {
-    id: 'api',
-    name: 'API',
-    price: 'R$ 999',
-    period: '/mês',
-    desc: 'Para plataformas e integrações',
-    icon: '🔌',
-    color: '#06b6d4',
-    highlight: false,
+    id: 'api', name: 'API', price: 'R$ 999', period: '/mês', icon: '🔌',
+    desc: 'Para plataformas e integrações', highlight: false,
     features: [
       'Tudo do plano Escritório',
       'Acesso à API REST completa',
@@ -88,12 +58,11 @@ const PLANS = [
       'Usuários ilimitados',
       'Rate limit personalizado',
       'Documentação técnica dedicada',
-      'Suporte técnico com SLA 4h',
+      'Suporte com SLA de 4h',
       'White-label disponível',
     ],
     cta: 'Contato comercial',
-    ctaRoute: null,
-    ctaHref: 'mailto:comercial@jurir.com',
+    href: 'mailto:comercial@jurir.com',
   },
 ];
 
@@ -101,99 +70,83 @@ export default function Pricing() {
   const { openModal, authToken } = useStore();
 
   function handleCTA(plan) {
-    if (plan.ctaHref) { window.open(plan.ctaHref, '_blank'); return; }
-    if (plan.id === 'free') { if (!authToken) openModal('register'); return; }
-    if (!authToken) { openModal('login'); return; }
-    if (plan.ctaRoute) window.location.href = plan.ctaRoute;
+    if (plan.href) { window.open(plan.href, '_blank'); return; }
+    if (!authToken) { openModal(plan.id === 'free' ? 'register' : 'login'); return; }
+    if (plan.id === 'solo') window.location.href = '/checkout';
   }
 
   return (
-    <section id="precos" style={{ padding: '80px 24px', background: '#030712' }}>
+    <section id="precos" style={{ padding: '80px 24px', background: 'var(--shell)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 4, color: 'var(--am4)', textTransform: 'uppercase' }}>
+        <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 4, color: 'var(--co7)', textTransform: 'uppercase' }}>
             PLANOS
           </span>
-          <h2 style={{ fontSize: 'clamp(28px, 5vw, 44px)', fontWeight: 800, margin: '16px 0 20px', color: '#fff' }}>
+          <h2 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, margin: '16px 0 16px', color: 'var(--abyss)' }}>
             Escolha seu plano
           </h2>
-          <p style={{ fontSize: 17, color: 'var(--muted)', maxWidth: 480, margin: '0 auto' }}>
-            Do advogado autônomo ao grande escritório — temos o plano certo para você.
+          <p style={{ fontSize: 16, color: 'var(--iron)', maxWidth: 460, margin: '0 auto' }}>
+            Do advogado autônomo ao grande escritório.
           </p>
         </div>
 
-        {/* Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 20 }}>
           {PLANS.map(plan => (
             <div key={plan.id} style={{
-              background: plan.highlight ? 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(234,88,12,0.06))' : 'rgba(255,255,255,0.02)',
-              border: `1.5px solid ${plan.highlight ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.07)'}`,
-              borderRadius: 20,
-              padding: '32px 28px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 0,
+              background: plan.highlight ? 'var(--abyss)' : '#fff',
+              border: `1.5px solid ${plan.highlight ? 'var(--night)' : 'var(--pale)'}`,
+              borderRadius: 20, padding: '32px 24px',
+              display: 'flex', flexDirection: 'column',
               position: 'relative',
+              boxShadow: plan.highlight ? '0 16px 48px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.05)',
             }}>
               {plan.badge && (
                 <div style={{
                   position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)',
-                  background: 'linear-gradient(90deg, var(--am4), #f97316)',
-                  color: '#000', fontSize: 11, fontWeight: 800, padding: '4px 16px',
-                  borderRadius: 20, letterSpacing: 1, whiteSpace: 'nowrap',
-                }}>
-                  {plan.badge}
-                </div>
+                  background: 'linear-gradient(90deg,#D4A800,#f97316)',
+                  color: '#000', fontSize: 11, fontWeight: 800,
+                  padding: '4px 16px', borderRadius: 20, whiteSpace: 'nowrap', letterSpacing: 1,
+                }}>{plan.badge}</div>
               )}
 
-              {/* Plan header */}
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>{plan.icon}</div>
-                <div style={{ fontWeight: 800, fontSize: 20, color: '#fff', marginBottom: 4 }}>{plan.name}</div>
-                <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 16 }}>{plan.desc}</div>
+                <div style={{ fontSize: 26, marginBottom: 8 }}>{plan.icon}</div>
+                <div style={{ fontWeight: 800, fontSize: 19, color: plan.highlight ? '#fff' : 'var(--abyss)', marginBottom: 4 }}>{plan.name}</div>
+                <div style={{ fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.55)' : 'var(--slate)', marginBottom: 16 }}>{plan.desc}</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                  <span style={{ fontSize: 36, fontWeight: 900, color: plan.highlight ? 'var(--am4)' : '#fff' }}>{plan.price}</span>
-                  {plan.period && <span style={{ fontSize: 14, color: 'var(--muted)' }}>{plan.period}</span>}
+                  <span style={{ fontSize: 34, fontWeight: 900, color: plan.highlight ? '#D4A800' : 'var(--abyss)' }}>{plan.price}</span>
+                  {plan.period && <span style={{ fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.45)' : 'var(--slate)' }}>{plan.period}</span>}
                 </div>
               </div>
 
-              {/* Features */}
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', display: 'flex', flexDirection: 'column', gap: 9 }}>
                 {plan.features.map(f => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>
-                    <span style={{ color: plan.highlight ? 'var(--am4)' : '#4ade80', marginTop: 2, flexShrink: 0 }}>✓</span>
+                  <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.75)' : 'var(--iron)', lineHeight: 1.5 }}>
+                    <span style={{ color: plan.highlight ? '#D4A800' : '#16a34a', flexShrink: 0, marginTop: 1 }}>✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
 
-              {/* CTA */}
               <button
                 onClick={() => handleCTA(plan)}
                 style={{
-                  marginTop: 'auto',
-                  width: '100%', padding: '14px 0',
-                  borderRadius: 12, border: 'none', cursor: 'pointer',
-                  fontWeight: 700, fontSize: 15,
-                  background: plan.highlight
-                    ? 'linear-gradient(90deg, var(--am4), #f97316)'
-                    : 'rgba(255,255,255,0.07)',
-                  color: plan.highlight ? '#000' : '#fff',
-                  transition: 'opacity 0.2s',
+                  marginTop: 'auto', width: '100%', padding: '13px 0',
+                  borderRadius: 12, border: plan.highlight ? 'none' : '1.5px solid var(--mist)',
+                  cursor: 'pointer', fontWeight: 700, fontSize: 14,
+                  background: plan.highlight ? 'linear-gradient(90deg,#D4A800,#f97316)' : 'transparent',
+                  color: plan.highlight ? '#000' : 'var(--abyss)',
+                  transition: 'all 0.18s',
                 }}
-                onMouseEnter={e => e.target.style.opacity = '0.85'}
-                onMouseLeave={e => e.target.style.opacity = '1'}
-              >
-                {plan.cta}
-              </button>
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+              >{plan.cta}</button>
             </div>
           ))}
         </div>
 
-        {/* Footer note */}
-        <p style={{ textAlign: 'center', marginTop: 40, fontSize: 13, color: 'var(--muted)' }}>
+        <p style={{ textAlign: 'center', marginTop: 36, fontSize: 13, color: 'var(--slate)' }}>
           Todos os planos incluem acesso ao app Android. Cancele quando quiser.
         </p>
       </div>
