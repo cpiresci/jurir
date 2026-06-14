@@ -1,16 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Send, AlertCircle, ChevronDown } from 'lucide-react';
+import { Loader2, Send, AlertCircle } from 'lucide-react';
 import { useStore } from '../store';
 import { useSSEAnalysis } from '../hooks/useSSEAnalysis';
 import { analyzeFree, analyzePremiumPoll, pollJob, getAnalysis, wakeUp } from '../lib/api';
 import AgentsGrid from './AgentsGrid';
 import VerdictSection from './VerdictSection';
-
-const MODES = [
-  { id: 'free',    label: 'Gratuito' },
-  { id: 'premium', label: 'Premium SSE' },
-  { id: 'polling', label: 'Premium Polling' },
-];
 
 const LANGS = [
   { id: 'pt', label: 'PT' },
@@ -19,9 +13,11 @@ const LANGS = [
 ];
 
 const EXAMPLES = [
-  'Fui demitido sem justa causa após 3 anos de empresa. A empresa se recusa a pagar as verbas rescisórias corretas. O que tenho direito?',
-  'Meu locatário está com 4 meses de aluguel em atraso e se recusa a sair do imóvel. Como proceder juridicamente?',
-  'Uma empresa debitou valores indevidos no meu cartão de crédito e não quer estornar. Quais são meus direitos como consumidor?',
+  { label: 'Trabalhista', text: 'Fui demitido sem justa causa após 3 anos. A empresa se recusa a pagar as verbas rescisórias. Tenho direito a seguro-desemprego?' },
+  { label: 'Consumidor',  text: 'Uma empresa cobrou valor indevido no meu cartão e nega o estorno. O produto veio com defeito. Quais são meus direitos?' },
+  { label: 'Locação',     text: 'Meu locatário tem 4 meses de aluguel em atraso e se recusa a sair. Como proceder para uma ação de despejo?' },
+  { label: 'Família',     text: 'Quero a guarda compartilhada dos meus filhos após separação. O outro cônjuge não concorda. Como a Justiça decide isso?' },
+  { label: 'Trânsito',    text: 'Sofri um acidente de carro, a outra parte tem seguro mas a seguradora está negando o pagamento. O que posso fazer?' },
 ];
 
 export default function AnalysisPanel() {
@@ -98,10 +94,10 @@ export default function AnalysisPanel() {
 
   const handleRun = async () => {
     if (!prompt.trim()) { addToast('Descreva o caso jurídico.', 'info'); return; }
-    if (mode === 'free') { await runFree(); return; }
-    if (!authToken) { addToast('Faça login para análise premium.', 'info'); openModal('login'); return; }
+    // Modo transparente: premium SSE se logado com crédito, free caso contrário
     const ud = useStore.getState().userData;
-    if (ud !== null && ud !== undefined && (ud.premium_credits ?? 1) <= 0) { addToast('Sem créditos premium.', 'error'); openModal('login'); return; }
+    const hasCredits = authToken && ud !== null && ud !== undefined && (ud.premium_credits ?? 0) > 0;
+    if (!hasCredits) { await runFree(); return; }
     setRunning(true); setWakeStatus('waking'); addToast('⚡ Acordando servidor…', 'info');
     let awake = false;
     try { awake = await Promise.race([wakeUp(), new Promise(res => setTimeout(() => res(false), 28_000))]); }
@@ -109,12 +105,16 @@ export default function AnalysisPanel() {
     setWakeStatus(null);
     if (!awake) addToast('ℹ️ Servidor iniciando…', 'info');
     setRunning(false);
-    if (mode === 'premium') await runSSE(prompt, lang);
-    else await runPolling();
+    await runSSE(prompt, lang);
   };
 
+  const isPremiumMode = (() => {
+    const ud = useStore.getState().userData;
+    return authToken && ud !== null && ud !== undefined && (ud.premium_credits ?? 0) > 0;
+  })();
+
   const getButtonLabel = () => {
-    if (!running) return <><Send size={14}/> Analisar Caso</>;
+    if (!running) return <><Send size={14}/> {isPremiumMode ? 'Analisar — 16 Agentes' : 'Analisar Gratuitamente'}</>;
     if (wakeStatus === 'waking') return <><Loader2 size={15} className="spin"/> Conectando…</>;
     return <><Loader2 size={15} className="spin"/> Analisando…</>;
   };
@@ -132,10 +132,10 @@ export default function AnalysisPanel() {
             letterSpacing: '-.02em',
           }}>
             Descreva seu caso e{' '}
-            <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>a IA faz o resto</span>
+            <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>descubra suas chances</span>
           </h2>
           <p style={{ color: 'var(--t3)', maxWidth: 520, margin: '0 auto', lineHeight: 1.7, fontSize: '.92rem' }}>
-            Seja específico: partes envolvidas, fatos relevantes, o que você quer saber.
+            Seja específico: partes envolvidas, fatos, datas, documentos e o que você precisa saber.
           </p>
         </div>
 
@@ -147,33 +147,25 @@ export default function AnalysisPanel() {
           boxShadow: 'var(--shadow-card)',
           overflow: 'hidden',
         }}>
-          {/* Top bar */}
+          {/* Top bar — idioma + contador, sem tabs de modo */}
           <div style={{
             borderBottom: '1px solid var(--b-subtle)',
-            padding: '16px 24px',
+            padding: '12px 20px',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            flexWrap: 'wrap', gap: 12,
+            flexWrap: 'wrap', gap: 10,
             background: 'var(--bg-card2)',
           }}>
-            {/* Mode toggle */}
-            <div className="mode-pill">
-              {MODES.map(m => (
-                <button key={m.id} className={`mode-pill-btn${mode === m.id ? ' active' : ''}`}
-                  onClick={() => setMode(m.id)}>
-                  {m.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Lang + char count */}
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--t4)', letterSpacing: '.12em' }}>
+              CASO JURÍDICO
+            </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)' }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.63rem', color: 'var(--t5)' }}>
                 {charCount}/4000
               </span>
               <div className="mode-pill">
                 {LANGS.map(l => (
                   <button key={l.id} className={`mode-pill-btn${lang === l.id ? ' active' : ''}`}
-                    onClick={() => setLang(l.id)} style={{ padding: '6px 12px' }}>
+                    onClick={() => setLang(l.id)} style={{ padding: '5px 11px', fontSize: '.68rem' }}>
                     {l.label}
                   </button>
                 ))}
@@ -181,34 +173,39 @@ export default function AnalysisPanel() {
             </div>
           </div>
 
-          {/* Textarea area */}
-          <div style={{ padding: '24px 24px 0' }}>
+          {/* Textarea */}
+          <div style={{ padding: '22px 22px 0' }}>
             <textarea
               className="analysis-textarea"
-              placeholder="Descreva seu caso jurídico com detalhes: partes envolvidas, fatos, datas, documentos, e o que você precisa saber…"
+              placeholder="Ex: Fui demitido sem justa causa após 3 anos de empresa. A empresa se recusa a pagar as verbas rescisórias. Tenho direito a seguro-desemprego e FGTS?"
               value={prompt}
               onChange={e => { setPrompt(e.target.value); setCharCount(e.target.value.length); }}
               maxLength={4000}
-              style={{ minHeight: 160 }}
+              style={{ minHeight: 148 }}
             />
 
-            {/* Examples */}
-            <div style={{ marginTop: 10, marginBottom: 20 }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.63rem', color: 'var(--t5)', letterSpacing: '.08em' }}>EXEMPLOS: </span>
+            {/* Chips de exemplo */}
+            <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', marginTop: 10, marginBottom: 18 }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t5)', letterSpacing: '.1em', alignSelf: 'center', flexShrink: 0 }}>
+                EXEMPLOS
+              </span>
               {EXAMPLES.map((ex, i) => (
                 <button key={i}
-                  onClick={() => { setPrompt(ex); setCharCount(ex.length); }}
+                  onClick={() => { setPrompt(ex.text); setCharCount(ex.text.length); }}
                   style={{
-                    background: 'none', border: 'none', padding: '2px 6px',
-                    fontFamily: 'var(--f-mono)', fontSize: '.63rem',
-                    color: 'var(--co7)', cursor: 'pointer', letterSpacing: '.03em',
-                    textDecoration: 'underline', textDecorationColor: 'rgba(20,114,217,0.3)',
-                    transition: 'color .15s',
+                    background: 'rgba(20,114,217,0.05)',
+                    border: '1px solid rgba(20,114,217,0.18)',
+                    borderRadius: 'var(--r-sm)',
+                    padding: '4px 10px',
+                    fontFamily: 'var(--f-mono)', fontSize: '.6rem',
+                    color: 'var(--co7)', cursor: 'pointer',
+                    letterSpacing: '.04em',
+                    transition: 'all .15s',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.color = 'var(--co8)'}
-                  onMouseLeave={e => e.currentTarget.style.color = 'var(--co7)'}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(20,114,217,0.10)'; e.currentTarget.style.borderColor = 'rgba(20,114,217,0.35)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(20,114,217,0.05)'; e.currentTarget.style.borderColor = 'rgba(20,114,217,0.18)'; }}
                 >
-                  Exemplo {i + 1}
+                  {ex.label}
                 </button>
               ))}
             </div>
@@ -217,32 +214,32 @@ export default function AnalysisPanel() {
           {/* Bottom action bar */}
           <div style={{
             borderTop: '1px solid var(--b-subtle)',
-            padding: '16px 24px',
+            padding: '14px 22px',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             gap: 12, flexWrap: 'wrap',
             background: 'var(--bg-card2)',
           }}>
-            {/* Mode info */}
+            {/* Status indicator transparente */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {mode === 'free' ? (
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.68rem', color: 'var(--t4)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--jade2)', display: 'inline-block' }}/>
-                  Gratuito · 1 agente especialista
+              {isPremiumMode ? (
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.66rem', color: 'var(--co7)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--co7)', boxShadow: '0 0 6px rgba(20,114,217,0.6)', display: 'inline-block', animation: 'pulse 2s ease-in-out infinite' }}/>
+                  16 agentes · Juiz IA · JURIR Score
                 </span>
               ) : (
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.68rem', color: 'var(--co7)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--co7)', boxShadow: '0 0 6px rgba(20,114,217,0.6)', display: 'inline-block', animation: 'pulse 2s ease-in-out infinite' }}/>
-                  Premium · 16 agentes + Juiz IA
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.66rem', color: 'var(--t4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--jade2)', display: 'inline-block' }}/>
+                  Gratuito · sem cadastro
                 </span>
               )}
             </div>
 
             {/* Submit */}
             <button
-              className="btn btn-cobalt"
+              className={`btn ${isPremiumMode ? 'btn-cobalt-ultra' : 'btn-cobalt'}`}
               onClick={handleRun}
               disabled={running}
-              style={{ opacity: running ? 0.75 : 1, minWidth: 160, justifyContent: 'center' }}
+              style={{ opacity: running ? 0.75 : 1, minWidth: 180, justifyContent: 'center' }}
             >
               {getButtonLabel()}
             </button>
@@ -282,72 +279,146 @@ export default function AnalysisPanel() {
 
 /* ─── Free Result Card ─── */
 function FreeResult({ result }) {
-  const agentArea   = result.agent_area   || result.area_especialista || 'Especialista Jurídico';
-  const verdict     = result.veredito     || result.verdict           || result.free_analysis || '';
-  const riskLevel   = result.risk_level   || result.nivel_risco       || '';
-  const confidence  = result.confidence   || result.confianca         || null;
+  const agentArea  = result.agent_area   || result.area_especialista || 'Especialista Jurídico';
+  const verdict    = result.veredito     || result.verdict           || result.free_analysis || '';
+  const riskLevel  = result.risk_level   || result.nivel_risco       || '';
+  const confidence = result.confidence   || result.confianca         || null;
+  const score      = result.jurir_score  || result.score             || null;
 
   const riskColor = { BAIXO: 'var(--jade2)', MÉDIO: '#F59E0B', ALTO: 'var(--cr3)', CRÍTICO: 'var(--cr3)' };
   const rC = riskColor[riskLevel] || 'var(--t4)';
 
+  const scoreColor = !score ? 'var(--t4)' : score >= 65 ? 'var(--jade2)' : score >= 40 ? '#F59E0B' : 'var(--cr3)';
+  const scoreLabel = !score ? null : score >= 80 ? 'Fortemente Favorável' : score >= 65 ? 'Favorável' : score >= 50 ? 'Parcialmente Favorável' : score >= 35 ? 'Risco Moderado' : 'Alto Risco';
+  const lockCriticos = !score ? 3 : score < 40 ? 5 : score < 65 ? 3 : 2;
+
+  const { openModal, authToken } = useStore();
+
   return (
-    <div style={{
-      background: 'var(--bg-card)', border: '1px solid var(--b-main)',
-      borderRadius: 'var(--r-xl)', padding: 32,
-      boxShadow: 'var(--shadow-card)',
-    }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
-        <div style={{
-          background: 'rgba(20,114,217,0.06)', border: '1px solid var(--b-cobalt)',
-          borderRadius: 'var(--r-md)', padding: '10px 16px',
-          fontFamily: 'var(--f-mono)', fontSize: '.7rem',
-          color: 'var(--co7)', letterSpacing: '.08em',
-          flexShrink: 0,
-        }}>
-          ⚖️ {agentArea}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+      {/* Diagnóstico inicial */}
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--b-main)',
+        borderRadius: 'var(--r-xl)', padding: 28,
+        boxShadow: 'var(--shadow-card)',
+      }}>
+        {/* Header com área e risco */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+          <div style={{
+            background: 'rgba(20,114,217,0.06)', border: '1px solid var(--b-cobalt)',
+            borderRadius: 'var(--r-md)', padding: '8px 14px',
+            fontFamily: 'var(--f-mono)', fontSize: '.68rem',
+            color: 'var(--co7)', letterSpacing: '.08em', flexShrink: 0,
+          }}>
+            ⚖️ {agentArea}
+          </div>
+          {riskLevel && (
+            <div style={{
+              background: `${rC}11`, border: `1px solid ${rC}33`,
+              borderRadius: 'var(--r-md)', padding: '8px 14px',
+              fontFamily: 'var(--f-mono)', fontSize: '.68rem',
+              color: rC, letterSpacing: '.08em', flexShrink: 0,
+            }}>
+              RISCO {riskLevel}
+            </div>
+          )}
+          {confidence && (
+            <div style={{
+              fontFamily: 'var(--f-mono)', fontSize: '.68rem',
+              color: 'var(--t4)', letterSpacing: '.06em',
+              padding: '8px 0', flexShrink: 0,
+            }}>
+              CONFIANÇA {confidence}%
+            </div>
+          )}
         </div>
-        {riskLevel && (
-          <div style={{
-            background: `${rC}11`, border: `1px solid ${rC}33`,
-            borderRadius: 'var(--r-md)', padding: '10px 16px',
-            fontFamily: 'var(--f-mono)', fontSize: '.7rem',
-            color: rC, letterSpacing: '.08em', flexShrink: 0,
-          }}>
-            RISCO {riskLevel}
+
+        <div style={{ height: 1, background: 'var(--b-subtle)', marginBottom: 20 }}/>
+
+        <div style={{
+          fontFamily: 'var(--f-display)', fontSize: '1.05rem', fontWeight: 400,
+          color: 'var(--t1)', lineHeight: 1.75, whiteSpace: 'pre-wrap',
+        }}>
+          {verdict}
+        </div>
+      </div>
+
+      {/* JURIR Score reveal */}
+      {score && (
+        <div style={{
+          background: 'var(--bg-card)', border: `1px solid ${scoreColor}33`,
+          borderRadius: 'var(--r-xl)', padding: '24px 28px',
+          boxShadow: 'var(--shadow-card)',
+          display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap',
+        }}>
+          {/* Número grande */}
+          <div style={{ textAlign: 'center', flexShrink: 0 }}>
+            <div style={{
+              fontFamily: 'var(--f-display)', fontSize: '4rem', fontWeight: 700,
+              color: scoreColor, lineHeight: 1, letterSpacing: '-.04em',
+            }}>
+              {score}
+            </div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.5rem', color: 'var(--t4)', letterSpacing: '.2em', marginTop: 2 }}>
+              JURIR SCORE / 100
+            </div>
           </div>
-        )}
-        {confidence && (
-          <div style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.7rem',
-            color: 'var(--t4)', letterSpacing: '.06em',
-            padding: '10px 0', flexShrink: 0,
-          }}>
-            CONFIANÇA {confidence}%
+
+          {/* Barra + label */}
+          <div style={{ flex: 1, minWidth: 180 }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.78rem', color: scoreColor, fontWeight: 600, marginBottom: 10 }}>
+              {scoreLabel}
+            </div>
+            <div style={{ background: 'var(--bg-card2)', borderRadius: 4, height: 6, overflow: 'hidden', marginBottom: 8 }}>
+              <div style={{
+                height: '100%', borderRadius: 4,
+                background: `linear-gradient(90deg, var(--cr3), #F59E0B, var(--jade2))`,
+                width: '100%',
+                clipPath: `inset(0 ${100 - score}% 0 0)`,
+                transition: 'clip-path 1.2s cubic-bezier(.22,1,.36,1)',
+              }}/>
+            </div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t5)', letterSpacing: '.08em' }}>
+              Baseado na análise inicial · Score completo disponível no relatório premium
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Divider */}
-      <div style={{ height: 1, background: 'var(--b-subtle)', marginBottom: 24 }}/>
-
-      {/* Verdict text */}
+      {/* Lock card — copy dinâmico */}
       <div style={{
-        fontFamily: 'var(--f-display)', fontSize: '1.05rem', fontWeight: 400,
-        color: 'var(--t1)', lineHeight: 1.75,
-        whiteSpace: 'pre-wrap',
+        background: 'linear-gradient(135deg, rgba(20,114,217,0.04), rgba(139,92,246,0.03))',
+        border: '1px solid var(--b-cobalt)',
+        borderRadius: 'var(--r-xl)', padding: '28px 28px',
+        boxShadow: 'var(--shadow-cobalt)',
+        textAlign: 'center',
       }}>
-        {verdict}
+        <div style={{ fontSize: '1.4rem', marginBottom: 10 }}>🔍</div>
+        <div style={{
+          fontFamily: 'var(--f-display)', fontSize: '1.3rem', fontWeight: 600,
+          color: 'var(--t0)', marginBottom: 10, letterSpacing: '-.01em',
+        }}>
+          Encontramos {lockCriticos} pontos críticos no seu caso
+        </div>
+        <p style={{ color: 'var(--t3)', fontSize: '.88rem', lineHeight: 1.7, maxWidth: 460, margin: '0 auto 22px' }}>
+          {score
+            ? <>Seu JURIR Score é <strong style={{ color: scoreColor }}>{score}/100</strong>. Os 15 especialistas restantes — incluindo o <em>Advogado do Diabo</em> e o <em>Juiz IA</em> — identificaram onde seu caso pode ser fortalecido ou onde há riscos que você ainda não viu.</>
+            : <>Os 15 especialistas restantes identificaram pontos críticos e oportunidades específicas no seu caso que ainda estão bloqueados — incluindo o contraditório completo e o veredicto do Juiz IA.</>
+          }
+        </p>
+        <button
+          className="btn btn-cobalt-ultra btn-lg"
+          style={{ justifyContent: 'center' }}
+          onClick={() => authToken ? null : openModal('login')}
+        >
+          🔓 Ver Relatório Completo — R$ 49,00
+        </button>
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t5)', letterSpacing: '.08em', marginTop: 10 }}>
+          16 agentes · JURIR Score dimensional · PDF profissional · acesso imediato
+        </div>
       </div>
 
-      {/* Footer note */}
-      <div style={{
-        marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--b-subtle)',
-        fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)',
-        letterSpacing: '.08em',
-      }}>
-        ANÁLISE GRATUITA · 1 AGENTE · PARA ANÁLISE COMPLETA COM 16 AGENTES FAÇA UPGRADE
-      </div>
     </div>
   );
 }
