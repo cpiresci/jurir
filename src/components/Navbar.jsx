@@ -67,7 +67,7 @@ export default function Navbar() {
         </svg>
         <span className="nav-wordmark t-display">
           JUR<em>IR</em>
-          <sub>INTELIGÊNCIA JURÍDICA</sub>
+          <sub>ANÁLISE JURÍDICA POR IA</sub>
         </span>
       </Link>
 
