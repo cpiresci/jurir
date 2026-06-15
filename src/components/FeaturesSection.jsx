@@ -1,211 +1,266 @@
+import { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 
 const FEATURES = [
   {
+    id: 'analise',
+    emoji: '⚛️',
+    label: 'Core',
+    title: 'Análise Jurídica Quântica',
+    desc: '16 agentes IA em paralelo analisam seu caso simultaneamente, com contraditório real via Advogado do Diabo e veredicto do Juiz IA Quantum.',
+    tag: 'GRATUITO · PREMIUM',
+    tagJade: false,
+    route: null,
+    cta: 'Analisar caso',
+    scrollTo: 'analise',
+  },
+  {
+    id: 'score',
+    emoji: '📊',
+    label: 'Score',
+    title: 'JURIR Score Dimensional',
+    desc: 'Pontuação multidimensional do seu caso: mérito jurídico, risco processual, probabilidade de êxito e solidez dos argumentos.',
+    tag: 'PREMIUM',
+    tagJade: false,
+    route: null,
+    cta: 'Ver score',
+    scrollTo: 'analise',
+  },
+  {
     id: 'delta',
+    emoji: '🔀',
     label: 'Delta Analysis',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <polygon points="14,4 26,24 2,24" stroke="var(--co7)" strokeWidth="1.5" fill="rgba(0,242,254,0.06)" strokeLinejoin="round"/>
-        <line x1="14" y1="10" x2="14" y2="18" stroke="var(--co8)" strokeWidth="1.2"/>
-        <circle cx="14" cy="20" r="1.2" fill="var(--co7)"/>
-      </svg>
-    ),
     title: 'Delta Analysis',
-    desc: 'Compare dois casos jurídicos em paralelo. A IA mapeia divergências, precedentes conflitantes e variações de risco entre cenários distintos.',
+    desc: 'Compare dois casos jurídicos. A IA mapeia divergências, precedentes conflitantes e variações de risco entre cenários distintos.',
+    tag: 'PREMIUM',
+    tagJade: false,
     route: '/delta',
     cta: 'Comparar casos',
   },
   {
     id: 'documentos',
+    emoji: '📄',
     label: 'Documentos',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect x="5" y="3" width="14" height="18" rx="2" stroke="var(--co7)" strokeWidth="1.5" fill="rgba(0,242,254,0.06)"/>
-        <rect x="9" y="3" width="10" height="6" rx="1" stroke="var(--co8)" strokeWidth="1.2" fill="rgba(79,172,254,0.08)"/>
-        <line x1="8" y1="14" x2="16" y2="14" stroke="var(--co9)" strokeWidth="1"/>
-        <line x1="8" y1="17" x2="14" y2="17" stroke="var(--co9)" strokeWidth="1" opacity=".6"/>
-        <path d="M17 17 L23 23" stroke="var(--co7)" strokeWidth="1.5" strokeLinecap="round"/>
-        <circle cx="20" cy="20" r="4" stroke="var(--co8)" strokeWidth="1.2" fill="rgba(0,242,254,0.06)"/>
-      </svg>
-    ),
-    title: 'Upload de Documentos',
-    desc: 'Envie contratos, petições ou decisões em PDF ou Word. Os 16 agentes extraem cláusulas, identificam riscos e geram análise completa.',
+    title: 'Análise de Documentos',
+    desc: 'Upload de contratos, petições ou decisões em PDF ou Word. Os 16 agentes extraem cláusulas, identificam riscos e geram análise completa.',
+    tag: 'PREMIUM',
+    tagJade: false,
     route: '/documentos',
     cta: 'Analisar documento',
   },
   {
     id: 'peticoes',
+    emoji: '📝',
     label: 'Petições',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect x="4" y="3" width="16" height="20" rx="2" stroke="var(--co7)" strokeWidth="1.5" fill="rgba(0,242,254,0.06)"/>
-        <line x1="8" y1="9" x2="16" y2="9" stroke="var(--co8)" strokeWidth="1.2"/>
-        <line x1="8" y1="13" x2="16" y2="13" stroke="var(--co9)" strokeWidth="1" opacity=".7"/>
-        <line x1="8" y1="17" x2="13" y2="17" stroke="var(--co9)" strokeWidth="1" opacity=".5"/>
-        <path d="M19 18 L24 13 L22 11 L17 16 L17 19 Z" stroke="var(--co7)" strokeWidth="1.2" fill="rgba(0,242,254,0.08)" strokeLinejoin="round"/>
-      </svg>
-    ),
     title: 'Gerador de Petições',
     desc: 'Gere petições iniciais, recursos e contestações profissionais em .docx com fundamentação automática, citação de jurisprudência e formatação ABNT.',
+    tag: 'PREMIUM',
+    tagJade: false,
     route: '/peticoes',
     cta: 'Gerar petição',
   },
   {
     id: 'simulador',
+    emoji: '🏛️',
     label: 'Simulador',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect x="3" y="6" width="22" height="16" rx="2" stroke="var(--co7)" strokeWidth="1.5" fill="rgba(0,242,254,0.06)"/>
-        <path d="M3 10 H25" stroke="var(--co8)" strokeWidth="1" opacity=".5"/>
-        <circle cx="7" cy="8" r="1" fill="var(--co9)" opacity=".7"/>
-        <circle cx="10" cy="8" r="1" fill="var(--co9)" opacity=".5"/>
-        <path d="M8 15 L12 13 L16 16 L20 12" stroke="var(--co7)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        <circle cx="20" cy="12" r="1.5" fill="var(--co8)"/>
-      </svg>
-    ),
     title: 'Simulador de Instâncias',
     desc: 'Simule o percurso processual em 1ª instância, TJ, STJ e STF. Projete probabilidades de êxito, prazos e custos em cada grau de jurisdição.',
+    tag: 'PREMIUM',
+    tagJade: false,
     route: '/simulador',
     cta: 'Simular instâncias',
   },
   {
     id: 'monitoramento',
+    emoji: '🔍',
     label: 'Monitoramento',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="14" r="10" stroke="var(--co7)" strokeWidth="1.5" fill="rgba(0,242,254,0.04)"/>
-        <path d="M14 8 L14 14 L18 17" stroke="var(--co8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <circle cx="14" cy="14" r="1.5" fill="var(--co7)"/>
-        <path d="M4 14 Q9 8 14 14 Q19 20 24 14" stroke="var(--co9)" strokeWidth="1" opacity=".4" fill="none"/>
-      </svg>
-    ),
     title: 'Monitoramento Processual',
     desc: 'Acompanhe processos em tempo real via DATAJUD. Receba alertas automáticos sobre movimentações, publicações e prazos críticos.',
+    tag: 'PREMIUM',
+    tagJade: false,
     route: '/monitoramento',
     cta: 'Monitorar processo',
   },
   {
-    id: 'verificar',
-    label: 'Verificar',
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <shield-like>
-          <path d="M14 3 L23 7 L23 15 C23 20 14 25 14 25 C14 25 5 20 5 15 L5 7 Z" stroke="var(--co7)" strokeWidth="1.5" fill="rgba(0,242,254,0.06)" strokeLinejoin="round"/>
-          <path d="M10 14 L13 17 L18 11" stroke="var(--co8)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-        </shield-like>
-      </svg>
-    ),
-    title: 'Verificar Relatório',
-    desc: 'Autentique qualquer relatório JURIR pelo código serial único. Confirme integridade, data de emissão e identidade do subscritor.',
-    route: '/verificar',
-    cta: 'Verificar autenticidade',
+    id: 'historico',
+    emoji: '📋',
+    label: 'Histórico',
+    title: 'Histórico de Análises',
+    desc: 'Todas as suas análises salvas e organizadas. Revisite, compare e exporte relatórios completos em PDF com serial de autenticidade verificável.',
+    tag: 'INCLUSO NO PREMIUM',
+    tagJade: true,
+    route: '/historico',
+    cta: 'Ver histórico',
   },
 ];
+
+function FeatureCard({ f, onCta }) {
+  const cardRef = useRef(null);
+
+  const handleEnter = () => {
+    const el = cardRef.current;
+    if (!el) return;
+    el.style.background = 'var(--card-hover)';
+    el.style.borderColor = 'rgba(0,242,254,0.20)';
+    el.style.transform = 'translateY(-4px)';
+    el.style.boxShadow = '0 0 0 1px rgba(0,242,254,0.2), 0 8px 48px rgba(0,0,0,0.7), 0 0 60px rgba(0,242,254,0.10)';
+    el.querySelector('.fc-topbar').style.opacity = '1';
+  };
+  const handleLeave = () => {
+    const el = cardRef.current;
+    if (!el) return;
+    el.style.background = 'var(--card)';
+    el.style.borderColor = 'rgba(0,242,254,0.10)';
+    el.style.transform = 'translateY(0)';
+    el.style.boxShadow = 'none';
+    el.querySelector('.fc-topbar').style.opacity = '0';
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      style={{
+        position: 'relative',
+        background: 'var(--card)',
+        border: '1px solid rgba(0,242,254,0.10)',
+        borderRadius: 'var(--r-lg)',
+        padding: '28px 26px',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'all .3s cubic-bezier(0.19,1,0.22,1)',
+        overflow: 'hidden',
+        backdropFilter: 'blur(12px)',
+      }}
+    >
+      {/* Gradient top bar (hover reveal) */}
+      <div className="fc-topbar" style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: 1,
+        background: 'linear-gradient(90deg, #00f2fe 0%, #4facfe 100%)',
+        opacity: 0,
+        transition: 'opacity .3s',
+      }} />
+
+      {/* Label mono */}
+      <div style={{
+        fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t4)',
+        letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 16,
+      }}>
+        {f.label}
+      </div>
+
+      {/* Icon */}
+      <div style={{
+        fontSize: '1.5rem', marginBottom: 16,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        width: 48, height: 48, borderRadius: 'var(--r-md)',
+        background: 'rgba(0,242,254,0.06)',
+        border: '1px solid rgba(0,242,254,0.10)',
+      }}>
+        {f.emoji}
+      </div>
+
+      {/* Title */}
+      <h3 style={{
+        fontFamily: 'var(--f-sans)', fontSize: '.88rem', fontWeight: 600,
+        color: 'var(--t0)', marginBottom: 8, letterSpacing: '.01em',
+      }}>
+        {f.title}
+      </h3>
+
+      {/* Desc */}
+      <p style={{
+        fontFamily: 'var(--f-display)', fontSize: '.8rem', color: 'var(--t3)',
+        lineHeight: 1.65, fontWeight: 400, flex: 1,
+      }}>
+        {f.desc}
+      </p>
+
+      {/* Tag */}
+      <div style={{
+        display: 'inline-flex', alignItems: 'center',
+        marginTop: 14, padding: '3px 9px',
+        background: f.tagJade ? 'rgba(16,185,129,0.06)' : 'rgba(0,242,254,0.05)',
+        border: f.tagJade
+          ? '1px solid rgba(16,185,129,0.15)'
+          : '1px solid rgba(0,242,254,0.10)',
+        borderRadius: 999,
+        fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+        color: f.tagJade ? 'var(--jade2)' : 'var(--co7)',
+        letterSpacing: '.10em',
+        alignSelf: 'flex-start',
+      }}>
+        {f.tag}
+      </div>
+    </div>
+  );
+}
 
 export default function FeaturesSection() {
   const navigate = useNavigate();
   const { authToken, openModal } = useStore();
 
-  const handleCta = (route) => {
-    if (authToken) navigate(route);
+  const handleCta = (f) => {
+    if (f.scrollTo) {
+      document.getElementById(f.scrollTo)?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    if (authToken) navigate(f.route);
     else openModal('register');
   };
 
   return (
-    <section id="funcionalidades" style={{ padding: '100px 24px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section
+      id="funcionalidades"
+      style={{
+        padding: 'clamp(60px,8vw,120px) 28px',
+        background: 'var(--abyss)',
+        borderTop: '1px solid rgba(255,255,255,0.05)',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        position: 'relative',
+        zIndex: 1,
+        overflow: 'hidden',
+      }}
+    >
+      {/* Top center light line */}
+      <div style={{
+        position: 'absolute', top: 0, left: '50%',
+        transform: 'translateX(-50%)',
+        width: 800, height: 1,
+        background: 'linear-gradient(90deg,transparent,rgba(0,242,254,0.20),transparent)',
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 72 }}>
-          <div className="section-label" style={{ marginBottom: 20 }}>Funcionalidades</div>
-          <h2 className="t-display" style={{
-            fontSize: 'clamp(1.9rem,4vw,2.8rem)', fontWeight: 400,
-            color: 'var(--t0)', marginBottom: 14, letterSpacing: '-.02em',
-          }}>
-            Inteligência jurídica em{' '}
-            <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>cada módulo</span>
-          </h2>
-          <p style={{ color: 'var(--t3)', fontSize: '.9rem', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
-            Seis ferramentas especializadas, construídas para advogados que não aceitam metade do caminho.
-          </p>
-        </div>
+        <div className="section-label" style={{ marginBottom: 18 }}>Plataforma Completa</div>
+        <h2 className="t-display" style={{
+          fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 300,
+          color: 'var(--t0)', marginBottom: 14,
+          letterSpacing: '-.025em', lineHeight: 1.1,
+        }}>
+          Todas as ferramentas que{' '}
+          <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>seu caso precisa</span>
+        </h2>
+        <p style={{
+          fontFamily: 'var(--f-display)', fontSize: '.9rem', color: 'var(--t3)',
+          lineHeight: 1.75, maxWidth: 540, margin: '0 auto 56px',
+        }}>
+          O JURIR não é apenas uma análise. É um ecossistema jurídico completo,
+          do diagnóstico inicial até a petição pronta para protocolo.
+        </p>
 
-        {/* Grid */}
+        {/* Grid 8 cards */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
-          gap: 20,
+          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gap: 16,
         }}>
-          {FEATURES.map((f) => (
-            <div
-              key={f.id}
-              style={{
-                position: 'relative',
-                background: 'rgba(0,242,254,0.03)',
-                border: '1px solid rgba(0,242,254,0.10)',
-                borderRadius: 'var(--r-card)',
-                padding: '32px 28px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 0,
-                transition: 'border-color .2s, box-shadow .2s, background .2s',
-                cursor: 'default',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'rgba(0,242,254,0.25)';
-                e.currentTarget.style.boxShadow = '0 0 32px rgba(0,242,254,0.07)';
-                e.currentTarget.style.background = 'rgba(0,242,254,0.05)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'rgba(0,242,254,0.10)';
-                e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.background = 'rgba(0,242,254,0.03)';
-              }}
-            >
-              {/* Top accent line */}
-              <div style={{
-                position: 'absolute', top: 0, left: 24, right: 24, height: 1,
-                background: 'linear-gradient(90deg, transparent, rgba(0,242,254,0.18), transparent)',
-              }}/>
-
-              {/* Label mono */}
-              <div style={{
-                fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t4)',
-                letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 20,
-              }}>
-                {f.label}
-              </div>
-
-              {/* Icon */}
-              <div style={{ marginBottom: 20 }}>{f.icon}</div>
-
-              {/* Title */}
-              <h3 style={{
-                fontFamily: 'var(--f-display)', fontSize: '1.35rem', fontWeight: 400,
-                color: 'var(--t0)', marginBottom: 12, letterSpacing: '-.01em',
-              }}>
-                {f.title}
-              </h3>
-
-              {/* Description */}
-              <p style={{
-                fontSize: '.855rem', color: 'var(--t3)', lineHeight: 1.65,
-                marginBottom: 28, flexGrow: 1,
-              }}>
-                {f.desc}
-              </p>
-
-              {/* CTA */}
-              <button
-                className="btn btn-ghost btn-sm"
-                style={{ alignSelf: 'flex-start' }}
-                onClick={() => handleCta(f.route)}
-              >
-                {f.cta} →
-              </button>
-            </div>
+          {FEATURES.map(f => (
+            <FeatureCard key={f.id} f={f} onCta={handleCta} />
           ))}
         </div>
       </div>
