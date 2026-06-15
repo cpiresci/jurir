@@ -10,7 +10,7 @@ const sections = [
     icon: <Database size={18} />,
     title: 'Dados que Coletamos',
     color: 'var(--co7)',
-    bg: 'rgba(20,114,217,0.06)',
+    bg: 'rgba(0,242,254,0.06)',
     border: 'var(--b-cobalt)',
     content: [
       {
@@ -144,7 +144,7 @@ export default function PrivacidadePage() {
       <div style={{ marginBottom: 56 }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
-          background: 'rgba(20,114,217,0.06)', border: '1px solid var(--b-cobalt)',
+          background: 'rgba(0,242,254,0.06)', border: '1px solid var(--b-cobalt)',
           borderRadius: 'var(--r-pill)', padding: '5px 14px',
           fontSize: '.7rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.12em', marginBottom: 20,
@@ -375,7 +375,7 @@ export default function PrivacidadePage() {
       {/* ── CONTATO ── */}
       <div style={{
         marginTop: 40,
-        background: 'linear-gradient(135deg, rgba(20,114,217,0.06) 0%, rgba(43,138,245,0.04) 100%)',
+        background: 'linear-gradient(135deg, rgba(0,242,254,0.06) 0%, rgba(43,138,245,0.04) 100%)',
         border: '1px solid var(--b-cobalt)',
         borderRadius: 'var(--r-xl)',
         padding: '32px 28px',

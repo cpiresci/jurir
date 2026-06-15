@@ -12,7 +12,7 @@ const FLOW = [
 
 const STATUS_COLOR = {
   idle:    { border: 'var(--b-main)',               bg: 'var(--bg-card)',              dot: 'var(--t5)',  label: '' },
-  running: { border: 'rgba(20,114,217,0.35)',        bg: 'rgba(20,114,217,0.03)',       dot: 'var(--co7)', label: 'analisando…' },
+  running: { border: 'rgba(0,242,254,0.28)',        bg: 'rgba(20,114,217,0.03)',       dot: 'var(--co7)', label: 'analisando…' },
   done:    { border: 'rgba(16,185,129,0.25)',        bg: 'rgba(16,185,129,0.022)',      dot: 'var(--jade2)', label: 'concluído' },
   error:   { border: 'rgba(239,68,68,0.22)',         bg: 'rgba(239,68,68,0.02)',        dot: '#ef4444',  label: 'erro' },
 };
@@ -76,10 +76,10 @@ export default function AgentsSection() {
             <div style={{
               display:'inline-flex', alignItems:'center', gap:9,
               marginTop:22, padding:'9px 18px',
-              background:'rgba(20,114,217,0.06)', border:'1px solid var(--b-cobalt)',
+              background:'rgba(0,242,254,0.06)', border:'1px solid var(--b-cobalt)',
               borderRadius:'var(--r-md)',
               fontFamily:'var(--f-mono)', fontSize:'.67rem', color:'var(--co7)', letterSpacing:'.10em',
-              boxShadow:'0 0 24px rgba(20,114,217,0.10)',
+              boxShadow:'0 0 24px rgba(0,242,254,0.10)',
             }}>
               <span style={{ width:6, height:6, borderRadius:'50%', background:'var(--co7)', animation:'pulse 1.2s ease-in-out infinite', boxShadow:'0 0 8px rgba(20,114,217,0.6)' }}/>
               ANÁLISE EM TEMPO REAL — CONSELHO ATIVO
@@ -109,7 +109,7 @@ export default function AgentsSection() {
                 transform: visible ? 'translateY(0)' : 'translateY(18px)',
                 transition: `opacity .5s ${0.025 * i}s, transform .5s ${0.025 * i}s, border-color .35s, background .35s, box-shadow .35s`,
                 boxShadow: status === 'running'
-                  ? '0 0 18px rgba(20,114,217,0.14)'
+                  ? '0 0 18px rgba(0,242,254,0.12)'
                   : status === 'done'
                     ? '0 0 12px rgba(16,185,129,0.09)'
                     : 'var(--shadow-card)',
@@ -120,7 +120,7 @@ export default function AgentsSection() {
                 {status === 'running' && (
                   <div style={{
                     position:'absolute', inset:0,
-                    background:'linear-gradient(90deg, transparent 0%, rgba(20,114,217,0.06) 50%, transparent 100%)',
+                    background:'linear-gradient(90deg, transparent 0%, rgba(0,242,254,0.06) 50%, transparent 100%)',
                     backgroundSize:'200% 100%',
                     animation:'agent-shimmer 1.8s ease-in-out infinite',
                     borderRadius:'inherit', pointerEvents:'none',

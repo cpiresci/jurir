@@ -70,7 +70,7 @@ export default function Footer() {
           <div style={{ maxWidth:360 }}>
             <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:20 }}>
               <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
-                <rect width="36" height="36" rx="8" fill="rgba(20,114,217,0.07)" stroke="rgba(20,114,217,0.18)" strokeWidth="1"/>
+                <rect width="36" height="36" rx="8" fill="rgba(20,114,217,0.07)" stroke="rgba(0,242,254,0.18)" strokeWidth="1"/>
                 <line x1="7" y1="17" x2="29" y2="17" stroke="var(--co7)" strokeWidth="1.4" strokeLinecap="round"/>
                 <line x1="18" y1="9" x2="18" y2="27" stroke="var(--co7)" strokeWidth="1.4" strokeLinecap="round"/>
                 <path d="M7 17 Q9 22 13 22 Q17 22 18 17" stroke="var(--co7)" strokeWidth="1.1" fill="rgba(20,114,217,0.07)" strokeLinecap="round"/>

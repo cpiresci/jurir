@@ -194,7 +194,7 @@ export default function AnalysisPanel() {
                   onClick={() => { setPrompt(ex.text); setCharCount(ex.text.length); }}
                   style={{
                     background: 'rgba(20,114,217,0.05)',
-                    border: '1px solid rgba(20,114,217,0.18)',
+                    border: '1px solid rgba(0,242,254,0.18)',
                     borderRadius: 'var(--r-sm)',
                     padding: '4px 10px',
                     fontFamily: 'var(--f-mono)', fontSize: '.6rem',
@@ -202,8 +202,8 @@ export default function AnalysisPanel() {
                     letterSpacing: '.04em',
                     transition: 'all .15s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(20,114,217,0.10)'; e.currentTarget.style.borderColor = 'rgba(20,114,217,0.35)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(20,114,217,0.05)'; e.currentTarget.style.borderColor = 'rgba(20,114,217,0.18)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,242,254,0.10)'; e.currentTarget.style.borderColor = 'rgba(0,242,254,0.28)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(20,114,217,0.05)'; e.currentTarget.style.borderColor = 'rgba(0,242,254,0.18)'; }}
                 >
                   {ex.label}
                 </button>
@@ -306,7 +306,7 @@ function FreeResult({ result }) {
         {/* Header com área e risco */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
           <div style={{
-            background: 'rgba(20,114,217,0.06)', border: '1px solid var(--b-cobalt)',
+            background: 'rgba(0,242,254,0.06)', border: '1px solid var(--b-cobalt)',
             borderRadius: 'var(--r-md)', padding: '8px 14px',
             fontFamily: 'var(--f-mono)', fontSize: '.68rem',
             color: 'var(--co7)', letterSpacing: '.08em', flexShrink: 0,
