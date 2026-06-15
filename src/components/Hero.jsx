@@ -68,7 +68,7 @@ function ScoreRing({ size = 120, score = 87, visible }) {
           <stop offset="100%" stopColor="var(--am4)"/>
         </linearGradient>
       </defs>
-      <circle cx={size/2} cy={size/2} r={R} fill="none" stroke="rgba(20,114,217,0.10)" strokeWidth={8}/>
+      <circle cx={size/2} cy={size/2} r={R} fill="none" stroke="rgba(0,242,254,0.10)" strokeWidth={8}/>
       <circle cx={size/2} cy={size/2} r={R} fill="none" stroke="url(#rgrad-h)" strokeWidth={7}
         strokeLinecap="round" strokeDasharray={C} strokeDashoffset={fill}
         transform={`rotate(-90 ${size/2} ${size/2})`} filter="url(#rg-h)"
@@ -177,7 +177,7 @@ export default function Hero() {
             position:'absolute', top:0, bottom:0, width:1,
             left: i<2 ? (i===0?0:'8%') : undefined,
             right: i>=2 ? (i===2?'8%':0) : undefined,
-            background:'linear-gradient(180deg,transparent,rgba(20,114,217,0.12),rgba(139,92,246,0.06),transparent)',
+            background:'linear-gradient(180deg,transparent,rgba(0,242,254,0.12),rgba(139,92,246,0.06),transparent)',
             pointerEvents:'none',
           }}/>
         ))}
