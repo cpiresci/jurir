@@ -110,7 +110,7 @@ export default function Footer() {
             }}>
               <span style={{ width:4, height:4, borderRadius:'50%', background:'var(--jade2)', boxShadow:'0 0 5px rgba(16,185,129,0.5)' }}/>
               <span style={{ fontFamily:'var(--f-mono)', fontSize:'.55rem', color:'var(--co7)', letterSpacing:'.14em' }}>
-                SISTEMA v10.0 · OPERACIONAL
+                SISTEMA v11.0 · OPERACIONAL
               </span>
             </div>
           </div>
