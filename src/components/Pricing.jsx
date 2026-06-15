@@ -1,243 +1,346 @@
-import { Check, Zap, ArrowRight, Code2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Check, Zap, ArrowRight, Code2, CreditCard } from 'lucide-react';
 import { useStore } from '../store';
 
-const PLANS = [
+// ── Linha 1: Free · Crédito · Solo ──────────────────────────────────────────
+const PLANS_TOP = [
   {
     id: 'free',
     label: 'GRATUITO',
     price: 'R$ 0',
-    sub: 'para sempre, sem cartão',
+    sub: 'para sempre · sem cartão',
     badge: null,
-    premium: false,
+    color: 'free',
     features: [
-      '1 agente especialista (selecionado por IA)',
-      'Análise jurídica por área mais relevante',
+      '1 agente especialista por análise',
+      'Análise jurídica básica da área relevante',
       'Resultado em até 3 minutos',
-      'Acesso ao painel básico',
+      'Sem necessidade de cadastro',
     ],
-    cta: 'Usar Grátis',
-    ctaStyle: 'ghost',
+    cta: 'Usar Grátis Agora',
     action: 'scroll',
+  },
+  {
+    id: 'credito',
+    label: 'POR ANÁLISE',
+    price: 'R$ 19',
+    priceDecimal: ',90',
+    sub: 'por análise · pague só quando usar',
+    badge: 'SEM ASSINATURA',
+    note: '💡 Ideal para casos únicos. Sem recorrência.',
+    color: 'jade',
+    features: [
+      'Todos os 16 agentes em paralelo',
+      'Advogado do Diabo — contraditório completo',
+      'Juiz IA Quantum + veredicto final',
+      'JURIR Score dimensional',
+      'Relatório PDF disponível por 30 dias',
+      'Serial de autenticidade verificável',
+    ],
+    cta: 'Comprar Análise — R$19,90',
+    action: 'checkout_credito',
   },
   {
     id: 'solo',
     label: 'SOLO',
     price: 'R$ 49',
-    sub: 'por mês, cancele quando quiser',
-    badge: 'MAIS POPULAR',
-    premium: true,
+    sub: 'por mês · cancele quando quiser',
+    badge: '✦ MAIS POPULAR',
+    color: 'cyan',
     features: [
-      '16 agentes especializados em paralelo',
-      'Advogado do Diabo com contraditório',
-      'Juiz IA Quantum + JURIR Score',
+      'Análises ilimitadas',
+      'Todos os 16 agentes em paralelo',
+      'Advogado do Diabo + Juiz IA Quantum',
+      'JURIR Score dimensional completo',
       'Streaming SSE em tempo real',
-      'Histórico completo de análises',
-      'Delta Analysis (comparativo)',
-      'Upload de documentos PDF/Word',
-      'Simulador de Instâncias judiciais',
+      'Delta Analysis — comparativo de casos',
+      'Análise de documentos PDF/Word',
+      'Simulador de Instâncias (1ª, TJ, STJ, STF)',
       'Gerador de Petições (.docx)',
-      'Monitoramento via DATAJUD',
-      'Exportação em PDF profissional',
-      'Verificação de autenticidade',
+      'Monitoramento Processual via DATAJUD',
+      'Histórico completo + exportação PDF',
     ],
-    cta: 'Começar Solo',
-    ctaStyle: 'primary',
-    action: 'register',
+    cta: 'Começar Solo — R$49/mês',
+    action: 'checkout_solo',
   },
+];
+
+// ── Linha 2: Escritório · API ─────────────────────────────────────────────────
+const PLANS_BOT = [
   {
     id: 'escritorio',
     label: 'ESCRITÓRIO',
     price: 'R$ 299',
-    sub: 'por mês · até 10 usuários',
-    badge: null,
-    premium: false,
+    sub: 'por mês · faturamento mensal ou anual',
+    badge: 'ATÉ 5 USUÁRIOS',
+    color: 'violet',
     features: [
-      'Tudo do plano Solo',
-      'Até 10 usuários simultâneos',
-      'Painel administrativo centralizado',
-      'Relatórios por usuário e período',
-      'Suporte prioritário via WhatsApp',
-      'Onboarding dedicado',
-      'SLA de 99,5% de disponibilidade',
+      '30 análises completas/mês',
+      'Até 5 usuários com acessos individuais',
+      'Tudo do plano Solo para cada usuário',
+      'White-label no relatório PDF (logo do escritório)',
+      'API com 500 requisições/mês',
+      'Dashboard centralizado de casos',
+      'Exportação em lote (ZIP)',
+      'Suporte prioritário via chat',
+      'Treinamento inicial incluído (1h)',
     ],
-    cta: 'Falar com equipe',
-    ctaStyle: 'ghost',
-    action: 'contact',
+    cta: 'Contratar Escritório — R$299/mês',
+    action: 'checkout_escritorio',
   },
   {
     id: 'api',
-    label: 'API',
+    label: 'API & PLATAFORMA',
     price: 'R$ 999',
-    sub: 'por mês · acesso programático',
+    sub: 'por mês · SLA garantido · NF emitida',
     badge: 'ENTERPRISE',
-    premium: false,
+    color: 'gold',
     features: [
-      'Tudo do plano Escritório',
-      'Acesso completo à API REST',
-      'Webhooks para integrações',
-      'Rate limit elevado (10k req/mês)',
-      'Chaves de API múltiplas',
-      'Documentação e sandbox',
-      'Gerente de conta dedicado',
-      'Contrato e NDA disponíveis',
+      'API REST com 5.000 requisições/mês',
+      'Usuários ilimitados na organização',
+      'Análises ilimitadas incluídas',
+      'White-label total — remova referências ao JURIR',
+      'Webhook para integração de sistemas',
+      'SSE streaming via API',
+      'SLA 99,5% de uptime contratual',
+      'Suporte dedicado com gerente de conta',
+      'Sandbox para testes e homologação',
+      'NF/CNPJ · contrato PJ disponível',
     ],
-    cta: 'Contatar vendas',
-    ctaStyle: 'ghost',
+    cta: 'Falar com Vendas — R$999/mês',
     action: 'contact',
   },
 ];
 
-export default function Pricing() {
-  const { openModal, authToken } = useStore();
+// ── Paleta por plano ──────────────────────────────────────────────────────────
+const PALETTE = {
+  free:    { border: 'rgba(255,255,255,.08)',  glow: 'transparent',               badgeBg: 'rgba(255,255,255,.06)', badgeColor: 'rgba(255,255,255,.4)',  checkColor: '#10b981', ctaBg: 'transparent',        ctaColor: 'rgba(255,255,255,.55)', ctaBorder: 'rgba(255,255,255,.14)' },
+  jade:    { border: 'rgba(16,185,129,.22)',   glow: 'rgba(16,185,129,.08)',       badgeBg: 'rgba(16,185,129,.1)',  badgeColor: '#34d399',               checkColor: '#10b981', ctaBg: 'linear-gradient(135deg,#10b981,#34d399)', ctaColor: '#050507',       ctaBorder: 'none' },
+  cyan:    { border: 'rgba(0,242,254,.28)',    glow: 'rgba(0,242,254,.10)',        badgeBg: 'rgba(0,242,254,.1)',   badgeColor: '#00f2fe',               checkColor: '#00f2fe', ctaBg: 'linear-gradient(135deg,#00f2fe,#4facfe)', ctaColor: '#050507',       ctaBorder: 'none' },
+  violet:  { border: 'rgba(124,58,237,.28)',  glow: 'rgba(124,58,237,.10)',       badgeBg: 'rgba(124,58,237,.12)','badgeColor': '#a78bfa',             checkColor: '#a78bfa', ctaBg: 'linear-gradient(135deg,#7c3aed,#a78bfa)', ctaColor: '#fff',          ctaBorder: 'none' },
+  gold:    { border: 'rgba(229,176,75,.32)',  glow: 'rgba(229,176,75,.12)',       badgeBg: 'rgba(229,176,75,.12)', badgeColor: '#f0c96a',               checkColor: '#e5b04b', ctaBg: 'linear-gradient(135deg,#e5b04b,#f0c96a)', ctaColor: '#050507',       ctaBorder: 'none' },
+};
 
-  const handleCta = (plan) => {
+function PlanCard({ plan, wide = false }) {
+  const { openModal, authToken } = useStore();
+  const p = PALETTE[plan.color];
+  const isPopular = plan.badge === '✦ MAIS POPULAR';
+
+  const handleCta = () => {
     if (plan.action === 'scroll') {
       document.getElementById('analise')?.scrollIntoView({ behavior: 'smooth' });
-    } else if (plan.action === 'register') {
-      if (authToken) window.location.href = '/premium';
-      else openModal('register');
     } else if (plan.action === 'contact') {
       window.open('mailto:contato@jurir.app', '_blank');
+    } else {
+      // checkout_credito / checkout_solo / checkout_escritorio
+      if (!authToken) { openModal('register'); return; }
+      const planName = plan.action.replace('checkout_', '');
+      // chama backend /api/create-checkout-session
+      fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ plan: planName }),
+      })
+        .then(r => r.json())
+        .then(d => { if (d.url) window.location.href = d.url; })
+        .catch(() => alert('Erro ao iniciar pagamento. Tente novamente.'));
     }
   };
 
   return (
-    <section id="precos" style={{ padding: '100px 24px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <div style={{
+      borderRadius: 24,
+      padding: wide ? '32px 28px' : '32px 28px',
+      position: 'relative',
+      overflow: 'hidden',
+      border: `1px solid ${p.border}`,
+      background: plan.color === 'free'
+        ? 'rgba(255,255,255,.028)'
+        : `linear-gradient(145deg, ${p.glow} 0%, rgba(0,0,0,.18) 100%)`,
+      boxShadow: plan.color !== 'free' ? `0 0 0 1px ${p.border}, 0 8px 40px rgba(0,0,0,.5), 0 0 60px ${p.glow}` : 'none',
+      transition: 'transform .25s, box-shadow .25s',
+    }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
+    >
+      {/* Linha topo colorida */}
+      {plan.color !== 'free' && (
+        <div style={{
+          position: 'absolute', top: 0, left: '10%', right: '10%', height: 1,
+          background: `linear-gradient(90deg, transparent, ${p.badgeColor}, transparent)`,
+        }}/>
+      )}
 
-        <div style={{ textAlign: 'center', marginBottom: 64 }}>
+      {/* Glow radial topo */}
+      {plan.color !== 'free' && (
+        <div style={{
+          position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+          width: 280, height: 150, borderRadius: '50%',
+          background: `radial-gradient(ellipse at 50% 0%, ${p.glow} 0%, transparent 70%)`,
+          pointerEvents: 'none',
+        }}/>
+      )}
+
+      {/* Selo popular */}
+      {isPopular && (
+        <div style={{
+          position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+          background: 'linear-gradient(135deg,#00f2fe,#4facfe)',
+          borderRadius: '0 0 10px 10px', padding: '4px 16px',
+          fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+          fontWeight: 700, color: '#050507', letterSpacing: '.1em', whiteSpace: 'nowrap',
+          zIndex: 2,
+        }}>
+          {plan.badge}
+        </div>
+      )}
+
+      <div style={{ position: 'relative', zIndex: 1, marginTop: isPopular ? 18 : 0 }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <span style={{
+            fontFamily: 'var(--f-mono)', fontSize: '.58rem',
+            color: 'rgba(255,255,255,.35)', letterSpacing: '.2em', textTransform: 'uppercase',
+          }}>{plan.label}</span>
+          {plan.badge && !isPopular && (
+            <span style={{
+              background: p.badgeBg, border: `1px solid ${p.border}`,
+              borderRadius: 999, padding: '3px 10px',
+              fontFamily: 'var(--f-mono)', fontSize: '.54rem',
+              color: p.badgeColor, letterSpacing: '.1em',
+            }}>{plan.badge}</span>
+          )}
+        </div>
+
+        {/* Preço */}
+        <div style={{ marginBottom: 4 }}>
+          <span style={{
+            fontFamily: 'var(--f-display)', fontSize: '3rem', fontWeight: 600, lineHeight: 1,
+            background: plan.color === 'free' ? 'none' : `linear-gradient(135deg, ${p.badgeColor}, ${p.checkColor})`,
+            WebkitBackgroundClip: plan.color === 'free' ? 'unset' : 'text',
+            WebkitTextFillColor: plan.color === 'free' ? 'var(--t0)' : 'transparent',
+            backgroundClip: plan.color === 'free' ? 'unset' : 'text',
+          }}>
+            {plan.price}
+          </span>
+          {plan.priceDecimal && (
+            <span style={{
+              fontFamily: 'var(--f-display)', fontSize: '1.8rem', fontWeight: 600,
+              background: `linear-gradient(135deg, ${p.badgeColor}, ${p.checkColor})`,
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+            }}>{plan.priceDecimal}</span>
+          )}
+        </div>
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.7rem', color: 'rgba(255,255,255,.3)', marginBottom: plan.note ? 10 : 20, letterSpacing: '.06em' }}>
+          {plan.sub}
+        </div>
+
+        {/* Nota informativa (crédito) */}
+        {plan.note && (
+          <div style={{
+            fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: p.badgeColor,
+            background: p.badgeBg, border: `1px solid ${p.border}`,
+            borderRadius: 8, padding: '8px 12px', marginBottom: 16, lineHeight: 1.5,
+          }}>{plan.note}</div>
+        )}
+
+        <div style={{ height: 1, background: `${p.border}`, marginBottom: 18 }}/>
+
+        {/* Features */}
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 24 }}>
+          {plan.features.map((f, i) => (
+            <li key={i} style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
+              <Check size={12} style={{ color: p.checkColor, flexShrink: 0, marginTop: 3 }}/>
+              <span style={{ fontSize: '.8rem', color: 'rgba(255,255,255,.7)', lineHeight: 1.45 }}>{f}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* CTA */}
+        <button
+          onClick={handleCta}
+          style={{
+            width: '100%', padding: '13px 0', borderRadius: 999,
+            fontFamily: 'var(--f-mono)', fontSize: '.78rem', fontWeight: 700,
+            letterSpacing: '.08em', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            background: p.ctaBg,
+            color: p.ctaColor,
+            border: p.ctaBorder !== 'none' ? `1px solid ${p.ctaBorder}` : 'none',
+            boxShadow: plan.color !== 'free' ? `0 0 36px ${p.glow}` : 'none',
+            transition: 'all .25s',
+          }}
+          onMouseEnter={e => { if (plan.color !== 'free') e.currentTarget.style.filter = 'brightness(1.12)'; }}
+          onMouseLeave={e => { e.currentTarget.style.filter = ''; }}
+        >
+          {plan.id === 'solo' && <Zap size={13}/>}
+          {plan.id === 'credito' && <CreditCard size={13}/>}
+          {plan.id === 'api' && <Code2 size={13}/>}
+          {plan.cta}
+          {(plan.id === 'solo' || plan.id === 'escritorio') && <ArrowRight size={13}/>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function Pricing() {
+  return (
+    <section id="precos" style={{ padding: '100px 24px' }}>
+      <div style={{ maxWidth: 1060, margin: '0 auto' }}>
+
+        {/* Cabeçalho */}
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <div className="section-label" style={{ marginBottom: 20 }}>Planos & Acesso</div>
           <h2 className="t-display" style={{
             fontSize: 'clamp(1.9rem,4vw,2.8rem)', fontWeight: 400,
             color: 'var(--t0)', marginBottom: 14, letterSpacing: '-.02em',
           }}>
             Escolha seu nível de{' '}
-            <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>acesso</span>
+            <em style={{ fontStyle: 'italic', background: 'linear-gradient(135deg,#00f2fe,#4facfe)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              poder jurídico
+            </em>
           </h2>
-          <p style={{ color: 'var(--t3)', fontSize: '.9rem', lineHeight: 1.7 }}>
-            Comece gratuitamente. Eleve para poder total quando precisar de profundidade máxima.
+          <p style={{ color: 'var(--t3)', fontSize: '.9rem', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
+            Do diagnóstico gratuito à infraestrutura completa para escritórios e plataformas.
           </p>
         </div>
 
+        {/* Linha 1: Free · Crédito · Solo */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: 20,
-          alignItems: 'start',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 16,
+          marginBottom: 16,
         }}>
-          {PLANS.map((plan) => (
-            <div
-              key={plan.id}
-              className={plan.premium ? 'pricing-card pricing-card-premium' : 'pricing-card pricing-card-free'}
-              style={plan.premium ? {} : { position: 'relative' }}
-            >
-              {plan.premium && (
-                <div style={{
-                  position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-                  width: '60%', height: 1,
-                  background: 'linear-gradient(90deg, transparent, var(--co8), transparent)',
-                  zIndex: 1,
-                }}/>
-              )}
+          {PLANS_TOP.map(plan => <PlanCard key={plan.id} plan={plan}/>)}
+        </div>
 
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                {/* Header row */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, minHeight: 24 }}>
-                  <span style={{
-                    fontFamily: 'var(--f-mono)', fontSize: '.62rem',
-                    color: plan.premium ? 'rgba(255,255,255,0.45)' : 'var(--t4)',
-                    letterSpacing: '.18em', textTransform: 'uppercase',
-                  }}>
-                    {plan.label}
-                  </span>
-                  {plan.badge && (
-                    <span style={{
-                      background: plan.id === 'api' ? 'rgba(139,92,246,0.2)' : 'rgba(43,138,245,0.2)',
-                      border: `1px solid ${plan.id === 'api' ? 'rgba(139,92,246,0.35)' : 'rgba(43,138,245,0.35)'}`,
-                      borderRadius: 'var(--r-pill)', padding: '3px 10px',
-                      fontFamily: 'var(--f-mono)', fontSize: '.58rem',
-                      color: plan.id === 'api' ? '#c4b5fd' : 'var(--co9)',
-                      letterSpacing: '.1em',
-                    }}>
-                      {plan.badge}
-                    </span>
-                  )}
-                </div>
+        {/* Divisor B2B */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '8px 0 16px' }}>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,transparent,rgba(124,58,237,.2),rgba(229,176,75,.15),transparent)' }}/>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.56rem', color: 'rgba(255,255,255,.25)', letterSpacing: '.22em', whiteSpace: 'nowrap' }}>
+            PLANOS PARA ESCRITÓRIOS & PLATAFORMAS
+          </span>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,rgba(229,176,75,.15),rgba(124,58,237,.2),transparent)' }}/>
+        </div>
 
-                {/* Price */}
-                <div style={{
-                  fontFamily: 'var(--f-display)', fontSize: '2.8rem',
-                  letterSpacing: '.02em',
-                  color: plan.premium ? '#fff' : 'var(--t0)',
-                  lineHeight: 1, marginBottom: 4,
-                }}>
-                  {plan.price}
-                </div>
-                <div style={{
-                  fontSize: '.8rem',
-                  color: plan.premium ? 'rgba(255,255,255,0.45)' : 'var(--t4)',
-                  marginBottom: 28,
-                }}>
-                  {plan.sub}
-                </div>
-
-                <div style={{
-                  height: 1,
-                  background: plan.premium ? 'rgba(255,255,255,0.08)' : 'var(--b-main)',
-                  marginBottom: 22,
-                }}/>
-
-                {/* Features */}
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
-                  {plan.features.map((f, i) => (
-                    <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <Check size={12} style={{
-                        color: plan.premium ? 'var(--co9)' : 'var(--jade2)',
-                        flexShrink: 0, marginTop: 3,
-                      }}/>
-                      <span style={{
-                        fontSize: '.83rem',
-                        color: plan.premium ? 'rgba(255,255,255,0.80)' : 'var(--t2)',
-                        lineHeight: 1.5,
-                      }}>
-                        {f}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA */}
-                <button
-                  className={`btn${plan.ctaStyle === 'ghost' ? ' btn-ghost' : ''}`}
-                  style={{
-                    width: '100%', justifyContent: 'center',
-                    ...(plan.ctaStyle === 'primary' ? { background: '#fff', color: 'var(--co6)', fontWeight: 700 } : {}),
-                  }}
-                  onClick={() => handleCta(plan)}
-                >
-                  {plan.id === 'solo' && <Zap size={13}/>}
-                  {plan.id === 'api' && <Code2 size={13}/>}
-                  {plan.cta}
-                  {plan.id === 'solo' && <ArrowRight size={13}/>}
-                </button>
-              </div>
-            </div>
-          ))}
+        {/* Linha 2: Escritório · API */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: 16,
+          marginBottom: 40,
+        }}>
+          {PLANS_BOT.map(plan => <PlanCard key={plan.id} plan={plan} wide/>)}
         </div>
 
         {/* Trust row */}
-        <div style={{
-          marginTop: 48, display: 'flex', justifyContent: 'center',
-          gap: 28, flexWrap: 'wrap',
-        }}>
-          {['🔒 Pagamento seguro', '✅ Cancele a qualquer hora', '⚡ Acesso imediato', '🛡️ Dados protegidos'].map((item, i) => (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
+          {['🔒 Pagamento 100% seguro','✅ 30 dias de garantia','⚡ Acesso imediato','🚫 Cancele quando quiser','📄 NF disponível'].map((item, i) => (
             <span key={i} style={{
-              fontFamily: 'var(--f-mono)', fontSize: '.68rem',
-              color: 'var(--t4)', letterSpacing: '.08em',
-            }}>
-              {item}
-            </span>
+              fontFamily: 'var(--f-mono)', fontSize: '.62rem',
+              color: 'rgba(255,255,255,.25)', letterSpacing: '.08em',
+            }}>{item}</span>
           ))}
         </div>
       </div>
