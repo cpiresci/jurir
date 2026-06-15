@@ -514,7 +514,11 @@ body {
   box-shadow: var(--shadow-hover);
   transform: translateY(-4px);
 }
-.pricing-card-premium {
+
+/* Shared base for paid tiers (Solo / Escritório / API) */
+.pricing-card-solo,
+.pricing-card-escritorio,
+.pricing-card-api {
   background: linear-gradient(145deg, var(--co1) 0%, var(--co3) 50%, #0A1830 80%, #080E1C 100%);
   border-color: rgba(20,114,217,0.40);
   box-shadow: var(--shadow-cobalt2), 0 0 120px rgba(20,114,217,0.10);
@@ -522,7 +526,9 @@ body {
   position: relative;
   overflow: hidden;
 }
-.pricing-card-premium::before {
+.pricing-card-solo::before,
+.pricing-card-escritorio::before,
+.pricing-card-api::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -530,19 +536,49 @@ body {
   opacity: 0.6;
   pointer-events: none;
 }
-/* Glow orb inside premium card */
-.pricing-card-premium::after {
+/* Glow orb inside paid-tier cards */
+.pricing-card-solo::after,
+.pricing-card-escritorio::after,
+.pricing-card-api::after {
   content: '';
   position: absolute;
   top: -40%; right: -20%;
   width: 70%; height: 70%;
-  background: radial-gradient(circle, rgba(43,138,245,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--pricing-accent-glow) 0%, transparent 70%);
   pointer-events: none;
   border-radius: 50%;
 }
-.pricing-card-premium:hover {
+.pricing-card-solo:hover,
+.pricing-card-escritorio:hover,
+.pricing-card-api:hover {
   box-shadow: var(--shadow-cobalt2), 0 0 180px rgba(20,114,217,0.18);
   transform: translateY(-5px);
+}
+
+/* Plano Solo — accent cobalt (entrada premium, "MAIS POPULAR") */
+.pricing-card-solo {
+  --pricing-accent: var(--co9);
+  --pricing-accent-glow: rgba(43,138,245,0.12);
+  --pricing-badge-bg: rgba(43,138,245,0.20);
+  --pricing-badge-border: rgba(43,138,245,0.35);
+}
+
+/* Plano Escritório — accent amethyst (times jurídicos) */
+.pricing-card-escritorio {
+  --pricing-accent: var(--am5);
+  --pricing-accent-glow: rgba(139,92,246,0.14);
+  --pricing-badge-bg: rgba(139,92,246,0.20);
+  --pricing-badge-border: rgba(139,92,246,0.35);
+  border-color: rgba(139,92,246,0.35);
+}
+
+/* Plano API — accent gold (desenvolvedores / integrações) */
+.pricing-card-api {
+  --pricing-accent: var(--au7);
+  --pricing-accent-glow: rgba(232,188,26,0.14);
+  --pricing-badge-bg: rgba(232,188,26,0.18);
+  --pricing-badge-border: rgba(232,188,26,0.35);
+  border-color: rgba(232,188,26,0.35);
 }
 
 /* ══════════════════════════════════════════════════
