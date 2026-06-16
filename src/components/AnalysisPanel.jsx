@@ -410,9 +410,9 @@ function FreeResult({ result }) {
         <button
           className="btn btn-cobalt-ultra btn-lg"
           style={{ justifyContent: 'center' }}
-          onClick={() => authToken ? null : openModal('login')}
+          onClick={() => authToken ? (window.location.href = '/#/checkout') : openModal('login')}
         >
-          🔓 Ver Relatório Completo — R$ 49,00
+          🔓 Ver Relatório Completo — R$ 19,90
         </button>
         <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t5)', letterSpacing: '.08em', marginTop: 10 }}>
           16 agentes · JURIR Score dimensional · PDF profissional · acesso imediato
