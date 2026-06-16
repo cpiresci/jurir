@@ -22,7 +22,7 @@ const PLANS_TOP = [
   {
     id: 'credito',
     label: 'POR ANÁLISE',
-    price: 'R$ 19',
+    price: 'R$ 4',
     priceDecimal: ',90',
     sub: 'por análise · pague só quando usar',
     badge: 'SEM ASSINATURA',
@@ -36,13 +36,14 @@ const PLANS_TOP = [
       'Relatório PDF disponível por 30 dias',
       'Serial de autenticidade verificável',
     ],
-    cta: 'Comprar Análise — R$19,90',
+    cta: 'Comprar Análise — R$4,90',
     action: 'checkout_credito',
   },
   {
     id: 'solo',
     label: 'SOLO',
-    price: 'R$ 49',
+    price: 'R$ 19',
+    priceDecimal: ',90',
     sub: 'por mês · cancele quando quiser',
     badge: '✦ MAIS POPULAR',
     color: 'cyan',
@@ -59,7 +60,7 @@ const PLANS_TOP = [
       'Monitoramento Processual via DATAJUD',
       'Histórico completo + exportação PDF',
     ],
-    cta: 'Começar Solo — R$49/mês',
+    cta: 'Começar Solo — R$19,90/mês',
     action: 'checkout_solo',
   },
 ];
@@ -68,8 +69,9 @@ const PLANS_BOT = [
   {
     id: 'escritorio',
     label: 'ESCRITÓRIO',
-    price: 'R$ 299',
-    sub: 'por mês · faturamento mensal ou anual',
+    price: 'R$ 79',
+    priceDecimal: ',90',
+    sub: 'por mês · cancele quando quiser',
     badge: 'ATÉ 5 USUÁRIOS',
     color: 'violet',
     features: [
@@ -83,14 +85,15 @@ const PLANS_BOT = [
       'Suporte prioritário via chat',
       'Treinamento inicial incluído (1h)',
     ],
-    cta: 'Contratar Escritório — R$299/mês',
+    cta: 'Contratar Escritório — R$79,90/mês',
     action: 'checkout_escritorio',
   },
   {
     id: 'api',
     label: 'API & PLATAFORMA',
-    price: 'R$ 999',
-    sub: 'por mês · SLA garantido · NF emitida',
+    price: 'R$ 149',
+    priceDecimal: ',90',
+    sub: 'por mês · cancele quando quiser',
     badge: 'ENTERPRISE',
     color: 'gold',
     features: [
@@ -105,8 +108,8 @@ const PLANS_BOT = [
       'Sandbox para testes e homologação',
       'NF/CNPJ · contrato PJ disponível',
     ],
-    cta: 'Falar com Vendas — R$999/mês',
-    action: 'contact',
+    cta: 'Assinar API — R$149,90/mês',
+    action: 'checkout_api',
   },
 ];
 

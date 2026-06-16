@@ -28,7 +28,8 @@ export default function AuthModal() {
     try {
       const data = await login(email, pwd);
       const token = data.token || data.access_token;
-      const user = data.user || await getMe(token);
+      // Sempre busca /me após login para garantir is_escritorio, is_api_plan, org_role
+      const user = await getMe(token);
       setAuth(token, user);
       addToast(`Bem-vindo, ${user.email?.split('@')[0]}!`, 'success');
       closeModal();
