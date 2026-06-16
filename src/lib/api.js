@@ -186,3 +186,72 @@ export async function verifySerial(serial) {
   }
   return r.json();
 }
+
+// ── Org (Plano Escritório) ─────────────────────────────────────────────
+export async function createOrg(name, token) {
+  return apiFetch('/api/org', { method: 'POST', body: JSON.stringify({ name }) }, token);
+}
+export async function getMyOrg(token) {
+  return apiFetch('/api/org/me', {}, token);
+}
+export async function uploadOrgLogo(logo_base64, logo_mime, token) {
+  return apiFetch('/api/org/logo', { method: 'POST', body: JSON.stringify({ logo_base64, logo_mime }) }, token);
+}
+export async function removeOrgLogo(token) {
+  return apiFetch('/api/org/logo', { method: 'DELETE' }, token);
+}
+export async function getOrgMembers(token) {
+  return apiFetch('/api/org/members', {}, token);
+}
+export async function getOrgDashboard(token) {
+  return apiFetch('/api/org/dashboard', {}, token);
+}
+export async function inviteMember(email, role, token) {
+  return apiFetch('/api/org/invite', { method: 'POST', body: JSON.stringify({ email, role }) }, token);
+}
+export async function removeMember(user_id, token) {
+  return apiFetch(`/api/org/members/${user_id}`, { method: 'DELETE' }, token);
+}
+export async function acceptInvite(inviteToken, token) {
+  return apiFetch(`/api/org/accept-invite?token=${inviteToken}`, {}, token);
+}
+
+// ── Exportação ZIP (Plano Escritório) ──────────────────────────────────
+export async function downloadZip(analysis_ids, token) {
+  const r = await fetch(`${(await import('./constants')).API_BASE}/api/report/zip`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ analysis_ids }),
+  });
+  if (!r.ok) throw new Error(`ZIP ${r.status}`);
+  const blob = await r.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'jurir_lote.zip'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── API Keys (Plano API) ───────────────────────────────────────────────
+export async function listApiKeys(token) {
+  return apiFetch('/api/keys', {}, token);
+}
+export async function createApiKey(label, token) {
+  return apiFetch('/api/keys', { method: 'POST', body: JSON.stringify({ label }) }, token);
+}
+export async function revokeApiKey(id, token) {
+  return apiFetch(`/api/keys/${id}`, { method: 'DELETE' }, token);
+}
+
+// ── Webhooks (Plano API) ───────────────────────────────────────────────
+export async function listWebhooks(token) {
+  return apiFetch('/api/webhooks', {}, token);
+}
+export async function createWebhook(url, secret, events, token) {
+  return apiFetch('/api/webhooks', { method: 'POST', body: JSON.stringify({ url, secret, events }) }, token);
+}
+export async function deleteWebhook(id, token) {
+  return apiFetch(`/api/webhooks/${id}`, { method: 'DELETE' }, token);
+}
+export async function testWebhook(id, token) {
+  return apiFetch(`/api/webhooks/${id}/test`, { method: 'POST' }, token);
+}

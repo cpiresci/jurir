@@ -15,6 +15,11 @@ export const useStore = create((set, get) => ({
     localStorage.removeItem('jurir_user');
     set({ authToken: null, userData: null });
   },
+  // Atualiza userData no store (chamado após /me para refletir org_role, is_escritorio, is_api_plan)
+  refreshUser: (user) => {
+    localStorage.setItem('jurir_user', JSON.stringify(user));
+    set({ userData: user });
+  },
 
   // ── UI ──
   mode: 'free',
