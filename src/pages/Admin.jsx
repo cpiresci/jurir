@@ -124,6 +124,12 @@ function UsersTab({ api }) {
   const filtered = users.filter(u => !search || u.email?.toLowerCase().includes(search.toLowerCase()) || u.name?.toLowerCase().includes(search.toLowerCase()));
   async function toggleBan(u) { try { await api(`/api/admin/users/${u.id}/ban`, { method: "POST", body: JSON.stringify({ banned: !u.is_banned }) }); load(); } catch(e) { alert(e.message); } }
   async function adjustCredits(u) { const v = prompt(`Créditos atuais: ${u.credits}\nNovo valor:`); if (!v) return; try { await api(`/api/admin/users/${u.id}/credits`, { method: "POST", body: JSON.stringify({ credits: parseInt(v) }) }); load(); } catch(e) { alert(e.message); } }
+  async function setPlan(u) {
+    const plan = prompt(`Plano atual: ${u.plan || 'free'}\n\nNovo plano:\nfree | credito | mensal | escritorio | api`);
+    if (!plan) return;
+    const days = plan === 'free' || plan === 'credito' ? 30 : parseInt(prompt('Dias de validade:', '30') || '30');
+    try { await api(`/api/admin/users/${u.id}/plan`, { method: "POST", body: JSON.stringify({ plan, days }) }); load(); alert(`Plano '${plan}' setado!`); } catch(e) { alert(e.message); }
+  }
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
@@ -134,11 +140,18 @@ function UsersTab({ api }) {
           { key: "id", label: "ID", render: v => <span style={{ fontFamily: "monospace", fontSize: 11, color: T.textMuted }}>#{v}</span> },
           { key: "name", label: "Nome" },
           { key: "email", label: "E-mail" },
-          { key: "plan", label: "Plano", render: v => <Badge color={v === "pro" ? T.gold : T.cobalt} bg={v === "pro" ? T.warningLight : T.cobaltLight}>{v || "free"}</Badge> },
+          { key: "plan", label: "Plano", render: (v, row) => {
+              const colors = { escritorio: [T.cobalt, T.cobaltLight], api: [T.success, T.successLight], mensal: [T.gold, T.warningLight], free: [T.textMuted, T.surfaceAlt] };
+              const [c, bg] = colors[v] || colors.free;
+              return <span style={{ display:"flex", gap:4, alignItems:"center" }}>
+                <Badge color={c} bg={bg}>{v || "free"}</Badge>
+                {row.plan_expires_at && <span style={{fontSize:10,color:T.textMuted}}>até {row.plan_expires_at}</span>}
+              </span>;
+            } },
           { key: "credits", label: "Créditos", render: v => <span style={{ fontFamily: "monospace" }}>{v ?? 0}</span> },
           { key: "is_banned", label: "Status", render: v => v ? <Badge color={T.danger} bg={T.dangerLight}>Banido</Badge> : <Badge color={T.success} bg={T.successLight}>Ativo</Badge> },
           { key: "created_at", label: "Cadastro", render: v => v ? new Date(v).toLocaleDateString("pt-BR") : "—" },
-          { key: "_a", label: "Ações", render: (_, row) => <div style={{ display: "flex", gap: 6 }}><Btn small variant={row.is_banned ? "secondary" : "danger"} onClick={() => toggleBan(row)}>{row.is_banned ? "Desbanir" : "Banir"}</Btn><Btn small variant="ghost" onClick={() => adjustCredits(row)}>Créditos</Btn></div> },
+          { key: "_a", label: "Ações", render: (_, row) => <div style={{ display: "flex", gap: 6 }}><Btn small variant={row.is_banned ? "secondary" : "danger"} onClick={() => toggleBan(row)}>{row.is_banned ? "Desbanir" : "Banir"}</Btn><Btn small variant="ghost" onClick={() => adjustCredits(row)}>Créditos</Btn><Btn small variant="secondary" onClick={() => setPlan(row)}>Plano</Btn></div> },
         ]}
       />
     </div>
