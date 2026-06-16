@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SoloBanner from '../components/SoloBanner';
 import { TrendingUp, Loader2, Scale } from 'lucide-react';
 import { useStore } from '../store';
 import { getAnalyses, simulateInstances } from '../lib/api';
@@ -13,7 +14,12 @@ const INSTANCES = [
 const AREAS = ['civil','penal','trabalhista','consumidor','tributario','familia','empresarial','imobiliario','constitucional','previdenciario'];
 
 export default function SimuladorPage() {
-  const { authToken, openModal, addToast } = useStore();
+  const { authToken, userData, openModal, addToast } = useStore();
+  // Guard: exige plano Solo+
+  if (authToken && userData && !userData.is_unlimited) {
+    return <SoloBanner feature="Simulador de Instâncias" />;
+  }
+
   const [analyses,   setAnalyses]   = useState([]);
   const [loadingA,   setLoadingA]   = useState(false);
   const [loading,    setLoading]    = useState(false);

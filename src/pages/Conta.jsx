@@ -131,6 +131,31 @@ export default function ContaPage() {
               </p>
             </div>
           )}
+
+          {/* Barra mensal — Escritório e API */}
+          {usage.monthly && usage.monthly.limit && (
+            <div style={{ marginTop:14 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', fontSize:'.72rem', color:'var(--p4)', marginBottom:5 }}>
+                <span style={{ fontFamily:'var(--f-mono)', letterSpacing:'.06em' }}>
+                  {usage.monthly.plan === 'escritorio' ? 'ANÁLISES / MÊS' : 'REQUISIÇÕES / MÊS'}
+                </span>
+                <span style={{ color:'var(--p2)', fontWeight:600 }}>
+                  {usage.monthly.count} / {usage.monthly.limit}
+                </span>
+              </div>
+              <div style={{ height:6, background:'var(--b-neutral)', borderRadius:4, overflow:'hidden' }}>
+                <div style={{ height:'100%', borderRadius:4,
+                  background: usage.monthly.count / usage.monthly.limit > 0.85 ? 'var(--cr3)' : 'var(--co7)',
+                  width:`${Math.min((usage.monthly.count / usage.monthly.limit) * 100, 100)}%`,
+                  transition:'width .3s' }}/>
+              </div>
+              <p style={{ fontSize:'.7rem', color:'var(--p5)', marginTop:4 }}>
+                {usage.monthly.count >= usage.monthly.limit
+                  ? '⚠ Limite mensal atingido — renova em ' + usage.monthly.month
+                  : `${usage.monthly.limit - usage.monthly.count} restantes em ${usage.monthly.month}`}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Org */}

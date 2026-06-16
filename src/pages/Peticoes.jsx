@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SoloBanner from '../components/SoloBanner';
 import { FileDown, Loader2, Scroll } from 'lucide-react';
 import { useStore } from '../store';
 import { getAnalyses, generatePetition } from '../lib/api';
@@ -10,7 +11,12 @@ const TIPOS = [
 ];
 
 export default function PeticoesPage() {
-  const { authToken, openModal, addToast } = useStore();
+  const { authToken, userData, openModal, addToast } = useStore();
+  // Guard: exige plano Solo+
+  if (authToken && userData && !userData.is_unlimited) {
+    return <SoloBanner feature="Gerador de Petições" />;
+  }
+
   const [analyses, setAnalyses] = useState([]);
   const [loadingA, setLoadingA] = useState(false);
   const [loading,  setLoading]  = useState(false);

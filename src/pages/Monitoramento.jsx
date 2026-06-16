@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SoloBanner from '../components/SoloBanner';
 import { Bell, Plus, Trash2, Loader2, RefreshCw, Activity } from 'lucide-react';
 import { useStore } from '../store';
 import { addMonitoring, listMonitoring, removeMonitoring } from '../lib/api';
@@ -6,7 +7,12 @@ import { addMonitoring, listMonitoring, removeMonitoring } from '../lib/api';
 const TRIBUNAIS = ['TJSP','TJRJ','TJMG','TJRS','TJPR','TJSC','TJBA','TJPE','TJCE','TJGO','STJ','STF','TRT2','TRT15','TRF1','TRF3'];
 
 export default function MonitoramentoPage() {
-  const { authToken, openModal, addToast } = useStore();
+  const { authToken, userData, openModal, addToast } = useStore();
+  // Guard: exige plano Solo+
+  if (authToken && userData && !userData.is_unlimited) {
+    return <SoloBanner feature="Monitoramento Processual" />;
+  }
+
   const [list,     setList]     = useState([]);
   const [loading,  setLoading]  = useState(false);
   const [adding,   setAdding]   = useState(false);

@@ -4,13 +4,16 @@ import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useStore } from '../store';
 import { checkHealth } from '../lib/api';
 
-const FERRAMENTAS = [
-  { to: '/delta',         label: 'Delta Analysis',           icon: '⚡' },
-  { to: '/documentos',    label: 'Upload de Documentos',     icon: '📄' },
-  { to: '/peticoes',      label: 'Gerador de Petições',      icon: '📜' },
-  { to: '/simulador',     label: 'Simulador de Instâncias',  icon: '⚖️' },
-  { to: '/monitoramento', label: 'Monitoramento Processual', icon: '🔔' },
-  { to: '/verificar',     label: 'Verificar Relatório',      icon: '🛡️' },
+const FERRAMENTAS_FREE = [
+  { to: '/verificar', label: 'Verificar Relatório', icon: '🛡️' },
+];
+
+const FERRAMENTAS_SOLO = [
+  { to: '/delta',         label: 'Delta Analysis',           icon: '⚡',  badge: 'Solo' },
+  { to: '/documentos',    label: 'Upload de Documentos',     icon: '📄',  badge: 'Solo' },
+  { to: '/peticoes',      label: 'Gerador de Petições',      icon: '📜',  badge: 'Solo' },
+  { to: '/simulador',     label: 'Simulador de Instâncias',  icon: '⚖️', badge: 'Solo' },
+  { to: '/monitoramento', label: 'Monitoramento Processual', icon: '🔔',  badge: 'Solo' },
 ];
 
 export default function Navbar() {
@@ -20,6 +23,11 @@ export default function Navbar() {
   const [engineStatus, setEngineStatus]= useState('checking');
   const toolsRef = useRef(null);
   const { authToken, userData, clearAuth, openModal, addToast } = useStore();
+
+  const isSolo = !!(authToken && userData?.is_unlimited);
+  const ferramentas = isSolo
+    ? [...FERRAMENTAS_SOLO, ...FERRAMENTAS_FREE]
+    : FERRAMENTAS_FREE;
 
   useEffect(() => {
     let cancelled = false;
@@ -93,14 +101,22 @@ export default function Navbar() {
               boxShadow: 'var(--shadow-deep)',
               zIndex: 300, animation: 'scaleUp .18s var(--ease-spring)',
             }}>
-              {FERRAMENTAS.map(({ to, label, icon }) => (
+              {ferramentas.map(({ to, label, icon, badge }) => (
                 <Link key={to} to={to} onClick={() => setToolsOpen(false)}
                   style={dropItemSt}
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,242,254,0.05)'; e.currentTarget.style.color = 'var(--co7)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--t2)'; }}
                 >
                   <span style={{ fontSize: '.9rem' }}>{icon}</span>
-                  <span>{label}</span>
+                  <span style={{ flex: 1 }}>{label}</span>
+                  {badge && !isSolo && (
+                    <span style={{
+                      fontSize: '.62rem', fontFamily: 'var(--f-mono)', fontWeight: 700,
+                      color: 'var(--cr3)', background: 'rgba(220,40,40,.1)',
+                      border: '1px solid rgba(220,40,40,.2)', borderRadius: 4,
+                      padding: '1px 5px', letterSpacing: '.06em',
+                    }}>SOLO</span>
+                  )}
                 </Link>
               ))}
             </div>
@@ -149,7 +165,7 @@ export default function Navbar() {
           <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("analise")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Análise</a>
           <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("agentes")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Agentes</a>
           <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("precos")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Preços</a>
-          {FERRAMENTAS.map(({ to, label, icon }) => (
+          {ferramentas.map(({ to, label, icon }) => (
             <Link key={to} to={to} style={{ ...mobileLink, display: 'flex', gap: 8, alignItems: 'center' }} onClick={() => setMobileOpen(false)}>
               <span>{icon}</span>{label}
             </Link>
