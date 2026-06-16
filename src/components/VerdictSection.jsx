@@ -49,7 +49,16 @@ function ScoreGauge({ score }) {
   );
 }
 
+const DIM_LABELS = {
+  viabilidade_juridica:    'Viabilidade Jurídica',
+  risco_financeiro:        'Risco Financeiro',
+  complexidade_processual: 'Complexidade Processual',
+  urgencia:                'Urgência',
+  score_consolidado:       'Score Consolidado',
+};
+
 function DimBar({ label, value }) {
+  const display = DIM_LABELS[label] || label.replace(/_/g, ' ');
   const color =
     value >= 70 ? 'var(--emerald2)' :
     value >= 40 ? 'var(--flame)' : 'var(--flame)';
@@ -57,7 +66,7 @@ function DimBar({ label, value }) {
     <div className="dim-bar-wrap">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
         <span style={{ fontSize: '.65rem', color: 'var(--n4)', textTransform: 'uppercase', letterSpacing: '.1em' }}>
-          {label}
+          {display}
         </span>
         <span style={{ fontSize: '.68rem', color, fontFamily: 'var(--f-mono)', fontWeight: 600 }}>
           {value}
@@ -91,7 +100,9 @@ export default function VerdictSection() {
   // [FIX v7.0] Mantém seção visível se devil já chegou mas juiz ainda não
   // (evita que VerdictSection desapareça quando running=false antes do verdict)
   const judgeState = useStore(s => s.judgeState);
-  if (!verdictText && !devilText && !running && judgeState.status !== "done") return null;
+  const hasContent = verdictText || devilText || running ||
+    judgeState?.status === "running" || judgeState?.status === "done";
+  if (!hasContent) return null;
 
   return (
     <div style={{ marginTop: 36 }}>
@@ -180,9 +191,9 @@ export default function VerdictSection() {
                 DIMENSÕES DO SCORE
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px,1fr))', gap: 8 }}>
-                {Object.entries(scoreDims).map(([k, v]) => (
-                  <DimBar key={k} label={k} value={v}/>
-                ))}
+                {Object.entries(scoreDims)
+                  .filter(([k, v]) => typeof v === 'number' && k in DIM_LABELS)
+                  .map(([k, v]) => <DimBar key={k} label={k} value={v}/>)}
               </div>
             </div>
           )}
