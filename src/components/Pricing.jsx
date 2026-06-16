@@ -1,7 +1,7 @@
 import { Check, Zap, ArrowRight, Code2, CreditCard } from 'lucide-react';
 import { useStore } from '../store';
+import { API_BASE } from '../lib/constants';
 
-// ── Linha 1: Free · Crédito · Solo ──────────────────────────────────────────
 const PLANS_TOP = [
   {
     id: 'free',
@@ -64,7 +64,6 @@ const PLANS_TOP = [
   },
 ];
 
-// ── Linha 2: Escritório · API ─────────────────────────────────────────────────
 const PLANS_BOT = [
   {
     id: 'escritorio',
@@ -111,13 +110,12 @@ const PLANS_BOT = [
   },
 ];
 
-// ── Paleta por plano ──────────────────────────────────────────────────────────
 const PALETTE = {
-  free:    { border: 'rgba(255,255,255,.08)',  glow: 'transparent',               badgeBg: 'rgba(255,255,255,.06)', badgeColor: 'rgba(255,255,255,.4)',  checkColor: '#10b981', ctaBg: 'transparent',        ctaColor: 'rgba(255,255,255,.55)', ctaBorder: 'rgba(255,255,255,.14)' },
-  jade:    { border: 'rgba(16,185,129,.22)',   glow: 'rgba(16,185,129,.08)',       badgeBg: 'rgba(16,185,129,.1)',  badgeColor: '#34d399',               checkColor: '#10b981', ctaBg: 'linear-gradient(135deg,#10b981,#34d399)', ctaColor: '#050507',       ctaBorder: 'none' },
-  cyan:    { border: 'rgba(0,242,254,.28)',    glow: 'rgba(0,242,254,.10)',        badgeBg: 'rgba(0,242,254,.1)',   badgeColor: '#00f2fe',               checkColor: '#00f2fe', ctaBg: 'linear-gradient(135deg,#00f2fe,#4facfe)', ctaColor: '#050507',       ctaBorder: 'none' },
-  violet:  { border: 'rgba(124,58,237,.28)',  glow: 'rgba(124,58,237,.10)',       badgeBg: 'rgba(124,58,237,.12)','badgeColor': '#a78bfa',             checkColor: '#a78bfa', ctaBg: 'linear-gradient(135deg,#7c3aed,#a78bfa)', ctaColor: '#fff',          ctaBorder: 'none' },
-  gold:    { border: 'rgba(229,176,75,.32)',  glow: 'rgba(229,176,75,.12)',       badgeBg: 'rgba(229,176,75,.12)', badgeColor: '#f0c96a',               checkColor: '#e5b04b', ctaBg: 'linear-gradient(135deg,#e5b04b,#f0c96a)', ctaColor: '#050507',       ctaBorder: 'none' },
+  free:    { border: 'rgba(255,255,255,.08)',  glow: 'transparent',         badgeBg: 'rgba(255,255,255,.06)', badgeColor: 'rgba(255,255,255,.4)',  checkColor: '#10b981', ctaBg: 'transparent',        ctaColor: 'rgba(255,255,255,.55)', ctaBorder: 'rgba(255,255,255,.14)' },
+  jade:    { border: 'rgba(16,185,129,.22)',   glow: 'rgba(16,185,129,.08)', badgeBg: 'rgba(16,185,129,.1)',  badgeColor: '#34d399',               checkColor: '#10b981', ctaBg: 'linear-gradient(135deg,#10b981,#34d399)', ctaColor: '#050507', ctaBorder: 'none' },
+  cyan:    { border: 'rgba(0,242,254,.28)',    glow: 'rgba(0,242,254,.10)',  badgeBg: 'rgba(0,242,254,.1)',   badgeColor: '#00f2fe',               checkColor: '#00f2fe', ctaBg: 'linear-gradient(135deg,#00f2fe,#4facfe)', ctaColor: '#050507', ctaBorder: 'none' },
+  violet:  { border: 'rgba(124,58,237,.28)',   glow: 'rgba(124,58,237,.10)', badgeBg: 'rgba(124,58,237,.12)', badgeColor: '#a78bfa',              checkColor: '#a78bfa', ctaBg: 'linear-gradient(135deg,#7c3aed,#a78bfa)', ctaColor: '#fff',   ctaBorder: 'none' },
+  gold:    { border: 'rgba(229,176,75,.32)',   glow: 'rgba(229,176,75,.12)', badgeBg: 'rgba(229,176,75,.12)', badgeColor: '#f0c96a',              checkColor: '#e5b04b', ctaBg: 'linear-gradient(135deg,#e5b04b,#f0c96a)', ctaColor: '#050507', ctaBorder: 'none' },
 };
 
 function PlanCard({ plan, wide = false }) {
@@ -131,11 +129,9 @@ function PlanCard({ plan, wide = false }) {
     } else if (plan.action === 'contact') {
       window.open('mailto:contato@jurir.app', '_blank');
     } else {
-      // checkout_credito / checkout_solo / checkout_escritorio
       if (!authToken) { openModal('register'); return; }
       const planName = plan.action.replace('checkout_', '');
-      // chama backend /api/create-checkout-session
-      fetch('/api/create-checkout-session', {
+      fetch(`${API_BASE}/api/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
         body: JSON.stringify({ plan: planName }),
@@ -162,15 +158,12 @@ function PlanCard({ plan, wide = false }) {
       onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; }}
       onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
     >
-      {/* Linha topo colorida */}
       {plan.color !== 'free' && (
         <div style={{
           position: 'absolute', top: 0, left: '10%', right: '10%', height: 1,
           background: `linear-gradient(90deg, transparent, ${p.badgeColor}, transparent)`,
         }}/>
       )}
-
-      {/* Glow radial topo */}
       {plan.color !== 'free' && (
         <div style={{
           position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
@@ -179,8 +172,6 @@ function PlanCard({ plan, wide = false }) {
           pointerEvents: 'none',
         }}/>
       )}
-
-      {/* Selo popular */}
       {isPopular && (
         <div style={{
           position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
@@ -193,9 +184,7 @@ function PlanCard({ plan, wide = false }) {
           {plan.badge}
         </div>
       )}
-
       <div style={{ position: 'relative', zIndex: 1, marginTop: isPopular ? 18 : 0 }}>
-        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
           <span style={{
             fontFamily: 'var(--f-mono)', fontSize: '.58rem',
@@ -210,8 +199,6 @@ function PlanCard({ plan, wide = false }) {
             }}>{plan.badge}</span>
           )}
         </div>
-
-        {/* Preço */}
         <div style={{ marginBottom: 4 }}>
           <span style={{
             fontFamily: 'var(--f-display)', fontSize: '3rem', fontWeight: 600, lineHeight: 1,
@@ -233,8 +220,6 @@ function PlanCard({ plan, wide = false }) {
         <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.7rem', color: 'rgba(255,255,255,.3)', marginBottom: plan.note ? 10 : 20, letterSpacing: '.06em' }}>
           {plan.sub}
         </div>
-
-        {/* Nota informativa (crédito) */}
         {plan.note && (
           <div style={{
             fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: p.badgeColor,
@@ -242,10 +227,7 @@ function PlanCard({ plan, wide = false }) {
             borderRadius: 8, padding: '8px 12px', marginBottom: 16, lineHeight: 1.5,
           }}>{plan.note}</div>
         )}
-
         <div style={{ height: 1, background: `${p.border}`, marginBottom: 18 }}/>
-
-        {/* Features */}
         <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 24 }}>
           {plan.features.map((f, i) => (
             <li key={i} style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
@@ -254,8 +236,6 @@ function PlanCard({ plan, wide = false }) {
             </li>
           ))}
         </ul>
-
-        {/* CTA */}
         <button
           onClick={handleCta}
           style={{
@@ -287,8 +267,6 @@ export default function Pricing() {
   return (
     <section id="precos" style={{ padding: '100px 24px' }}>
       <div style={{ maxWidth: 1060, margin: '0 auto' }}>
-
-        {/* Cabeçalho */}
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <div className="section-label" style={{ marginBottom: 20 }}>Planos & Acesso</div>
           <h2 className="t-display" style={{
@@ -304,8 +282,6 @@ export default function Pricing() {
             Do diagnóstico gratuito à infraestrutura completa para escritórios e plataformas.
           </p>
         </div>
-
-        {/* Linha 1: Free · Crédito · Solo */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -314,8 +290,6 @@ export default function Pricing() {
         }}>
           {PLANS_TOP.map(plan => <PlanCard key={plan.id} plan={plan}/>)}
         </div>
-
-        {/* Divisor B2B */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '8px 0 16px' }}>
           <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,transparent,rgba(124,58,237,.2),rgba(229,176,75,.15),transparent)' }}/>
           <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.56rem', color: 'rgba(255,255,255,.25)', letterSpacing: '.22em', whiteSpace: 'nowrap' }}>
@@ -323,8 +297,6 @@ export default function Pricing() {
           </span>
           <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,rgba(229,176,75,.15),rgba(124,58,237,.2),transparent)' }}/>
         </div>
-
-        {/* Linha 2: Escritório · API */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
@@ -333,8 +305,6 @@ export default function Pricing() {
         }}>
           {PLANS_BOT.map(plan => <PlanCard key={plan.id} plan={plan} wide/>)}
         </div>
-
-        {/* Trust row */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
           {['🔒 Pagamento 100% seguro','✅ 30 dias de garantia','⚡ Acesso imediato','🚫 Cancele quando quiser','📄 NF disponível'].map((item, i) => (
             <span key={i} style={{
