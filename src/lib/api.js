@@ -218,7 +218,7 @@ export async function acceptInvite(inviteToken, token) {
 
 // ── Exportação ZIP (Plano Escritório) ──────────────────────────────────
 export async function downloadZip(analysis_ids, token) {
-  const r = await fetch(`${(await import('./constants')).API_BASE}/api/report/zip`, {
+  const r = await fetch(`${API_BASE}/api/report/zip`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify({ analysis_ids }),

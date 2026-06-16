@@ -16,7 +16,9 @@ import PrivacidadePage from './pages/PrivacidadePage';
 import AdminPage from './pages/Admin';
 import EscritorioPage  from './pages/Escritorio';
 import ApiPanelPage    from './pages/ApiPanel';
-import AceitarConvitePage from './pages/AceitarConvite';
+import AceitarConvitePage    from './pages/AceitarConvite';
+import CheckoutSuccessPage  from './pages/CheckoutSuccess';
+import CheckoutCancelPage   from './pages/CheckoutCancel';
 import { useStore } from './store';
 
 export default function App() {
@@ -42,6 +44,8 @@ export default function App() {
             <Route path="/escritorio"    element={<EscritorioPage />} />
             <Route path="/api-panel"     element={<ApiPanelPage />} />
             <Route path="/aceitar-convite" element={<AceitarConvitePage />} />
+            <Route path="/success"         element={<CheckoutSuccessPage />} />
+            <Route path="/cancel"          element={<CheckoutCancelPage />} />
           </Routes>
         </main>
       </div>
