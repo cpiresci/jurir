@@ -26,7 +26,7 @@ export default function CheckoutPage() {
     if (!authToken) { openModal('login'); return; }
     setLoading(true);
     try {
-      const { checkout_url } = await createCheckoutSession(authToken);
+      const { url: checkout_url } = await createCheckoutSession(authToken);
       if (checkout_url) window.location.href = checkout_url;
       else addToast('Erro ao criar sessão de checkout.', 'error');
     } catch (e) {
