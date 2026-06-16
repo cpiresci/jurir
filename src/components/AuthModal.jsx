@@ -26,9 +26,10 @@ export default function AuthModal() {
     if (ctrl.signal.aborted) { setLoading(false); return; }
     if (!awake) { setErr('Servidor indisponível. Tente em instantes.'); setLoading(false); return; }
     try {
-      const { access_token } = await login(email, pwd);
-      const user = await getMe(access_token);
-      setAuth(access_token, user);
+      const data = await login(email, pwd);
+      const token = data.token || data.access_token;
+      const user = data.user || await getMe(token);
+      setAuth(token, user);
       addToast(`Bem-vindo, ${user.email?.split('@')[0]}!`, 'success');
       closeModal();
     } catch (e) { setErr(e.message || 'Erro ao entrar.'); }

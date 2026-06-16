@@ -70,9 +70,11 @@ function Login({ onLogin }) {
     try {
       const res = await fetch(`${API}/api/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Falha");
-      if (!data.is_admin) throw new Error("Acesso restrito a administradores");
-      onLogin(data.token || data.access_token, data);
+      if (!res.ok) throw new Error(data.detail || data.error || "Falha");
+      const token = data.token || data.access_token;
+      const userData = data.user || data;
+      if (!userData.is_admin) throw new Error("Acesso restrito a administradores");
+      onLogin(token, userData);
     } catch (e) { setError(e.message); } finally { setLoading(false); }
   }
   return (
