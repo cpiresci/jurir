@@ -54,7 +54,7 @@ export default function CheckoutPage() {
           background: 'linear-gradient(90deg, transparent, var(--au5), transparent)' }}/>
         <div style={{ marginBottom: 28 }}>
           <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.12em', marginBottom: 8 }}>PLANO PREMIUM</div>
-          <div className="t-display" style={{ fontSize: '3rem', fontWeight: 700, color: 'var(--p0)', lineHeight: 1 }}>Sob consulta</div>
+          <div className="t-display" style={{ fontSize: '3rem', fontWeight: 700, color: 'var(--p0)', lineHeight: 1 }}>R$ 19,90</div>
           <div style={{ fontSize: '.82rem', color: 'var(--p4)', marginTop: 6 }}>acesso completo · sem limite de análises</div>
         </div>
         <ul style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px', marginBottom: 28 }}>
