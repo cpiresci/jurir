@@ -14,6 +14,9 @@ import VerificarPage from './pages/Verificar';
 import CheckoutPage from './pages/Checkout';
 import PrivacidadePage from './pages/PrivacidadePage';
 import AdminPage from './pages/Admin';
+import EscritorioPage  from './pages/Escritorio';
+import ApiPanelPage    from './pages/ApiPanel';
+import AceitarConvitePage from './pages/AceitarConvite';
 import { useStore } from './store';
 
 export default function App() {
@@ -36,6 +39,9 @@ export default function App() {
             <Route path="/premium"       element={<CheckoutPage />} />
             <Route path="/privacidade"   element={<PrivacidadePage />} />
             <Route path="/admin"         element={<AdminPage />} />
+            <Route path="/escritorio"    element={<EscritorioPage />} />
+            <Route path="/api-panel"     element={<ApiPanelPage />} />
+            <Route path="/aceitar-convite" element={<AceitarConvitePage />} />
           </Routes>
         </main>
       </div>

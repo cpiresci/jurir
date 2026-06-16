@@ -108,6 +108,8 @@ export default function Navbar() {
         </div>
 
         {authToken && <NLink href="/historico" isRouter>Histórico</NLink>}
+          {authToken && userData?.is_escritorio && <NLink href="/escritorio" isRouter>Escritório</NLink>}
+          {authToken && userData?.is_api_plan   && <NLink href="/api-panel"  isRouter>API</NLink>}
           {authToken && userData?.is_admin && <NLink href="/admin" isRouter style={{ color: 'var(--cr3)' }}>Admin</NLink>}
       </div>
 
@@ -152,6 +154,8 @@ export default function Navbar() {
             </Link>
           ))}
           {authToken && <Link to="/historico" style={mobileLink} onClick={() => setMobileOpen(false)}>Histórico</Link>}
+          {authToken && userData?.is_escritorio && <Link to="/escritorio" style={mobileLink} onClick={() => setMobileOpen(false)}>🏛 Escritório</Link>}
+          {authToken && userData?.is_api_plan   && <Link to="/api-panel"  style={mobileLink} onClick={() => setMobileOpen(false)}>⚡ API</Link>}
           {authToken && <Link to="/premium" style={{ ...mobileLink, color: 'var(--co7)' }} onClick={() => setMobileOpen(false)}>⚡ Premium</Link>}
           <div style={{ borderTop: '1px solid var(--b-subtle)', paddingTop: 14, marginTop: 8 }}>
             {authToken ? (
