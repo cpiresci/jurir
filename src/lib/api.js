@@ -121,10 +121,10 @@ export async function downloadPdf(analysisId, token) {
 
 // ── Delta Analysis ────────────────────────────────────────────────────
 export async function analyzeDelta(body, token) {
-  return apiFetch('/api/delta/analyze', { method: 'POST', body: JSON.stringify(body) }, token);
+  return apiFetch('/api/analyze/delta', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 export async function deltaSummary(body, token) {
-  return apiFetch('/api/delta/summary', { method: 'POST', body: JSON.stringify(body) }, token);
+  return apiFetch('/api/analyze/delta/summary', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
 // ── Upload de Documento ───────────────────────────────────────────────

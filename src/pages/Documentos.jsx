@@ -1,10 +1,16 @@
 import { useState, useRef } from 'react';
+import SoloBanner from '../components/SoloBanner';
 import { Upload, FileText, Loader2, AlertTriangle, ChevronRight, Zap } from 'lucide-react';
 import { useStore } from '../store';
 import { analyzeDocument } from '../lib/api';
 
 export default function DocumentosPage() {
-  const { authToken, openModal, addToast } = useStore();
+  const { authToken, userData, openModal, addToast } = useStore();
+  // Guard: exige plano Solo+
+  if (authToken && userData && !userData.is_unlimited) {
+    return <SoloBanner feature="Upload de Documentos" />;
+  }
+
   const [context,  setContext]  = useState('');
   const [file,     setFile]     = useState(null);
   const [loading,  setLoading]  = useState(false);

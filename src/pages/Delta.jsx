@@ -1,10 +1,16 @@
 import { useState } from 'react';
+import SoloBanner from '../components/SoloBanner';
 import { GitCompare, Loader2, TrendingUp } from 'lucide-react';
 import { useStore } from '../store';
 import { analyzeDelta } from '../lib/api';
 
 export default function DeltaPage() {
-  const { authToken, openModal, addToast } = useStore();
+  const { authToken, userData, openModal, addToast } = useStore();
+  // Guard: exige plano Solo+
+  if (authToken && userData && !userData.is_unlimited) {
+    return <SoloBanner feature="Delta Analysis" />;
+  }
+
   const [doc1,    setDoc1]    = useState('');
   const [doc2,    setDoc2]    = useState('');
   const [lang,    setLang]    = useState('pt');
