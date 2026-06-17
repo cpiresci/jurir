@@ -83,7 +83,7 @@ export default function ContaPage() {
             Membro desde {user.member_since}
           </div>
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-            <a href="/#/premium" className="btn btn-cobalt btn-sm">
+            <a href="#/premium" className="btn btn-cobalt btn-sm">
               {isPaid ? 'Mudar plano' : 'Fazer upgrade'}
             </a>
             {isPaid && user.plan !== 'credito' && (
@@ -170,7 +170,7 @@ export default function ContaPage() {
               Papel: <strong style={{ color:'var(--co7)' }}>{org.role === 'owner' ? 'Proprietário' : org.role === 'admin' ? 'Admin' : 'Membro'}</strong>
               {org.has_logo && <span style={{ marginLeft:8, color:'var(--jade2)' }}>· Logo configurado</span>}
             </div>
-            <a href="/#/escritorio" className="btn btn-cobalt btn-sm">Acessar Escritório</a>
+            <a href="#/escritorio" className="btn btn-cobalt btn-sm">Acessar Escritório</a>
           </div>
         )}
       </div>
@@ -218,7 +218,7 @@ export default function ContaPage() {
             <p style={{ fontSize:'.78rem', color:'var(--p4)', lineHeight:1.6 }}>
               Limite de {usage.free_limit} análises premium por dia. Faça upgrade para análises ilimitadas e acesso a todas as ferramentas.
             </p>
-            <a href="/#/premium" className="btn btn-cobalt btn-sm" style={{ marginTop:10, display:'inline-flex' }}>
+            <a href="#/premium" className="btn btn-cobalt btn-sm" style={{ marginTop:10, display:'inline-flex' }}>
               Ver planos →
             </a>
           </div>
