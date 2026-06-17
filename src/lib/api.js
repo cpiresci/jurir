@@ -111,12 +111,16 @@ export async function downloadPdf(analysisId, token) {
   const r = await fetch(`${API_BASE}/api/report/pdf/${analysisId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!r.ok) throw new Error(`PDF ${r.status}`);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: `Erro ${r.status}` }));
+    throw new Error(err.detail || `Erro ${r.status}`);
+  }
   const blob = await r.blob();
+  if (blob.size === 0) throw new Error('PDF vazio — tente novamente.');
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href = url; a.download = `jurir-analise-${analysisId}.pdf`; a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
 
 // ── Delta Analysis ────────────────────────────────────────────────────

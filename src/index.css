@@ -311,6 +311,7 @@ body::after {
 
 .mobile-menu {
   position: absolute; top: 64px; left: 0; right: 0;
+  z-index: 1001;
   background: rgba(5,5,7,0.98);
   backdrop-filter: blur(28px);
   border-bottom: 1px solid rgba(0,242,254,0.08);

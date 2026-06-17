@@ -135,9 +135,15 @@ function PlanCard({ plan, wide = false }) {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
         body: JSON.stringify({ plan: planName }),
       })
-        .then(r => r.json())
-        .then(d => { if (d.url) window.location.href = d.url; })
-        .catch(() => alert('Erro ao iniciar pagamento. Tente novamente.'));
+        .then(r => {
+          if (!r.ok) return r.json().then(e => { throw new Error(e.detail || `Erro ${r.status}`); });
+          return r.json();
+        })
+        .then(d => {
+          if (d.url) window.location.href = d.url;
+          else throw new Error('URL de checkout não recebida.');
+        })
+        .catch(e => alert(`Erro ao iniciar pagamento: ${e.message}`));
     }
   };
 
