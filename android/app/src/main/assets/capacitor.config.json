@@ -6,7 +6,7 @@
 		"androidScheme": "https",
 		"hostname": "jurir.app",
 		"allowNavigation": [
-			"jusaii-app-daqr.onrender.com"
+			"jusaii-app.onrender.com"
 		]
 	},
 	"plugins": {
