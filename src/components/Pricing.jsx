@@ -22,8 +22,7 @@ const PLANS_TOP = [
   {
     id: 'credito',
     label: 'POR ANÁLISE',
-    price: 'R$ 4',
-    priceDecimal: ',90',
+    price: 'R$ 19',
     sub: 'por análise · pague só quando usar',
     badge: 'SEM ASSINATURA',
     note: '💡 Ideal para casos únicos. Sem recorrência.',
@@ -36,14 +35,13 @@ const PLANS_TOP = [
       'Relatório PDF disponível por 30 dias',
       'Serial de autenticidade verificável',
     ],
-    cta: 'Comprar Análise — R$4,90',
+    cta: 'Comprar Análise — R$19',
     action: 'checkout_credito',
   },
   {
     id: 'solo',
     label: 'SOLO',
-    price: 'R$ 19',
-    priceDecimal: ',90',
+    price: 'R$ 49',
     sub: 'por mês · cancele quando quiser',
     badge: '✦ MAIS POPULAR',
     color: 'cyan',
@@ -60,7 +58,7 @@ const PLANS_TOP = [
       'Monitoramento Processual via DATAJUD',
       'Histórico completo + exportação PDF',
     ],
-    cta: 'Começar Solo — R$19,90/mês',
+    cta: 'Começar Solo — R$49/mês',
     action: 'checkout_solo',
   },
 ];
@@ -69,8 +67,7 @@ const PLANS_BOT = [
   {
     id: 'escritorio',
     label: 'ESCRITÓRIO',
-    price: 'R$ 79',
-    priceDecimal: ',90',
+    price: 'R$ 299',
     sub: 'por mês · cancele quando quiser',
     badge: 'ATÉ 5 USUÁRIOS',
     color: 'violet',
@@ -85,14 +82,13 @@ const PLANS_BOT = [
       'Suporte prioritário via chat',
       'Treinamento inicial incluído (1h)',
     ],
-    cta: 'Contratar Escritório — R$79,90/mês',
+    cta: 'Contratar Escritório — R$299/mês',
     action: 'checkout_escritorio',
   },
   {
     id: 'api',
     label: 'API & PLATAFORMA',
-    price: 'R$ 149',
-    priceDecimal: ',90',
+    price: 'R$ 999',
     sub: 'por mês · cancele quando quiser',
     badge: 'ENTERPRISE',
     color: 'gold',
@@ -108,7 +104,7 @@ const PLANS_BOT = [
       'Sandbox para testes e homologação',
       'NF/CNPJ · contrato PJ disponível',
     ],
-    cta: 'Assinar API — R$149,90/mês',
+    cta: 'Assinar API — R$999/mês',
     action: 'checkout_api',
   },
 ];
@@ -212,13 +208,6 @@ function PlanCard({ plan, wide = false }) {
           }}>
             {plan.price}
           </span>
-          {plan.priceDecimal && (
-            <span style={{
-              fontFamily: 'var(--f-display)', fontSize: '1.8rem', fontWeight: 600,
-              background: `linear-gradient(135deg, ${p.badgeColor}, ${p.checkColor})`,
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            }}>{plan.priceDecimal}</span>
-          )}
         </div>
         <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.7rem', color: 'rgba(255,255,255,.3)', marginBottom: plan.note ? 10 : 20, letterSpacing: '.06em' }}>
           {plan.sub}
