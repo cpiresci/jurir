@@ -11,5 +11,5 @@ jobs:
     steps:
       - name: Ping Jusaii
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://jusaii-app-daqr.onrender.com/health || echo "000")
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://jusaii-app.onrender.com/health || echo "000")
           echo "Status: $STATUS"
