@@ -14,7 +14,7 @@ const T = {
 function useApi(token) {
   return useCallback(async (path, opts = {}) => {
     const res = await fetch(`${API}${path}`, {
-      headers: { "Content-Type": "application/json", "X-Jurir-Key": "jurir-admin-key-2026", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       ...opts,
     });
     if (!res.ok) throw new Error(`${res.status}`);
@@ -123,7 +123,7 @@ function UsersTab({ api }) {
   useEffect(() => { load(); }, [load]);
   const filtered = users.filter(u => !search || u.email?.toLowerCase().includes(search.toLowerCase()) || u.name?.toLowerCase().includes(search.toLowerCase()));
   async function toggleBan(u) { try { await api(`/api/admin/users/${u.id}/ban`, { method: "POST", body: JSON.stringify({ banned: !u.is_banned }) }); load(); } catch(e) { alert(e.message); } }
-  async function adjustCredits(u) { const v = prompt(`Créditos atuais: ${u.credits}\nNovo valor:`); if (!v) return; try { await api(`/api/admin/users/${u.id}/credits`, { method: "POST", body: JSON.stringify({ credits: parseInt(v) }) }); load(); } catch(e) { alert(e.message); } }
+  async function adjustCredits(u) { const v = prompt(`Créditos atuais: ${u.credits}\nNovo valor:`); if (!v) return; try { await api(`/api/admin/users/${u.id}/credits`, { method: "POST", body: JSON.stringify({ delta: parseInt(v), credit_type: "free" }) }); load(); } catch(e) { alert(e.message); } }
   async function setPlan(u) {
     const plan = prompt(`Plano atual: ${u.plan || 'free'}\n\nNovo plano:\nfree | credito | mensal | escritorio | api`);
     if (!plan) return;
