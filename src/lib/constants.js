@@ -1,5 +1,5 @@
 export const JURIR_VERSION = 'v10.1-modular';
-export const API_BASE = 'https://jusaii-app.onrender.com';
+export const API_BASE = 'https://jurir-app-y4gz.onrender.com';
 
 export const AGENT_AREAS = [
   { id: 'civil',          area: 'Direito Civil',            icon: '⚖️' },
