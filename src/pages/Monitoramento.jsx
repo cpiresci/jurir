@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import SoloBanner from '../components/SoloBanner';
 import { Bell, Plus, Trash2, Loader2, RefreshCw, Activity } from 'lucide-react';
 import { useStore } from '../store';
-import { addMonitoring, listMonitoring, removeMonitoring } from '../lib/api';
+import { addMonitoring, listMonitoring, removeMonitoring, checkMonitoring } from '../lib/api';
 
 const TRIBUNAIS = ['TJSP','TJRJ','TJMG','TJRS','TJPR','TJSC','TJBA','TJPE','TJCE','TJGO','STJ','STF','TRT2','TRT15','TRF1','TRF3'];
 
@@ -17,6 +17,7 @@ export default function MonitoramentoPage() {
   const [loading,  setLoading]  = useState(false);
   const [adding,   setAdding]   = useState(false);
   const [removing, setRemoving] = useState(null);
+  const [checking, setChecking] = useState(null);
   const [form, setForm] = useState({ numero_processo: '', tribunal: 'TJSP' });
 
   const load = async () => {
@@ -60,6 +61,23 @@ export default function MonitoramentoPage() {
       addToast(`Erro: ${e.message}`, 'error');
     } finally {
       setRemoving(null);
+    }
+  };
+
+  const handleCheck = async (id) => {
+    setChecking(id);
+    try {
+      const data = await checkMonitoring(id, authToken);
+      if (data.houve_atualizacao) {
+        addToast('Nova movimentação encontrada!', 'success');
+        await load();
+      } else {
+        addToast('Sem novas movimentações.', 'info');
+      }
+    } catch (e) {
+      addToast(`Erro: ${e.message}`, 'error');
+    } finally {
+      setChecking(null);
     }
   };
 
@@ -134,6 +152,11 @@ export default function MonitoramentoPage() {
                   Atualizado: {p.updated_at ? new Date(p.updated_at).toLocaleString('pt-BR') : '—'}
                 </div>
               </div>
+              <button className="btn btn-ghost btn-sm" onClick={() => handleCheck(p.id)}
+                disabled={checking === p.id}
+                style={{ borderColor: 'rgba(99,102,241,0.2)', color: 'var(--p3)' }}>
+                {checking === p.id ? <Loader2 size={13} className="spin"/> : <RefreshCw size={13}/>}
+              </button>
               <button className="btn btn-ghost btn-sm" onClick={() => handleRemove(p.numero_processo)}
                 disabled={removing === p.numero_processo}
                 style={{ borderColor: 'rgba(185,28,28,0.2)', color: 'var(--cr5)' }}>
