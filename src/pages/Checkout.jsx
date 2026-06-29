@@ -38,7 +38,7 @@ export default function CheckoutPage() {
     if (!authToken) { openModal('login'); return; }
     setLoadingPlan(planId);
     try {
-      const r = await fetch(`${API_BASE}/api/create-checkout-session`, {
+      const r = await fetch(`${API_BASE}/api/billing/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
         body: JSON.stringify({ plan: planId }),
