@@ -311,3 +311,7 @@ export async function deleteWebhook(id, token) {
 export async function testWebhook(id, token) {
   return apiFetch(`/api/webhooks/${id}/test`, { method: 'POST' }, token);
 }
+
+export async function deltaHtml(body, token) {
+  return apiFetch('/api/delta/html', { method: 'POST', body: JSON.stringify(body) }, token);
+}
