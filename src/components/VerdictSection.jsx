@@ -39,7 +39,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       els.push(<div key={i} style={{ fontFamily: 'var(--f-display)', fontSize: '1rem', fontWeight: 600, color: 'var(--t0)', marginTop: 20, marginBottom: 8 }}>{line.slice(2)}</div>);
       i++; continue;
     }
-    if (/^[-─]{3,}$/.test(line.trim())) {
+    if (/^[-_─━═]{3,}$/.test(line.trim())) {
       els.push(<div key={i} style={{ height: 1, background: 'var(--b-subtle)', margin: '14px 0' }} />);
       i++; continue;
     }
