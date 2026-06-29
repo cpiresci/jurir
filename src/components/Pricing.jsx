@@ -130,13 +130,17 @@ function PlanCard({ plan, wide = false }) {
     } else {
       if (!authToken) { openModal('register'); return; }
       const planName = plan.action.replace('checkout_', '');
-      fetch(`${API_BASE}/api/create-checkout-session`, {
+      // [FIX] Endpoint correto é /api/billing/create-checkout-session
+      // (antes apontava para /api/create-checkout-session, que não existe
+      // e devolvia a página 404 HTML do Express — daí o erro "Unexpected
+      // token '<', <!DOCTYPE...' is not valid JSON").
+      fetch(`${API_BASE}/api/billing/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
         body: JSON.stringify({ plan: planName }),
       })
         .then(r => {
-          if (!r.ok) return r.json().then(e => { throw new Error(e.detail || `Erro ${r.status}`); });
+          if (!r.ok) return r.json().then(e => { throw new Error(e.detail || `Erro ${r.status}`); }).catch(() => { throw new Error(`Erro ${r.status}`); });
           return r.json();
         })
         .then(d => {
