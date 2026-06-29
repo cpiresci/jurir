@@ -1,191 +1,378 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 
-const LINKS = [
-  { label: 'Análise Jurídica',     href: '/#analise' },
-  { label: 'Conselho de Agentes',  href: '/#agentes' },
-  { label: 'Planos e Preços',      href: '/#precos' },
-  { label: 'Delta Analysis',       href: '/delta' },
-  { label: 'Upload de Documentos', href: '/documentos' },
-  { label: 'Gerador de Petições',  href: '/peticoes' },
-  { label: 'Simulador Judicial',   href: '/simulador' },
-  { label: 'Monitoramento',        href: '/monitoramento' },
-  { label: 'Verificar Relatório',  href: '/verificar' },
+const NAV_COLS = [
+  {
+    heading: 'Análise',
+    links: [
+      { label: 'Motor Jurídico',       href: '/#analise' },
+      { label: 'Conselho de Agentes',  href: '/#agentes' },
+      { label: 'Delta Analysis',       href: '/delta' },
+      { label: 'Upload de Documentos', href: '/documentos' },
+    ],
+  },
+  {
+    heading: 'Ferramentas',
+    links: [
+      { label: 'Gerador de Petições',  href: '/peticoes' },
+      { label: 'Simulador Judicial',   href: '/simulador' },
+      { label: 'Monitoramento',        href: '/monitoramento' },
+      { label: 'Verificar Relatório',  href: '/verificar' },
+    ],
+  },
+  {
+    heading: 'Plataforma',
+    links: [
+      { label: 'Planos e Preços',         href: '/#precos' },
+      { label: 'Política de Privacidade', href: '/privacidade' },
+      { label: 'Aviso Legal',             href: '/privacidade' },
+    ],
+  },
 ];
 
-const LEGAL_LINKS = [
-  { label: 'Política de Privacidade', href: '/privacidade' },
+const STATS = [
+  { value: '16',   unit: 'agentes', label: 'especializados em paralelo' },
+  { value: '100%', unit: 'swarm',   label: 'contraditório garantido' },
+  { value: '<3',   unit: 'min',     label: 'tempo médio de análise' },
+  { value: 'v11',  unit: 'motor',   label: 'jurídico quântico' },
 ];
 
-const PRINCIPLES = [
-  { icon: '⚖️', label: 'Contraditório Real',     desc: 'Todo caso passa pelo Advogado do Diabo' },
-  { icon: '🏛️', label: 'Veredicto Imparcial',   desc: 'Juiz IA Quantum prolata sem viés' },
-  { icon: '🔒', label: 'Dados Protegidos',       desc: 'SSL + armazenamento seguro' },
-  { icon: '📜', label: 'Legislação Vigente',     desc: 'CC, CLT, CDC, CPC, CF atualizados' },
+const PROVIDERS = [
+  { name: 'SambaNova', dot: '#00f2fe' },
+  { name: 'Cerebras',  dot: '#4facfe' },
+  { name: 'Gemini',    dot: '#a78bfa' },
+  { name: 'OpenRouter',dot: '#10b981' },
 ];
+
+function StatCounter({ value, unit, label }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{ textAlign: 'center', padding: '0 8px' }}>
+      <div style={{
+        fontFamily: 'var(--f-display)',
+        fontSize: 'clamp(1.8rem, 2.5vw, 2.6rem)',
+        fontWeight: 700,
+        color: 'var(--cy1)',
+        lineHeight: 1,
+        letterSpacing: '-.03em',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(12px)',
+        transition: 'opacity .7s var(--ease-out-expo), transform .7s var(--ease-out-expo)',
+        textShadow: '0 0 40px rgba(0,242,254,0.35)',
+      }}>
+        {value}
+        <span style={{ fontSize: '48%', color: 'var(--cy3)', marginLeft: 4 }}>{unit}</span>
+      </div>
+      <div style={{
+        fontFamily: 'var(--f-mono)',
+        fontSize: '.54rem',
+        color: 'var(--t4)',
+        letterSpacing: '.12em',
+        marginTop: 7,
+        textTransform: 'uppercase',
+        opacity: visible ? 1 : 0,
+        transition: 'opacity .7s .15s var(--ease-out-expo)',
+      }}>
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function FooterLink({ href, children }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={href}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        fontSize: '.83rem',
+        fontFamily: 'var(--f-sans)',
+        color: hov ? 'var(--cy1)' : 'var(--t3)',
+        textDecoration: 'none',
+        transition: 'color .2s',
+        padding: '4px 0',
+      }}
+    >
+      <span style={{
+        display: 'inline-block',
+        width: hov ? 18 : 6,
+        height: 1,
+        background: hov
+          ? 'linear-gradient(90deg, var(--cy1), var(--co8))'
+          : 'rgba(0,242,254,0.20)',
+        transition: 'width .25s var(--ease-out-expo), background .2s',
+        flexShrink: 0,
+        borderRadius: 2,
+      }}/>
+      {children}
+    </a>
+  );
+}
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="footer">
-      {/* Quantum constellation decoration */}
-      <div style={{ position:'absolute', top:20, right:60, opacity:0.25, pointerEvents:'none', display:'flex', gap:6, alignItems:'center' }}>
-        {[...Array(5)].map((_, i) => (
-          <div key={i} style={{
-            width: i===2 ? 5 : 3, height: i===2 ? 5 : 3,
-            borderRadius:'50%', background:'var(--co7)',
-            boxShadow: i===2 ? '0 0 8px rgba(20,114,217,0.6)' : 'none',
-          }}/>
-        ))}
-      </div>
+    <footer style={{
+      position: 'relative',
+      background: 'var(--abyss)',
+      borderTop: '1px solid rgba(0,242,254,0.07)',
+      overflow: 'hidden',
+    }}>
 
-      <div style={{ maxWidth:960, margin:'0 auto' }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: 1,
+        background: 'linear-gradient(90deg, transparent 0%, rgba(0,242,254,0.5) 30%, rgba(79,172,254,0.35) 70%, transparent 100%)',
+      }}/>
 
-        {/* ── PRINCIPLES ROW ── */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+        width: 900, height: 450,
+        background: 'radial-gradient(ellipse at center bottom, rgba(0,242,254,0.035) 0%, transparent 65%)',
+        pointerEvents: 'none',
+      }}/>
+
+      <div style={{
+        position: 'absolute', left: 0, top: 80, bottom: 80, width: 1,
+        background: 'linear-gradient(180deg, transparent, rgba(0,242,254,0.1) 30%, rgba(0,242,254,0.1) 70%, transparent)',
+      }}/>
+      <div style={{
+        position: 'absolute', right: 0, top: 80, bottom: 80, width: 1,
+        background: 'linear-gradient(180deg, transparent, rgba(0,242,254,0.06) 30%, rgba(0,242,254,0.06) 70%, transparent)',
+      }}/>
+
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 1 }}>
+
+        {/* STATS STRIP */}
         <div style={{
-          display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))',
-          gap:1, background:'var(--b-subtle)',
-          borderRadius:'var(--r-lg)', overflow:'hidden',
-          marginBottom:56,
-          border:'1px solid var(--b-main)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          margin: '0 -40px',
+          padding: '0 40px',
+          borderBottom: '1px solid rgba(0,242,254,0.07)',
         }}>
-          {PRINCIPLES.map((p, i) => (
+          {STATS.map((s, i) => (
             <div key={i} style={{
-              background:'var(--bg-deep)', padding:'20px 20px',
-              display:'flex', flexDirection:'column', gap:6,
+              padding: '44px 0',
+              borderRight: i < 3 ? '1px solid rgba(0,242,254,0.06)' : 'none',
             }}>
-              <div style={{ fontSize:'1.1rem', marginBottom:2 }}>{p.icon}</div>
-              <div style={{ fontFamily:'var(--f-sans)', fontSize:'.78rem', fontWeight:600, color:'var(--t1)', letterSpacing:'.02em' }}>
-                {p.label}
-              </div>
-              <div style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t5)', letterSpacing:'.06em', lineHeight:1.5 }}>
-                {p.desc}
-              </div>
+              <StatCounter {...s} />
             </div>
           ))}
         </div>
 
-        {/* ── TOP ROW ── */}
-        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:48, flexWrap:'wrap', marginBottom:52 }}>
+        {/* MAIN GRID */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1.7fr 1fr 1fr 1fr',
+          gap: 52,
+          padding: '64px 0 60px',
+          borderBottom: '1px solid rgba(0,242,254,0.06)',
+        }}>
 
-          {/* Brand block */}
-          <div style={{ maxWidth:360 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:20 }}>
-              <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
-                <rect width="36" height="36" rx="8" fill="rgba(20,114,217,0.07)" stroke="rgba(0,242,254,0.18)" strokeWidth="1"/>
-                <line x1="7" y1="17" x2="29" y2="17" stroke="var(--co7)" strokeWidth="1.4" strokeLinecap="round"/>
-                <line x1="18" y1="9" x2="18" y2="27" stroke="var(--co7)" strokeWidth="1.4" strokeLinecap="round"/>
-                <path d="M7 17 Q9 22 13 22 Q17 22 18 17" stroke="var(--co7)" strokeWidth="1.1" fill="rgba(20,114,217,0.07)" strokeLinecap="round"/>
-                <path d="M18 17 Q19 21 23 21 Q27 21 29 17" stroke="var(--co6)" strokeWidth="1.1" fill="rgba(20,114,217,0.05)" strokeLinecap="round"/>
-                <circle cx="18" cy="9" r="2.2" fill="var(--co7)"/>
-              </svg>
+          {/* BRAND */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 26 }}>
+              <div style={{
+                width: 44, height: 44,
+                background: 'rgba(0,242,254,0.04)',
+                border: '1px solid rgba(0,242,254,0.18)',
+                borderRadius: 11,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'relative',
+                boxShadow: '0 0 30px rgba(0,242,254,0.08), inset 0 1px 0 rgba(0,242,254,0.06)',
+              }}>
+                <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
+                  <line x1="7" y1="17" x2="29" y2="17" stroke="#00f2fe" strokeWidth="1.5" strokeLinecap="round"/>
+                  <line x1="18" y1="9" x2="18" y2="27" stroke="#00f2fe" strokeWidth="1.5" strokeLinecap="round"/>
+                  <path d="M7 17 Q9 22 13 22 Q17 22 18 17" stroke="#00f2fe" strokeWidth="1.2" fill="rgba(0,242,254,0.07)" strokeLinecap="round"/>
+                  <path d="M18 17 Q19 21 23 21 Q27 21 29 17" stroke="#4facfe" strokeWidth="1.2" fill="rgba(79,172,254,0.05)" strokeLinecap="round"/>
+                  <circle cx="18" cy="9" r="2.2" fill="#00f2fe"/>
+                </svg>
+                <div style={{
+                  position: 'absolute', top: -1, right: -1, width: 8, height: 8,
+                  borderTop: '2px solid #00f2fe', borderRight: '2px solid #00f2fe',
+                  borderTopRightRadius: 3,
+                }}/>
+              </div>
               <div>
-                <div className="t-display" style={{ fontSize:'1.4rem', fontWeight:600, color:'var(--t0)', letterSpacing:'-.01em' }}>
-                  JUR<em style={{ fontStyle:'italic', color:'var(--co7)' }}>IR</em>
+                <div style={{
+                  fontFamily: 'var(--f-display)',
+                  fontSize: '1.6rem', fontWeight: 700,
+                  color: '#fff', letterSpacing: '-.01em', lineHeight: 1,
+                }}>
+                  JUR<em style={{ fontStyle: 'italic', color: '#00f2fe' }}>IR</em>
                 </div>
-                <div style={{ fontFamily:'var(--f-mono)', fontSize:'.38rem', color:'var(--t5)', letterSpacing:'.28em' }}>
+                <div style={{
+                  fontFamily: 'var(--f-mono)', fontSize: '.42rem',
+                  letterSpacing: '.3em', color: 'rgba(255,255,255,0.18)',
+                  marginTop: 4, textTransform: 'uppercase',
+                }}>
                   INTELIGÊNCIA JURÍDICA QUÂNTICA
                 </div>
               </div>
             </div>
 
-            <p style={{ fontSize:'.84rem', color:'var(--t3)', lineHeight:1.75, marginBottom:16 }}>
-              A plataforma de inteligência jurídica de nova geração para o mercado brasileiro.
-              Dezesseis agentes especializados, análise em minutos, veredicto preciso e imparcial.
+            <p style={{
+              fontSize: '.85rem', color: 'rgba(255,255,255,0.38)',
+              lineHeight: 1.82, fontFamily: 'var(--f-sans)',
+              marginBottom: 22, maxWidth: 310,
+            }}>
+              Dezesseis especialistas em paralelo. Contraditório garantido.
+              Veredicto imparcial entregue em minutos para o mercado jurídico brasileiro.
             </p>
 
-            <p style={{
-              fontFamily:'var(--f-display)', fontStyle:'italic',
-              fontSize:'.85rem', color:'var(--t5)',
-              borderLeft:'2px solid var(--b-cobalt)', paddingLeft:12,
-              lineHeight:1.5,
+            <blockquote style={{
+              fontFamily: 'var(--f-display)', fontStyle: 'italic',
+              fontSize: '.92rem', color: 'rgba(255,255,255,0.22)',
+              borderLeft: '2px solid rgba(0,242,254,0.28)',
+              paddingLeft: 14, lineHeight: 1.55, marginBottom: 28,
             }}>
               "Fiat iustitia, ruat caelum"
-            </p>
+            </blockquote>
 
-            {/* Version tag */}
+            {/* Status pill */}
             <div style={{
-              display:'inline-flex', alignItems:'center', gap:6,
-              marginTop:20, padding:'4px 12px',
-              background:'rgba(20,114,217,0.05)', border:'1px solid var(--b-cobalt)',
-              borderRadius:'var(--r-pill)',
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '7px 16px',
+              background: 'rgba(0,242,254,0.03)',
+              border: '1px solid rgba(0,242,254,0.14)',
+              borderRadius: 999,
+              boxShadow: '0 0 20px rgba(0,242,254,0.04)',
+              marginBottom: 26,
             }}>
-              <span style={{ width:4, height:4, borderRadius:'50%', background:'var(--jade2)', boxShadow:'0 0 5px rgba(16,185,129,0.5)' }}/>
-              <span style={{ fontFamily:'var(--f-mono)', fontSize:'.55rem', color:'var(--co7)', letterSpacing:'.14em' }}>
+              <span style={{
+                width: 5, height: 5, borderRadius: '50%',
+                background: '#10b981',
+                boxShadow: '0 0 8px rgba(16,185,129,0.7)',
+                animation: 'pulse 2.5s ease-in-out infinite',
+              }}/>
+              <span style={{
+                fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+                letterSpacing: '.16em', color: '#00f2fe',
+                textTransform: 'uppercase',
+              }}>
                 SISTEMA v11.0 · OPERACIONAL
               </span>
             </div>
+
+            {/* Aviso legal */}
+            <div style={{
+              padding: '14px 16px',
+              background: 'rgba(0,242,254,0.02)',
+              border: '1px solid rgba(0,242,254,0.07)',
+              borderRadius: 10,
+              borderLeft: '2px solid rgba(0,242,254,0.22)',
+            }}>
+              <div style={{
+                fontFamily: 'var(--f-mono)', fontSize: '.5rem',
+                letterSpacing: '.15em', color: '#00f2fe',
+                marginBottom: 7, textTransform: 'uppercase',
+                display: 'flex', alignItems: 'center', gap: 6,
+              }}>
+                <span>⚖</span> Aviso Legal
+              </div>
+              <p style={{
+                fontSize: '.73rem', color: 'rgba(255,255,255,0.22)',
+                lineHeight: 1.68, fontFamily: 'var(--f-sans)',
+              }}>
+                Ferramenta de análise jurídica assistida por IA. Não substitui
+                advogado habilitado pela OAB. Consulte sempre um profissional
+                para decisões legais vinculantes.
+              </p>
+            </div>
           </div>
 
-          {/* Links col */}
-          <div>
-            <div style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t5)', letterSpacing:'.22em', marginBottom:16, textTransform:'uppercase' }}>
-              Plataforma
+          {/* NAV COLS */}
+          {NAV_COLS.map((col) => (
+            <div key={col.heading}>
+              <div style={{
+                fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+                letterSpacing: '.22em', color: '#00f2fe',
+                textTransform: 'uppercase', marginBottom: 20,
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                <span style={{
+                  display: 'inline-block', width: 14, height: 1,
+                  background: 'linear-gradient(90deg, #00f2fe, transparent)',
+                }}/>
+                {col.heading}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {col.links.map(l => (
+                  <FooterLink key={l.label} href={l.href}>{l.label}</FooterLink>
+                ))}
+              </div>
             </div>
-            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-              {LINKS.map(l => (
-                <a key={l.label} href={l.href} style={{
-                  fontSize:'.83rem', color:'var(--t3)',
-                  textDecoration:'none', transition:'color .15s',
-                  display:'flex', alignItems:'center', gap:6,
-                  fontFamily:'var(--f-sans)',
-                }}
-                  onMouseEnter={e => e.currentTarget.style.color = 'var(--co7)'}
-                  onMouseLeave={e => e.currentTarget.style.color = 'var(--t3)'}
-                >
-                  <span style={{ width:3, height:3, borderRadius:'50%', background:'var(--b-cobalt)', flexShrink:0 }}/>
-                  {l.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Legal disclaimer */}
-          <div style={{ maxWidth:220 }}>
-            <div style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t5)', letterSpacing:'.22em', marginBottom:16, textTransform:'uppercase' }}>
-              Aviso Legal
-            </div>
-            <p style={{ fontSize:'.75rem', color:'var(--t5)', lineHeight:1.7, fontFamily:'var(--f-sans)' }}>
-              O JURIR é uma ferramenta de análise jurídica assistida por inteligência artificial.
-              Não substitui o aconselhamento de um advogado habilitado na OAB.
-              Consulte sempre um profissional para decisões legais vinculantes.
-            </p>
-            <div style={{ marginTop:14, fontFamily:'var(--f-mono)', fontSize:'.58rem', color:'var(--t5)', letterSpacing:'.1em' }}>
-              © {new Date().getFullYear()} JURIR
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* ── BOTTOM BAR ── */}
+        {/* BOTTOM BAR */}
         <div style={{
-          borderTop:'1px solid var(--b-subtle)', paddingTop:24,
-          display:'flex', alignItems:'center', justifyContent:'space-between',
-          flexWrap:'wrap', gap:12,
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 16,
+          padding: '22px 0 30px',
         }}>
-          <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', gap:16 }}>
-            <span style={{ fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--t3)', letterSpacing:'.1em' }}>
-              © {new Date().getFullYear()} JURIR · INTELIGÊNCIA JURÍDICA QUÂNTICA · TODOS OS DIREITOS RESERVADOS
-            </span>
-            {LEGAL_LINKS.map(l => (
-              <a key={l.label} href={l.href} style={{
-                fontFamily:'var(--f-mono)', fontSize:'.6rem', color:'var(--co7)',
-                textDecoration:'none', letterSpacing:'.08em',
-                transition:'opacity .15s',
-              }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '.7'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-              >
-                {l.label}
-              </a>
-            ))}
+          <div style={{
+            fontFamily: 'var(--f-mono)', fontSize: '.56rem',
+            letterSpacing: '.1em', color: 'rgba(255,255,255,0.2)',
+          }}>
+            © {year} JURIR · INTELIGÊNCIA JURÍDICA QUÂNTICA · TODOS OS DIREITOS RESERVADOS
           </div>
-          <div style={{ display:'flex', gap:20 }}>
-            {['SambaNova AI', 'Cerebras', 'Google Gemini', 'OpenRouter'].map(p => (
-              <span key={p} style={{ fontFamily:'var(--f-mono)', fontSize:'.55rem', color:'var(--t5)', letterSpacing:'.08em', opacity:0.7 }}>
-                {p}
-              </span>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{
+              fontFamily: 'var(--f-mono)', fontSize: '.5rem',
+              color: 'rgba(255,255,255,0.15)', letterSpacing: '.1em',
+              marginRight: 10,
+            }}>
+              POWERED BY
+            </span>
+            {PROVIDERS.map((p, i) => (
+              <div key={p.name} style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '4px 10px',
+                background: i === 0 ? 'rgba(0,242,254,0.04)' : 'transparent',
+                border: i === 0 ? '1px solid rgba(0,242,254,0.1)' : 'none',
+                borderRadius: 999,
+              }}>
+                <span style={{
+                  width: 4, height: 4, borderRadius: '50%',
+                  background: p.dot, boxShadow: `0 0 6px ${p.dot}99`,
+                }}/>
+                <span style={{
+                  fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+                  color: 'rgba(255,255,255,0.28)', letterSpacing: '.06em',
+                }}>
+                  {p.name}
+                </span>
+              </div>
             ))}
           </div>
         </div>
+
       </div>
+
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: 1,
+        background: 'linear-gradient(90deg, transparent, rgba(0,242,254,0.12), transparent)',
+      }}/>
     </footer>
   );
 }
