@@ -26,7 +26,7 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
   const s      = agentStates[id];
   const status = s?.status || 'idle';
   const analysis  = s?.analysis || '';
-  const PREVIEW   = 220;
+  const PREVIEW   = 500;
   const needsExpand = analysis.length > PREVIEW;
   const displayText = expanded ? analysis : analysis.slice(0, PREVIEW);
   const riskCfg = s?.riskLevel ? RISK_CFG[s.riskLevel] : null;
@@ -207,14 +207,14 @@ export default function AgentsGrid() {
             title="Advogado do Diabo"
             icon="⚔️"
             status={devilState.status}
-            preview={devilState.analysis?.slice(0, 160)}
+            preview={devilState.analysis || ''}
             accentColor="var(--cr3)"
           />
           <SpecialCard
             title="Juiz IA Quantum"
             icon="🏛️"
             status={judgeState.status}
-            preview={judgeState.verdict?.slice(0, 160)}
+            preview={judgeState.verdict || ''}
             accentColor="var(--co7)"
           />
         </div>
@@ -224,6 +224,11 @@ export default function AgentsGrid() {
 }
 
 function SpecialCard({ title, icon, status, preview, accentColor }) {
+  const [expanded, setExpanded] = useState(false);
+  const PREVIEW = 300;
+  const needsExpand = (preview || '').length > PREVIEW;
+  const displayText = expanded ? preview : (preview || '').slice(0, PREVIEW);
+
   return (
     <div style={{
       background: 'var(--bg-card)',
@@ -254,9 +259,21 @@ function SpecialCard({ title, icon, status, preview, accentColor }) {
           {status === 'done'    && <CheckCircle size={12} style={{ color: 'var(--jade2)' }}/>}
         </div>
       </div>
-      {preview && (
-        <div style={{ fontSize: '.72rem', color: 'var(--t3)', lineHeight: 1.6, fontFamily: 'var(--f-display)', fontWeight: 300, position: 'relative' }}>
-          {preview}{preview.length >= 160 && '…'}
+      {displayText && (
+        <div>
+          <div style={{ fontSize: '.72rem', color: 'var(--t3)', lineHeight: 1.6, fontFamily: 'var(--f-display)', fontWeight: 300, position: 'relative' }}>
+            {displayText}{!expanded && needsExpand && <span style={{ color: 'var(--t5)' }}>…</span>}
+          </div>
+          {needsExpand && (
+            <button onClick={() => setExpanded(v => !v)} style={{
+              marginTop: 6, background: 'none', border: 'none',
+              color: accentColor, fontSize: '.65rem', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 3,
+              fontFamily: 'var(--f-mono)', padding: 0,
+            }}>
+              {expanded ? <><ChevronUp size={11}/> Menos</> : <><ChevronDown size={11}/> Ver análise completa</>}
+            </button>
+          )}
         </div>
       )}
     </div>
