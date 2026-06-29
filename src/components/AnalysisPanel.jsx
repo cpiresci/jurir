@@ -353,7 +353,7 @@ function MarkdownVerdict({ text }) {
     }
     if (line.startsWith('# ')) {
       elements.push(
-        <div key={i} style={{ fontFamily: 'var(--f-display)', fontSize: '1.1rem', fontWeight: 600, color: 'var(--t0)', marginTop: 24, marginBottom: 10 }}>
+        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>
           {line.slice(2)}
         </div>
       );
@@ -376,8 +376,8 @@ function MarkdownVerdict({ text }) {
       elements.push(
         <ul key={`ul-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-display)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.65 }}>
-              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: '.7rem' }}>◆</span>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
+              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: '.65rem' }}>◆</span>
               <span>{parseInline(item)}</span>
             </li>
           ))}
@@ -397,8 +397,8 @@ function MarkdownVerdict({ text }) {
       elements.push(
         <ol key={`ol-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-display)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.65 }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
               <span>{parseInline(item)}</span>
             </li>
           ))}
@@ -409,7 +409,7 @@ function MarkdownVerdict({ text }) {
 
     // Parágrafo normal
     elements.push(
-      <p key={i} style={{ fontFamily: 'var(--f-display)', fontSize: '1.02rem', fontWeight: 400, color: 'var(--t1)', lineHeight: 1.78, margin: '0 0 4px' }}>
+      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1rem', fontWeight: 400, color: 'var(--t1)', lineHeight: 1.75, margin: '0 0 4px', letterSpacing: '.01em' }}>
         {parseInline(line)}
       </p>
     );
@@ -486,29 +486,29 @@ function FreeResult({ result }) {
       {score && (
         <div style={{
           background: 'var(--bg-card)', border: `1px solid ${scoreColor}33`,
-          borderRadius: 'var(--r-xl)', padding: '24px 28px',
+          borderRadius: 'var(--r-xl)', padding: '22px 24px',
           boxShadow: 'var(--shadow-card)',
-          display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap',
+          display: 'flex', alignItems: 'center', gap: 24,
         }}>
           {/* Número grande */}
-          <div style={{ textAlign: 'center', flexShrink: 0 }}>
+          <div style={{ textAlign: 'center', flexShrink: 0, minWidth: 72 }}>
             <div style={{
-              fontFamily: 'var(--f-display)', fontSize: '4rem', fontWeight: 700,
+              fontFamily: 'var(--f-sans)', fontSize: '3.2rem', fontWeight: 700,
               color: scoreColor, lineHeight: 1, letterSpacing: '-.04em',
             }}>
               {score}
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.5rem', color: 'var(--t4)', letterSpacing: '.2em', marginTop: 2 }}>
-              JURIR SCORE / 100
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.48rem', color: 'var(--t4)', letterSpacing: '.18em', marginTop: 3 }}>
+              / 100
             </div>
           </div>
 
           {/* Barra + label */}
-          <div style={{ flex: 1, minWidth: 180 }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.78rem', color: scoreColor, fontWeight: 600, marginBottom: 10 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.8rem', color: scoreColor, fontWeight: 600, marginBottom: 10, letterSpacing: '.01em' }}>
               {scoreLabel}
             </div>
-            <div style={{ background: 'var(--bg-card2)', borderRadius: 4, height: 6, overflow: 'hidden', marginBottom: 8 }}>
+            <div style={{ background: 'var(--bg-card2)', borderRadius: 4, height: 5, overflow: 'hidden', marginBottom: 8 }}>
               <div style={{
                 height: '100%', borderRadius: 4,
                 background: `linear-gradient(90deg, var(--cr3), #F59E0B, var(--jade2))`,
@@ -517,7 +517,7 @@ function FreeResult({ result }) {
                 transition: 'clip-path 1.2s cubic-bezier(.22,1,.36,1)',
               }}/>
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t5)', letterSpacing: '.08em' }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.57rem', color: 'var(--t5)', letterSpacing: '.07em', lineHeight: 1.5 }}>
               Baseado na análise inicial · Score completo disponível no relatório premium
             </div>
           </div>

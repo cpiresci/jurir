@@ -36,7 +36,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       i++; continue;
     }
     if (line.startsWith('# ')) {
-      els.push(<div key={i} style={{ fontFamily: 'var(--f-display)', fontSize: '1rem', fontWeight: 600, color: 'var(--t0)', marginTop: 20, marginBottom: 8 }}>{line.slice(2)}</div>);
+      els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>{line.slice(2)}</div>);
       i++; continue;
     }
     if (/^[-_─━═]{3,}$/.test(line.trim())) {
@@ -49,7 +49,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       els.push(
         <ul key={`ul${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 5 }}>
           {items.map((it, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-display)', fontSize: '1rem', color: baseColor, lineHeight: 1.7 }}>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: baseColor, lineHeight: 1.7, letterSpacing: '.01em' }}>
               <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 3, fontSize: '.65rem' }}>◆</span>
               <span>{parseInline(it)}</span>
             </li>
@@ -64,7 +64,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       els.push(
         <ol key={`ol${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 5 }}>
           {items.map((it, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-display)', fontSize: '1rem', color: baseColor, lineHeight: 1.7 }}>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: baseColor, lineHeight: 1.7, letterSpacing: '.01em' }}>
               <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
               <span>{parseInline(it)}</span>
             </li>
@@ -74,7 +74,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       continue;
     }
     els.push(
-      <p key={i} style={{ fontFamily: 'var(--f-display)', fontSize: '1.02rem', fontWeight: 400, color: baseColor, lineHeight: 1.78, margin: '0 0 2px' }}>
+      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1rem', fontWeight: 400, color: baseColor, lineHeight: 1.75, margin: '0 0 2px', letterSpacing: '.01em' }}>
         {parseInline(line)}
       </p>
     );
@@ -98,25 +98,25 @@ function ScoreGauge({ score }) {
   const color = scoreColor(score);
   const angle = Math.min((score / 100) * 360, 360);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, flexShrink: 0, width: 120 }}>
       <div style={{
-        width: 96, height: 96, borderRadius: '50%',
+        width: 110, height: 110, borderRadius: '50%',
         background: `conic-gradient(${color} ${angle}deg, rgba(255,255,255,0.04) 0deg)`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: `0 0 24px ${color}44`,
+        boxShadow: `0 0 28px ${color}44`,
         position: 'relative',
       }}>
         <div style={{
-          position: 'absolute', inset: 7, borderRadius: '50%',
+          position: 'absolute', inset: 8, borderRadius: '50%',
           background: 'var(--abyss)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span style={{ fontFamily: 'var(--f-display)', fontSize: '1.5rem', fontWeight: 700, color: 'var(--t0)', lineHeight: 1 }}>{score}</span>
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.44rem', color: 'var(--t4)', letterSpacing: '.08em' }}>/100</span>
+          <span style={{ fontFamily: 'var(--f-sans)', fontSize: '1.75rem', fontWeight: 700, color: 'var(--t0)', lineHeight: 1, letterSpacing: '-.03em' }}>{score}</span>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.48rem', color: 'var(--t4)', letterSpacing: '.1em', marginTop: 2 }}>/100</span>
         </div>
       </div>
       <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t4)', letterSpacing: '.18em', textTransform: 'uppercase' }}>JURIR SCORE</span>
-      <span style={{ fontFamily: 'var(--f-sans)', fontSize: '.7rem', color, fontWeight: 600, textAlign: 'center', letterSpacing: '.02em' }}>{SCORE_LABEL(score)}</span>
+      <span style={{ fontFamily: 'var(--f-sans)', fontSize: '.72rem', color, fontWeight: 600, textAlign: 'center', letterSpacing: '.02em', lineHeight: 1.3 }}>{SCORE_LABEL(score)}</span>
     </div>
   );
 }
@@ -252,12 +252,14 @@ export default function VerdictSection() {
           <div style={{ height: 1, background: 'var(--b-subtle)', marginBottom: 20 }} />
 
           {/* Corpo */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 28, flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
+            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
               <MarkdownBlock text={verdictText} baseColor="var(--t1)" />
             </div>
             {jurirScore != null && (
-              <ScoreGauge score={jurirScore} />
+              <div style={{ flexShrink: 0, paddingTop: 4 }}>
+                <ScoreGauge score={jurirScore} />
+              </div>
             )}
           </div>
 
