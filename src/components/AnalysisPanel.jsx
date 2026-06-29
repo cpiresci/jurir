@@ -277,6 +277,122 @@ export default function AnalysisPanel() {
   );
 }
 
+/* ─── Markdown renderer minimalista para veredicto grátis ─── */
+function MarkdownVerdict({ text }) {
+  if (!text) return null;
+
+  // Remove bloco ⟦JURIR:...⟧ do final (metadado interno do backend)
+  const cleaned = text.replace(/⟦JURIR:[^⟧]*⟧/g, '').trim();
+
+  const lines = cleaned.split('\n');
+  const elements = [];
+  let i = 0;
+
+  const parseInline = (str) => {
+    // **negrito**, *itálico*, `código`
+    const parts = str.split(/('\*\*[^*]+\*\*'|'\*[^*]+\*'|'`[^`]+`')/);
+    return parts.map((p, idx) => {
+      if (p.startsWith('**') && p.endsWith('**'))
+        return <strong key={idx} style={{ color: 'var(--t0)', fontWeight: 600 }}>{p.slice(2,-2)}</strong>;
+      if (p.startsWith('*') && p.endsWith('*'))
+        return <em key={idx}>{p.slice(1,-1)}</em>;
+      if (p.startsWith('`') && p.endsWith('`'))
+        return <code key={idx} style={{ fontFamily: 'var(--f-mono)', fontSize: '.85em', color: 'var(--co7)', background: 'rgba(0,242,254,0.06)', borderRadius: 3, padding: '1px 5px' }}>{p.slice(1,-1)}</code>;
+      return p;
+    });
+  };
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Linha vazia
+    if (!line.trim()) { elements.push(<div key={i} style={{ height: 10 }} />); i++; continue; }
+
+    // Títulos ## / ###
+    if (line.startsWith('### ')) {
+      elements.push(
+        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.78rem', fontWeight: 600, color: 'var(--co7)', letterSpacing: '.10em', textTransform: 'uppercase', marginTop: 20, marginBottom: 6 }}>
+          {line.slice(4)}
+        </div>
+      );
+      i++; continue;
+    }
+    if (line.startsWith('## ')) {
+      elements.push(
+        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.85rem', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>
+          {line.slice(3)}
+        </div>
+      );
+      i++; continue;
+    }
+    if (line.startsWith('# ')) {
+      elements.push(
+        <div key={i} style={{ fontFamily: 'var(--f-display)', fontSize: '1.1rem', fontWeight: 600, color: 'var(--t0)', marginTop: 24, marginBottom: 10 }}>
+          {line.slice(2)}
+        </div>
+      );
+      i++; continue;
+    }
+
+    // Separador ---
+    if (/^[-─]{3,}$/.test(line.trim())) {
+      elements.push(<div key={i} style={{ height: 1, background: 'var(--b-subtle)', margin: '16px 0' }} />);
+      i++; continue;
+    }
+
+    // Lista — bullet •, -, *
+    if (/^[•\-\*]\s/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^[•\-\*]\s/.test(lines[i])) {
+        items.push(lines[i].replace(/^[•\-\*]\s/, ''));
+        i++;
+      }
+      elements.push(
+        <ul key={`ul-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {items.map((item, j) => (
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-display)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.65 }}>
+              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: '.7rem' }}>◆</span>
+              <span>{parseInline(item)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    // Lista numerada
+    if (/^\d+[.)\s]/.test(line)) {
+      const items = [];
+      let num = 1;
+      while (i < lines.length && /^\d+[.)\s]/.test(lines[i])) {
+        items.push(lines[i].replace(/^\d+[.)\s]+/, ''));
+        i++;
+      }
+      elements.push(
+        <ol key={`ol-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {items.map((item, j) => (
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-display)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.65 }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
+              <span>{parseInline(item)}</span>
+            </li>
+          ))}
+        </ol>
+      );
+      continue;
+    }
+
+    // Parágrafo normal
+    elements.push(
+      <p key={i} style={{ fontFamily: 'var(--f-display)', fontSize: '1.02rem', fontWeight: 400, color: 'var(--t1)', lineHeight: 1.78, margin: '0 0 4px' }}>
+        {parseInline(line)}
+      </p>
+    );
+    i++;
+  }
+
+  return <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>{elements}</div>;
+}
+
 /* ─── Free Result Card ─── */
 function FreeResult({ result }) {
   const agentArea  = result.agent_area   || result.area_especialista || 'Especialista Jurídico';
@@ -336,12 +452,7 @@ function FreeResult({ result }) {
 
         <div style={{ height: 1, background: 'var(--b-subtle)', marginBottom: 20 }}/>
 
-        <div style={{
-          fontFamily: 'var(--f-display)', fontSize: '1.05rem', fontWeight: 400,
-          color: 'var(--t1)', lineHeight: 1.75, whiteSpace: 'pre-wrap',
-        }}>
-          {verdict}
-        </div>
+        <MarkdownVerdict text={verdict} />
       </div>
 
       {/* JURIR Score reveal */}
