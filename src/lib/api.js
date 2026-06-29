@@ -178,7 +178,7 @@ export async function removeMonitoring(numero_processo, token) {
 
 // ── Stripe ────────────────────────────────────────────────────────────
 export async function createCheckoutSession(token, plan = 'credito') {
-  return apiFetch('/api/create-checkout-session', { method: 'POST', body: JSON.stringify({ plan }) }, token);
+  return apiFetch('/api/billing/create-checkout-session', { method: 'POST', body: JSON.stringify({ plan }) }, token);
 }
 
 // ── Verificação de Serial ─────────────────────────────────────────────
