@@ -1,0 +1,36 @@
+--- a/capacitor.config.json
++++ b/capacitor.config.json
+@@ -5,7 +5,9 @@
+   "server": {
+     "androidScheme": "https",
+     "hostname": "jurir.app",
+-    "allowNavigation": ["jusaii-app.onrender.com"]
++    "allowNavigation": [
++      "jurir-app-y4gz.onrender.com"
++    ]
+   },
+   "plugins": {
+     "SplashScreen": {
+--- a/android/app/src/main/res/xml/network_security_config.xml
++++ b/android/app/src/main/res/xml/network_security_config.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <network-security-config>
+     <domain-config cleartextTrafficPermitted="false">
+-        <domain includeSubdomains="true">jusaii-app-daqr.onrender.com</domain>
++        <domain includeSubdomains="true">jurir-app-y4gz.onrender.com</domain>
+         <trust-anchors>
+             <certificates src="system"/>
+         </trust-anchors>
+--- a/android/app/src/main/AndroidManifest.xml
++++ b/android/app/src/main/AndroidManifest.xml
+@@ -10,7 +10,8 @@
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:label="@string/app_name"
+         android:theme="@style/AppTheme"
+-        android:usesCleartextTraffic="false">
++        android:usesCleartextTraffic="false"
++        android:networkSecurityConfig="@xml/network_security_config">
+         <activity
+             android:name=".MainActivity"
+             android:exported="true"
