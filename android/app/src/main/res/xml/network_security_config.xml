@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">jusaii-app-daqr.onrender.com</domain>
+        <domain includeSubdomains="true">jurir-app-y4gz.onrender.com</domain>
         <trust-anchors>
             <certificates src="system"/>
         </trust-anchors>

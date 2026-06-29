@@ -5,7 +5,9 @@
   "server": {
     "androidScheme": "https",
     "hostname": "jurir.app",
-    "allowNavigation": ["jusaii-app.onrender.com"]
+    "allowNavigation": [
+      "jurir-app-y4gz.onrender.com"
+    ]
   },
   "plugins": {
     "SplashScreen": {
