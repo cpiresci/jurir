@@ -336,7 +336,7 @@ function MarkdownVerdict({ text }) {
     }
 
     // Separador --- → só espaço, sem linha visual (evita linhas indesejadas no resultado grátis)
-    if (/^[-─]{3,}$/.test(line.trim())) {
+    if (/^[-_─━═]{3,}$/.test(line.trim())) {
       elements.push(<div key={i} style={{ height: 14 }} />);
       i++; continue;
     }
