@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { CheckCircle, Loader2, Zap, Building2, Code2, CreditCard } from 'lucide-react';
 import { useStore } from '../store';
 import { getMe } from '../lib/api';
 
 const PLAN_INFO = {
-  credito:    { icon: <CreditCard size={32}/>, color: 'var(--au6)',  label: 'Crédito Avulso',  msg: 'Seu crédito foi adicionado. Você já pode realizar uma análise premium.' },
+  credito:    { icon: <CreditCard size={32}/>, color: 'var(--au6)',  label: 'Crédito Avulso',  msg: 'Seu crédito foi adicionado. Clique abaixo para continuar com a análise dos 16 agentes.' },
   solo:       { icon: <Zap size={32}/>,        color: 'var(--cr3)',  label: 'Plano Solo',       msg: 'Assinatura ativa! Análises ilimitadas liberadas.' },
   escritorio: { icon: <Building2 size={32}/>,  color: 'var(--co7)', label: 'Plano Escritório', msg: 'Seu espaço de equipe está pronto. Configure sua organização agora.' },
   api:        { icon: <Code2 size={32}/>,      color: 'var(--jade2)', label: 'Plano API',      msg: 'API ativa! Crie sua primeira API Key no Painel API.' },
@@ -13,6 +13,7 @@ const PLAN_INFO = {
 
 export default function CheckoutSuccessPage() {
   const { authToken, refreshUser, addToast } = useStore();
+  const navigate = useNavigate();
   const location = useLocation();
   const params   = new URLSearchParams(location.search);
   const sessionId = params.get('session_id');
@@ -20,7 +21,13 @@ export default function CheckoutSuccessPage() {
   const [status,   setStatus]   = useState('loading'); // loading | ok | error
   const [planKey,  setPlanKey]  = useState(null);
 
+  const [hasPending, setHasPending] = useState(false);
+
   useEffect(() => {
+    // Verifica análise pendente antes de qualquer coisa
+    const pending = sessionStorage.getItem('jurir_pending_analysis');
+    if (pending) setHasPending(true);
+
     if (!authToken) { setStatus('ok'); return; }
     // Refaz o /me para pegar o plano atualizado no store
     getMe(authToken)
@@ -33,6 +40,16 @@ export default function CheckoutSuccessPage() {
       })
       .catch(() => setStatus('ok'));
   }, [authToken]);
+
+  const handleContinueAnalysis = () => {
+    // Não apaga sessionStorage aqui — AnalysisPanel vai limpar e disparar
+    navigate('/#analise');
+    // Força scroll para a seção após navegação
+    setTimeout(() => {
+      const el = document.getElementById('analise');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  };
 
   const info = PLAN_INFO[planKey] || PLAN_INFO.credito;
 
@@ -74,7 +91,14 @@ export default function CheckoutSuccessPage() {
                 <Link to="/api-panel" className="btn btn-cobalt">Abrir Painel API</Link>
               )}
               {(planKey === 'solo' || planKey === 'credito' || !planKey) && (
-                <Link to="/#analise" className="btn btn-cobalt">Fazer uma análise</Link>
+                hasPending ? (
+                  <button className="btn btn-cobalt-ultra" onClick={handleContinueAnalysis}
+                    style={{ justifyContent: 'center' }}>
+                    ⚡ Continuar Análise Premium
+                  </button>
+                ) : (
+                  <Link to="/#analise" className="btn btn-cobalt">Fazer uma análise</Link>
+                )
               )}
               <Link to="/" className="btn btn-ghost">Voltar ao início</Link>
             </div>
