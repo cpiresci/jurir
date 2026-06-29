@@ -2,7 +2,7 @@ import { useState } from 'react';
 import SoloBanner from '../components/SoloBanner';
 import { GitCompare, Loader2, TrendingUp } from 'lucide-react';
 import { useStore } from '../store';
-import { analyzeDelta } from '../lib/api';
+import { analyzeDelta, deltaHtml } from '../lib/api';
 
 export default function DeltaPage() {
   const { authToken, userData, openModal, addToast } = useStore();
@@ -16,6 +16,8 @@ export default function DeltaPage() {
   const [lang,    setLang]    = useState('pt');
   const [loading, setLoading] = useState(false);
   const [result,  setResult]  = useState(null);
+  const [htmlDiff, setHtmlDiff] = useState(null);
+  const [htmlLoading, setHtmlLoading] = useState(false);
 
   const run = async () => {
     if (!authToken) { openModal('login'); return; }
@@ -28,6 +30,20 @@ export default function DeltaPage() {
       addToast(`Erro: ${e.message}`, 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const runHtml = async () => {
+    if (!authToken) { openModal('login'); return; }
+    if (!doc1.trim() || !doc2.trim()) { addToast('Cole os dois documentos.', 'info'); return; }
+    setHtmlLoading(true); setHtmlDiff(null);
+    try {
+      const html = await deltaHtml({ doc_v1: doc1, doc_v2: doc2, language: lang }, authToken);
+      setHtmlDiff(html);
+    } catch (e) {
+      addToast(`Erro: ${e.message}`, 'error');
+    } finally {
+      setHtmlLoading(false);
     }
   };
 
@@ -78,6 +94,9 @@ export default function DeltaPage() {
           <option value="pt">🇧🇷 Português</option>
           <option value="en">🇺🇸 English</option>
         </select>
+        <button className="btn btn-ghost" onClick={runHtml} disabled={htmlLoading} style={{ whiteSpace: 'nowrap' }}>
+          {htmlLoading ? <Loader2 size={14} className="spin"/> : <GitCompare size={14}/>} Diff Visual
+        </button>
         <button className="btn btn-crimson btn-lg" onClick={run} disabled={loading} style={{ flex: 1, justifyContent: 'center' }}>
           {loading ? <><Loader2 size={15} className="spin"/> Analisando…</> : <><GitCompare size={14}/> Comparar Documentos</>}
         </button>
@@ -155,6 +174,17 @@ export default function DeltaPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+      {htmlDiff && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1000,
+          display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: '12px 20px', background: 'var(--surface)', borderBottom: '1px solid var(--b-neutral)' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.8rem', color: 'var(--p3)' }}>DIFF VISUAL</span>
+            <button className="btn btn-ghost btn-sm" onClick={() => setHtmlDiff(null)}>Fechar ✕</button>
+          </div>
+          <iframe srcDoc={htmlDiff} style={{ flex: 1, border: 'none', background: '#fff' }} title="Delta Diff" />
         </div>
       )}
     </div>
