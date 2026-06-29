@@ -316,3 +316,7 @@ export async function deltaHtml(body, token) {
   return apiFetch('/api/delta/html', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
+
+export async function checkMonitoring(id, token) {
+  return apiFetch(`/api/monitoring/${id}/check`, { method: 'POST' }, token);
+}
