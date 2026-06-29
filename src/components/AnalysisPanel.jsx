@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, Send, AlertCircle } from 'lucide-react';
 import { useStore } from '../store';
@@ -34,6 +34,31 @@ export default function AnalysisPanel() {
   useEffect(() => {
     const stored = sessionStorage.getItem('jurir_doc_prompt');
     if (stored) { sessionStorage.removeItem('jurir_doc_prompt'); setPrompt(stored); }
+
+    // Retomar análise premium pendente (usuário voltou após checkout)
+    const pendingAnalysis = sessionStorage.getItem('jurir_pending_analysis');
+    const pendingPrompt   = sessionStorage.getItem('jurir_pending_prompt');
+    if (pendingAnalysis && pendingPrompt) {
+      sessionStorage.removeItem('jurir_pending_analysis');
+      sessionStorage.removeItem('jurir_pending_prompt');
+      const ud = useStore.getState().userData;
+      const tok = useStore.getState().authToken;
+      const hasCredits = tok && ud && (ud.premium_credits ?? 0) > 0;
+      if (hasCredits) {
+        setPrompt(pendingPrompt);
+        setCharCount(pendingPrompt.length);
+        // Pequeno delay para o store estabilizar antes de disparar
+        setTimeout(() => {
+          useStore.getState().addToast('✅ Crédito disponível — iniciando análise completa…', 'success');
+          runSSE(pendingPrompt, 'pt');
+        }, 800);
+      } else if (tok) {
+        // Logado mas sem crédito ainda (pode ser delay do webhook) — restaura prompt apenas
+        setPrompt(pendingPrompt);
+        setCharCount(pendingPrompt.length);
+        useStore.getState().addToast('Crédito sendo processado. Clique em "Analisar — 16 Agentes" quando estiver pronto.', 'info');
+      }
+    }
   }, []);
 
   const {
@@ -62,7 +87,7 @@ export default function AnalysisPanel() {
       if (!awake && !ctrl.signal.aborted) addToast('ℹ️ Servidor iniciando — tentando análise…', 'info');
       if (ctrl.signal.aborted) return;
       const data = await analyzeFree(prompt, lang, ctrl.signal);
-      setFreeResult(data);
+      setFreeResult({ ...data, _prompt: prompt });
       addToast('✅ Análise concluída!', 'success');
     } catch (e) {
       setWakeStatus(null);
@@ -523,7 +548,16 @@ function FreeResult({ result }) {
         <button
           className="btn btn-cobalt-ultra btn-lg"
           style={{ justifyContent: 'center' }}
-          onClick={() => authToken ? navigate('/premium') : openModal('login')}
+          onClick={() => {
+            if (!authToken) { openModal('login'); return; }
+            // Salva prompt para retomar análise após checkout
+            const currentPrompt = result._prompt || '';
+            if (currentPrompt) {
+              sessionStorage.setItem('jurir_pending_prompt', currentPrompt);
+              sessionStorage.setItem('jurir_pending_analysis', '1');
+            }
+            navigate('/premium');
+          }}
         >
           🔓 Ver Relatório Completo — R$ 19,90
         </button>
