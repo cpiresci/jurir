@@ -76,15 +76,17 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
         <span style={{ fontSize: '.85rem', flexShrink: 0 }}>{icon}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: '.75rem', fontWeight: 600,
-            color: status === 'done' ? 'var(--t0)' : 'var(--t3)',
+            fontSize: '.78rem', fontWeight: 700,
+            color: status === 'done' ? 'var(--t0)' : 'var(--t2)',
+            fontFamily: 'var(--f-sans)',
+            letterSpacing: '.02em',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
             transition: 'color .3s',
           }}>
             {area}
           </div>
           {s?.confidence > 0 && (
-            <div style={{ fontSize: '.62rem', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
+            <div style={{ fontSize: '.62rem', color: 'var(--cy1)', fontFamily: 'var(--f-mono)', opacity: 0.85 }}>
               conf: {s.confidence}%
             </div>
           )}
@@ -114,11 +116,15 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
       {analysis && (
         <div>
           <div style={{
-            fontSize: '.73rem', color: 'var(--t2)', lineHeight: 1.6,
-            fontFamily: 'var(--f-display)', fontWeight: 300,
+            fontSize: '.82rem',
+            color: 'var(--t1)',
+            lineHeight: 1.75,
+            fontFamily: 'var(--f-sans)',
+            fontWeight: 400,
+            letterSpacing: '.01em',
           }}>
             {displayText}
-            {!expanded && needsExpand && <span style={{ color: 'var(--t5)' }}>…</span>}
+            {!expanded && needsExpand && <span style={{ color: 'var(--t4)' }}>…</span>}
           </div>
           {needsExpand && (
             <button onClick={() => setExpanded(v => !v)} style={{
@@ -261,8 +267,16 @@ function SpecialCard({ title, icon, status, preview, accentColor }) {
       </div>
       {displayText && (
         <div>
-          <div style={{ fontSize: '.72rem', color: 'var(--t3)', lineHeight: 1.6, fontFamily: 'var(--f-display)', fontWeight: 300, position: 'relative' }}>
-            {displayText}{!expanded && needsExpand && <span style={{ color: 'var(--t5)' }}>…</span>}
+          <div style={{
+            fontSize: '.82rem',
+            color: 'var(--t1)',
+            lineHeight: 1.75,
+            fontFamily: 'var(--f-sans)',
+            fontWeight: 400,
+            letterSpacing: '.01em',
+            position: 'relative',
+          }}>
+            {displayText}{!expanded && needsExpand && <span style={{ color: 'var(--t4)' }}>…</span>}
           </div>
           {needsExpand && (
             <button onClick={() => setExpanded(v => !v)} style={{
