@@ -157,18 +157,6 @@ export async function analyzeDelta(body, token) {
 export async function deltaSummary(body, token) {
   return apiFetch('/api/analyze/delta/summary', { method: 'POST', body: JSON.stringify(body) }, token);
 }
-export async function deltaHtml(body, token) {
-  const r = await fetch(`${API_BASE}/api/analyze/delta/html`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(body),
-  });
-  if (!r.ok) {
-    const err = await r.json().catch(() => ({ detail: r.statusText }));
-    throw new Error(err.detail || `HTTP ${r.status}`);
-  }
-  return r.text();
-}
 
 // ── Upload de Documento ───────────────────────────────────────────────
 // Backend espera JSON puro { filename, content_b64 } (sem multer/multipart).
@@ -231,8 +219,13 @@ export async function listMonitoring(token) {
 export async function removeMonitoring(numero_processo, token) {
   return apiFetch(`/api/monitoring/${encodeURIComponent(numero_processo)}`, { method: 'DELETE' }, token);
 }
-export async function checkMonitoring(id, token) {
-  return apiFetch(`/api/monitoring/check/${id}`, { method: 'POST' }, token);
+
+// ── Recuperação de Senha ──────────────────────────────────────────────
+export async function forgotPassword(email) {
+  return apiFetch('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) });
+}
+export async function resetPassword(token, password) {
+  return apiFetch('/api/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) });
 }
 
 // ── Stripe ────────────────────────────────────────────────────────────

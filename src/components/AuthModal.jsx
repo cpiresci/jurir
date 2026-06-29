@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useStore } from '../store';
-import { login, register, getMe, wakeUp } from '../lib/api';
+import { login, register, getMe, wakeUp, forgotPassword } from '../lib/api';
 
 export default function AuthModal() {
   const { modalOpen, closeModal, setAuth, addToast } = useStore();
@@ -11,6 +11,8 @@ export default function AuthModal() {
   const [loading, setLoading] = useState(false);
   const [err,     setErr]     = useState('');
   const [wakeMsg, setWakeMsg] = useState('');
+  const [forgot,  setForgot]  = useState(false);
+  const [sentMsg, setSentMsg] = useState('');
   const abortRef = useRef(null);
 
   if (!modalOpen) return null;
@@ -53,6 +55,16 @@ export default function AuthModal() {
       addToast('Conta criada! Faça login.', 'success');
       setTab('login');
     } catch (e) { setErr(e.message || 'Erro ao cadastrar.'); }
+    finally { setLoading(false); }
+  };
+
+  const handleForgot = async () => {
+    if (!email) { setErr('Informe seu email.'); return; }
+    setLoading(true); setErr('');
+    try {
+      await forgotPassword(email);
+      setSentMsg('Email enviado! Verifique sua caixa de entrada.');
+    } catch (e) { setErr(e.message || 'Erro ao enviar email.'); }
     finally { setLoading(false); }
   };
 
@@ -126,6 +138,29 @@ export default function AuthModal() {
             }
           </button>
         </div>
+
+        {tab === 'login' && !forgot && (
+          <button onClick={() => { setForgot(true); setErr(''); setSentMsg(''); }}
+            style={{ background: 'none', border: 'none', color: 'var(--t4)', fontSize: '.78rem', cursor: 'pointer', marginTop: 12, width: '100%', textAlign: 'center' }}>
+            Esqueci minha senha
+          </button>
+        )}
+
+        {forgot && (
+          <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <p style={{ fontSize: '.82rem', color: 'var(--t3)' }}>Informe seu email para receber o link de redefinição.</p>
+            {sentMsg
+              ? <p style={{ color: 'var(--jade2)', fontSize: '.82rem', padding: '9px 12px', background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 'var(--r-sm)' }}>{sentMsg}</p>
+              : <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center' }} disabled={loading} onClick={handleForgot}>
+                  {loading ? <><Loader2 size={15} className="spin"/> Enviando…</> : 'Enviar link de redefinição'}
+                </button>
+            }
+            <button onClick={() => { setForgot(false); setSentMsg(''); setErr(''); }}
+              style={{ background: 'none', border: 'none', color: 'var(--t4)', fontSize: '.78rem', cursor: 'pointer', textAlign: 'center' }}>
+              ← Voltar ao login
+            </button>
+          </div>
+        )}
 
         <p style={{ textAlign: 'center', fontSize: '.78rem', color: 'var(--t4)', marginTop: 20 }}>
           {tab === 'login'

@@ -20,6 +20,7 @@ import AceitarConvitePage    from './pages/AceitarConvite';
 import CheckoutSuccessPage  from './pages/CheckoutSuccess';
 import CheckoutCancelPage   from './pages/CheckoutCancel';
 import ContaPage            from './pages/Conta';
+import ResetPasswordPage    from './pages/ResetPassword';
 import { useStore } from './store';
 
 export default function App() {
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/success"         element={<CheckoutSuccessPage />} />
             <Route path="/cancel"          element={<CheckoutCancelPage />} />
             <Route path="/conta"           element={<ContaPage />} />
+            <Route path="/reset-password"   element={<ResetPasswordPage />} />
           </Routes>
         </main>
       </div>
