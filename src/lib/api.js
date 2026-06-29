@@ -1,9 +1,36 @@
 import { API_BASE } from './constants';
 
+// [FIX v10.4] No WebView do Capacitor Android o fetch cross-origin precisa
+// de mode:'cors' explícito + timeout para não travar silenciosamente.
+// Retry automático (1x) para falhas de rede transitórias durante cold start.
+const FETCH_TIMEOUT_MS = 30_000;
+
+function fetchWithTimeout(url, opts, ms = FETCH_TIMEOUT_MS) {
+  const ctrl = new AbortController();
+  const tid   = setTimeout(() => ctrl.abort(), ms);
+  const merged = { ...opts, signal: opts.signal ?? ctrl.signal };
+  return fetch(url, merged).finally(() => clearTimeout(tid));
+}
+
 export async function apiFetch(path, opts = {}, token = null) {
   const headers = { 'Content-Type': 'application/json', ...opts.headers };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  const r = await fetch(`${API_BASE}${path}`, { ...opts, headers });
+  const url = `${API_BASE}${path}`;
+  const options = { mode: 'cors', credentials: 'omit', ...opts, headers };
+
+  const attempt = () => fetchWithTimeout(url, options);
+
+  let r;
+  try {
+    r = await attempt();
+  } catch (e) {
+    // Retry único em falhas de rede (típico no Capacitor durante cold start)
+    if (e.name === 'TypeError' || e.name === 'AbortError') {
+      await new Promise(res => setTimeout(res, 1200));
+      r = await attempt();
+    } else throw e;
+  }
+
   if (!r.ok) {
     const err = await r.json().catch(() => ({ detail: r.statusText }));
     throw new Error(err.detail || err.message || `HTTP ${r.status}`);
