@@ -315,3 +315,16 @@ export async function testWebhook(id, token) {
 export async function deltaHtml(body, token) {
   return apiFetch('/api/delta/html', { method: 'POST', body: JSON.stringify(body) }, token);
 }
+
+export async function listMonitoring(token) {
+  return apiFetch('/api/monitoring', {}, token);
+}
+export async function addMonitoring(body, token) {
+  return apiFetch('/api/monitoring', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+export async function removeMonitoring(id, token) {
+  return apiFetch(`/api/monitoring/${id}`, { method: 'DELETE' }, token);
+}
+export async function checkMonitoring(id, token) {
+  return apiFetch(`/api/monitoring/${id}/check`, { method: 'POST' }, token);
+}
