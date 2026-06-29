@@ -376,7 +376,7 @@ function MarkdownVerdict({ text }) {
       elements.push(
         <ul key={`ul-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '.95rem', color: 'var(--t1)', lineHeight: 1.75, letterSpacing: '.01em' }}>
               <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: '.65rem' }}>◆</span>
               <span>{parseInline(item)}</span>
             </li>
@@ -397,7 +397,7 @@ function MarkdownVerdict({ text }) {
       elements.push(
         <ol key={`ol-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '.95rem', color: 'var(--t1)', lineHeight: 1.75, letterSpacing: '.01em' }}>
               <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
               <span>{parseInline(item)}</span>
             </li>
@@ -409,7 +409,7 @@ function MarkdownVerdict({ text }) {
 
     // Parágrafo normal
     elements.push(
-      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1rem', fontWeight: 400, color: 'var(--t1)', lineHeight: 1.75, margin: '0 0 4px', letterSpacing: '.01em' }}>
+      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.95rem', fontWeight: 400, color: 'var(--t1)', lineHeight: 1.8, margin: '0 0 4px', letterSpacing: '.01em', wordBreak: 'break-word' }}>
         {parseInline(line)}
       </p>
     );

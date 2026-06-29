@@ -1,8 +1,9 @@
-import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, ChevronDown } from 'lucide-react';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
 
-// ── Reutiliza o mesmo renderer do AnalysisPanel ──────────────────────────────
+// ── Inline parser ─────────────────────────────────────────────────────────────
 function parseInline(str) {
   const parts = str.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/);
   return parts.map((p, i) => {
@@ -16,6 +17,7 @@ function parseInline(str) {
   });
 }
 
+// ── Markdown renderer ─────────────────────────────────────────────────────────
 function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
   if (!text) return null;
   const cleaned = text.replace(/⟦JURIR:[^⟧]*⟧/g, '').trim();
@@ -28,15 +30,15 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
     if (!line.trim()) { els.push(<div key={i} style={{ height: 8 }} />); i++; continue; }
 
     if (line.startsWith('### ')) {
-      els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.75rem', fontWeight: 600, color: 'var(--co7)', letterSpacing: '.12em', textTransform: 'uppercase', marginTop: 18, marginBottom: 6 }}>{line.slice(4)}</div>);
+      els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.8rem', fontWeight: 600, color: 'var(--co7)', letterSpacing: '.10em', textTransform: 'uppercase', marginTop: 18, marginBottom: 6 }}>{line.slice(4)}</div>);
       i++; continue;
     }
     if (line.startsWith('## ')) {
-      els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.82rem', fontWeight: 700, color: 'var(--t0)', marginTop: 20, marginBottom: 8 }}>{line.slice(3)}</div>);
+      els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.88rem', fontWeight: 700, color: 'var(--t0)', marginTop: 20, marginBottom: 8 }}>{line.slice(3)}</div>);
       i++; continue;
     }
     if (line.startsWith('# ')) {
-      els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>{line.slice(2)}</div>);
+      els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1rem', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>{line.slice(2)}</div>);
       i++; continue;
     }
     if (/^[-_─━═]{3,}$/.test(line.trim())) {
@@ -49,7 +51,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       els.push(
         <ul key={`ul${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 5 }}>
           {items.map((it, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: baseColor, lineHeight: 1.7, letterSpacing: '.01em' }}>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '.95rem', color: baseColor, lineHeight: 1.75, letterSpacing: '.01em' }}>
               <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 3, fontSize: '.65rem' }}>◆</span>
               <span>{parseInline(it)}</span>
             </li>
@@ -64,7 +66,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       els.push(
         <ol key={`ol${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 5 }}>
           {items.map((it, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: baseColor, lineHeight: 1.7, letterSpacing: '.01em' }}>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '.95rem', color: baseColor, lineHeight: 1.75, letterSpacing: '.01em' }}>
               <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
               <span>{parseInline(it)}</span>
             </li>
@@ -73,8 +75,9 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
       );
       continue;
     }
+    // Parágrafo — tamanho uniforme, sem overflow hidden
     els.push(
-      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1rem', fontWeight: 400, color: baseColor, lineHeight: 1.75, margin: '0 0 2px', letterSpacing: '.01em' }}>
+      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.95rem', fontWeight: 400, color: baseColor, lineHeight: 1.8, margin: '0 0 2px', letterSpacing: '.01em', wordBreak: 'break-word' }}>
         {parseInline(line)}
       </p>
     );
@@ -83,7 +86,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
   return <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>{els}</div>;
 }
 
-// ── Score gauge ───────────────────────────────────────────────────────────────
+// ── Score helpers ─────────────────────────────────────────────────────────────
 const SCORE_LABEL = s =>
   s >= 80 ? 'Fortemente Favorável' :
   s >= 65 ? 'Favorável' :
@@ -94,33 +97,61 @@ const scoreColor = s =>
   s >= 65 ? 'var(--jade2)' :
   s >= 40 ? '#F59E0B' : 'var(--cr3)';
 
+// ── ScoreGauge com toggle expand/collapse ─────────────────────────────────────
 function ScoreGauge({ score }) {
+  const [expanded, setExpanded] = useState(false);
   const color = scoreColor(score);
   const angle = Math.min((score / 100) * 360, 360);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, flexShrink: 0, width: 120 }}>
-      <div style={{
-        width: 110, height: 110, borderRadius: '50%',
-        background: `conic-gradient(${color} ${angle}deg, rgba(255,255,255,0.04) 0deg)`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: `0 0 28px ${color}44`,
-        position: 'relative',
-      }}>
+    <div>
+      {/* Botão que exibe o gauge — clicável para expandir */}
+      <button
+        onClick={() => setExpanded(v => !v)}
+        style={{
+          background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+          width: '100%',
+        }}
+        title={expanded ? 'Ocultar dimensões' : 'Ver dimensões do score'}
+      >
+        {/* Gauge circular */}
         <div style={{
-          position: 'absolute', inset: 8, borderRadius: '50%',
-          background: 'var(--abyss)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          width: 110, height: 110, borderRadius: '50%',
+          background: `conic-gradient(${color} ${angle}deg, rgba(255,255,255,0.04) 0deg)`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: `0 0 28px ${color}44`,
+          position: 'relative',
         }}>
-          <span style={{ fontFamily: 'var(--f-sans)', fontSize: '1.75rem', fontWeight: 700, color: 'var(--t0)', lineHeight: 1, letterSpacing: '-.03em' }}>{score}</span>
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.48rem', color: 'var(--t4)', letterSpacing: '.1em', marginTop: 2 }}>/100</span>
+          <div style={{
+            position: 'absolute', inset: 8, borderRadius: '50%',
+            background: 'var(--abyss)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ fontFamily: 'var(--f-sans)', fontSize: '1.75rem', fontWeight: 700, color: 'var(--t0)', lineHeight: 1, letterSpacing: '-.03em' }}>{score}</span>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.48rem', color: 'var(--t4)', letterSpacing: '.1em', marginTop: 2 }}>/100</span>
+          </div>
         </div>
-      </div>
-      <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t4)', letterSpacing: '.18em', textTransform: 'uppercase' }}>JURIR SCORE</span>
-      <span style={{ fontFamily: 'var(--f-sans)', fontSize: '.72rem', color, fontWeight: 600, textAlign: 'center', letterSpacing: '.02em', lineHeight: 1.3 }}>{SCORE_LABEL(score)}</span>
+
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t4)', letterSpacing: '.18em', textTransform: 'uppercase' }}>JURIR SCORE</span>
+        <span style={{ fontFamily: 'var(--f-sans)', fontSize: '.72rem', color, fontWeight: 600, textAlign: 'center', letterSpacing: '.02em', lineHeight: 1.3 }}>
+          {SCORE_LABEL(score)}
+        </span>
+
+        {/* Indicador expand/collapse */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 4,
+          fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t5)', letterSpacing: '.08em',
+        }}>
+          <ChevronDown size={11} style={{ transition: 'transform .25s', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', color: 'var(--co7)' }} />
+          {expanded ? 'OCULTAR' : 'EXPANDIR'}
+        </div>
+      </button>
     </div>
   );
 }
 
+// ── DimBar ────────────────────────────────────────────────────────────────────
 const DIM_LABELS = {
   viabilidade_juridica:    'Viabilidade Jurídica',
   risco_financeiro:        'Risco Financeiro',
@@ -147,6 +178,8 @@ function DimBar({ label, value }) {
 
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function VerdictSection() {
+  const [scoreExpanded, setScoreExpanded] = useState(false);
+
   const {
     verdictText, devilText, jurirScore, scoreDims,
     vetoActive, analysisId, authToken, addToast, running,
@@ -251,29 +284,86 @@ export default function VerdictSection() {
           </div>
           <div style={{ height: 1, background: 'var(--b-subtle)', marginBottom: 20 }} />
 
-          {/* Corpo */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
-            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-              <MarkdownBlock text={verdictText} baseColor="var(--t1)" />
-            </div>
-            {jurirScore != null && (
-              <div style={{ flexShrink: 0, paddingTop: 4 }}>
-                <ScoreGauge score={jurirScore} />
-              </div>
-            )}
-          </div>
+          {/* Texto do veredicto — ocupa largura total sem flex com gauge */}
+          <MarkdownBlock text={verdictText} baseColor="var(--t1)" />
 
-          {/* Dimensões */}
-          {scoreDims && Object.keys(scoreDims).length > 0 && (
-            <div style={{ marginTop: 22, borderTop: '1px solid var(--b-subtle)', paddingTop: 18 }}>
-              <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.55rem', color: 'var(--t4)', letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 12 }}>
-                Dimensões do Score
+          {/* Score gauge abaixo do texto, centralizado, com toggle */}
+          {jurirScore != null && (
+            <div style={{ marginTop: 24 }}>
+              {/* Linha divisória sutil */}
+              <div style={{ height: 1, background: 'var(--b-subtle)', marginBottom: 20 }} />
+
+              {/* Gauge clicável */}
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button
+                  onClick={() => setScoreExpanded(v => !v)}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                  }}
+                  title={scoreExpanded ? 'Ocultar dimensões' : 'Ver dimensões do score'}
+                >
+                  {/* Gauge circular */}
+                  <div style={{
+                    width: 120, height: 120, borderRadius: '50%',
+                    background: `conic-gradient(${scoreColor(jurirScore)} ${Math.min((jurirScore / 100) * 360, 360)}deg, rgba(255,255,255,0.04) 0deg)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: `0 0 32px ${scoreColor(jurirScore)}44`,
+                    position: 'relative',
+                    transition: 'box-shadow .3s',
+                  }}>
+                    <div style={{
+                      position: 'absolute', inset: 9, borderRadius: '50%',
+                      background: 'var(--abyss)',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <span style={{ fontFamily: 'var(--f-sans)', fontSize: '1.85rem', fontWeight: 700, color: 'var(--t0)', lineHeight: 1, letterSpacing: '-.03em' }}>{jurirScore}</span>
+                      <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.48rem', color: 'var(--t4)', letterSpacing: '.1em', marginTop: 2 }}>/100</span>
+                    </div>
+                  </div>
+
+                  <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t4)', letterSpacing: '.18em', textTransform: 'uppercase' }}>JURIR SCORE</span>
+                  <span style={{ fontFamily: 'var(--f-sans)', fontSize: '.78rem', color: scoreColor(jurirScore), fontWeight: 600, textAlign: 'center', letterSpacing: '.02em', lineHeight: 1.3 }}>
+                    {SCORE_LABEL(jurirScore)}
+                  </span>
+
+                  {/* Indicador expand/collapse */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 4,
+                    fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t5)', letterSpacing: '.08em',
+                    marginTop: 2,
+                  }}>
+                    <ChevronDown
+                      size={11}
+                      style={{
+                        transition: 'transform .25s',
+                        transform: scoreExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                        color: 'var(--co7)',
+                      }}
+                    />
+                    {scoreExpanded ? 'OCULTAR DIMENSÕES' : 'VER DIMENSÕES'}
+                  </div>
+                </button>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px,1fr))', gap: 10 }}>
-                {Object.entries(scoreDims)
-                  .filter(([k, v]) => typeof v === 'number' && k in DIM_LABELS)
-                  .map(([k, v]) => <DimBar key={k} label={k} value={v} />)}
-              </div>
+
+              {/* Dimensões — colapsável */}
+              {scoreExpanded && scoreDims && Object.keys(scoreDims).length > 0 && (
+                <div style={{
+                  marginTop: 20,
+                  borderTop: '1px solid var(--b-subtle)',
+                  paddingTop: 18,
+                  animation: 'fade-in .25s ease',
+                }}>
+                  <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.55rem', color: 'var(--t4)', letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 12, textAlign: 'center' }}>
+                    Dimensões do Score
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px,1fr))', gap: 10 }}>
+                    {Object.entries(scoreDims)
+                      .filter(([k, v]) => typeof v === 'number' && k in DIM_LABELS)
+                      .map(([k, v]) => <DimBar key={k} label={k} value={v} />)}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
