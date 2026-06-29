@@ -50,17 +50,14 @@ jobs:
       version_name: ${{ steps.versioning.outputs.version_name }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-
       - uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: temurin
-
       - run: npm ci
 
       - name: Set version from package.json + run number
@@ -72,6 +69,7 @@ jobs:
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
           echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
+          # Patch build.gradle dinamicamente
           sed -i "s/versionCode [0-9]*/versionCode $VERSION_CODE/" android/app/build.gradle
           sed -i "s/versionName \".*\"/versionName \"$VERSION_NAME\"/" android/app/build.gradle
           echo "✅ versionCode=$VERSION_CODE  versionName=$VERSION_NAME"
@@ -80,12 +78,11 @@ jobs:
         with:
           name: web-dist
           path: dist/
-
       - run: npm install -g @capacitor/cli
       - run: npx cap sync android
-
       - uses: android-actions/setup-android@v3
-
+        env:
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
       - run: sdkmanager "build-tools;34.0.0" "platforms;android-36"
 
       - name: Decode Keystore
@@ -107,7 +104,7 @@ jobs:
             -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
-            --no-daemon --stacktrace
+            --no-daemon
 
       - name: Build Release AAB
         working-directory: android
@@ -121,7 +118,7 @@ jobs:
             -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
-            --no-daemon --stacktrace
+            --no-daemon
 
       - name: Rename artifacts with version
         run: |
@@ -160,11 +157,6 @@ jobs:
           AAB_FILE=$(find . -name "*.aab" | head -1)
           echo "aab_file=$AAB_FILE" >> $GITHUB_OUTPUT
           echo "✅ AAB encontrado: $AAB_FILE"
-
-      - name: Create whatsnew directory
-        run: |
-          mkdir -p whatsnew
-          echo "Melhorias de estabilidade e performance." > whatsnew/whatsnew-pt-BR
 
       - uses: r0adkll/upload-google-play@v1.1.3
         continue-on-error: true
