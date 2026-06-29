@@ -30,10 +30,7 @@ export default function DocumentosPage() {
     if (!file) { addToast('Selecione um arquivo.', 'info'); return; }
     setLoading(true); setResult(null);
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('context', context);
-      const data = await analyzeDocument(fd, authToken);
+      const data = await analyzeDocument(file, authToken);
       setResult(data);
     } catch (e) {
       addToast(`Erro: ${e.message}`, 'error');

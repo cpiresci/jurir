@@ -132,13 +132,30 @@ export async function deltaSummary(body, token) {
 }
 
 // ── Upload de Documento ───────────────────────────────────────────────
-export async function analyzeDocument(formData, token) {
+// Backend espera JSON puro { filename, content_b64 } (sem multer/multipart).
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      resolve(result.split(',')[1] || '');
+    };
+    reader.onerror = () => reject(new Error('Falha ao ler o arquivo.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+export async function analyzeDocument(file, token) {
+  const content_b64 = await fileToBase64(file);
   const r = await fetch(`${API_BASE}/api/document/analyze`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ filename: file.name, content_b64 }),
   });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(err.detail || `HTTP ${r.status}`);
+  }
   return r.json();
 }
 
