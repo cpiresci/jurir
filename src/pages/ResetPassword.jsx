@@ -13,7 +13,8 @@ export default function ResetPasswordPage() {
   const [success,  setSuccess]  = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const hash = window.location.hash || '';
+    const params = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : window.location.search);
     const t = params.get('token');
     if (!t) setErr('Link inválido ou expirado.');
     else setToken(t);
