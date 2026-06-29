@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader2, Send, AlertCircle } from 'lucide-react';
 import { useStore } from '../store';
 import { useSSEAnalysis } from '../hooks/useSSEAnalysis';
@@ -290,7 +291,7 @@ function MarkdownVerdict({ text }) {
 
   const parseInline = (str) => {
     // **negrito**, *itálico*, `código`
-    const parts = str.split(/('\*\*[^*]+\*\*'|'\*[^*]+\*'|'`[^`]+`')/);
+    const parts = str.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/);
     return parts.map((p, idx) => {
       if (p.startsWith('**') && p.endsWith('**'))
         return <strong key={idx} style={{ color: 'var(--t0)', fontWeight: 600 }}>{p.slice(2,-2)}</strong>;
@@ -334,9 +335,9 @@ function MarkdownVerdict({ text }) {
       i++; continue;
     }
 
-    // Separador ---
+    // Separador --- → só espaço, sem linha visual (evita linhas indesejadas no resultado grátis)
     if (/^[-─]{3,}$/.test(line.trim())) {
-      elements.push(<div key={i} style={{ height: 1, background: 'var(--b-subtle)', margin: '16px 0' }} />);
+      elements.push(<div key={i} style={{ height: 14 }} />);
       i++; continue;
     }
 
@@ -409,6 +410,7 @@ function FreeResult({ result }) {
   const lockCriticos = !score ? 3 : score < 40 ? 5 : score < 65 ? 3 : 2;
 
   const { openModal, authToken } = useStore();
+  const navigate = useNavigate();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -521,7 +523,7 @@ function FreeResult({ result }) {
         <button
           className="btn btn-cobalt-ultra btn-lg"
           style={{ justifyContent: 'center' }}
-          onClick={() => authToken ? (window.location.href = '/#/checkout') : openModal('login')}
+          onClick={() => authToken ? navigate('/premium') : openModal('login')}
         >
           🔓 Ver Relatório Completo — R$ 19,90
         </button>
