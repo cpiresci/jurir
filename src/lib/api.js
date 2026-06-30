@@ -318,5 +318,6 @@ export async function deltaHtml(body, token) {
 
 
 export async function checkMonitoring(id, token) {
-  return apiFetch(`/api/monitoring/${id}/check`, { method: 'POST' }, token);
+  // [FIX] Rota real no backend é POST /api/monitoring/check/:id (não /:id/check)
+  return apiFetch(`/api/monitoring/check/${id}`, { method: 'POST' }, token);
 }
