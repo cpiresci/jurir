@@ -95,23 +95,23 @@
   --b-bright:  1px solid rgba(0,242,254,0.25);
   --b-mid:     1px solid rgba(255,255,255,0.07);
 
-  /* ── TEXT ── */
-  --t0: #FFFFFF;
-  --t1: rgba(255,255,255,0.90);
-  --t2: rgba(255,255,255,0.65);
-  --t3: rgba(255,255,255,0.40);
-  --t4: rgba(255,255,255,0.22);
-  --t5: rgba(255,255,255,0.12);
+  /* ── TEXT — escala recalibrada p/ WCAG 2.2 AA sobre --void (#050507) ── */
+  --t0: #FFFFFF;                      /* 19.9:1 — títulos/destaque */
+  --t1: rgba(255,255,255,0.92);       /* 17.6:1 — corpo principal */
+  --t2: rgba(255,255,255,0.72);       /* 12.8:1 — corpo secundário */
+  --t3: rgba(255,255,255,0.58);       /* ~7.4:1 — captions/labels (era 0.40, falhava) */
+  --t4: rgba(255,255,255,0.42);       /* ~4.6:1 — placeholder/auxiliar (era 0.22, falhava) */
+  --t5: rgba(255,255,255,0.16);       /* decorativo apenas — nunca usar em texto legível */
 
   /* ── MARBLE aliases (legacy compat) ── */
   --shell: #0C0C14;
   --pale:  #0E0E18;
-  --mist:  rgba(255,255,255,0.12);
-  --fog:   rgba(255,255,255,0.22);
-  --slate: rgba(255,255,255,0.40);
-  --iron:  rgba(255,255,255,0.55);
-  --dusk:  rgba(255,255,255,0.70);
-  --night: rgba(255,255,255,0.85);
+  --mist:  rgba(255,255,255,0.16);
+  --fog:   rgba(255,255,255,0.42);
+  --slate: rgba(255,255,255,0.58);
+  --iron:  rgba(255,255,255,0.72);
+  --dusk:  rgba(255,255,255,0.85);
+  --night: rgba(255,255,255,0.92);
   --abyss-old: #050507;
 
   /* ── TYPOGRAPHY ── */

@@ -399,7 +399,7 @@ export default function Footer() {
         }}>
           <div style={{
             fontFamily: 'var(--f-mono)', fontSize: '.54rem',
-            letterSpacing: '.10em', color: 'rgba(255,255,255,0.18)',
+            letterSpacing: '.10em', color: 'var(--t4)',
             lineHeight: 1.6,
           }}>
             © {year} JURIR · INTELIGÊNCIA JURÍDICA QUÂNTICA
