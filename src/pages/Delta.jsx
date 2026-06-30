@@ -92,7 +92,7 @@ export default function DeltaPage() {
           letterSpacing: '.1em', marginBottom: 16 }}>
           <GitCompare size={11}/> DELTA ANALYSIS
         </div>
-        <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.4rem)', fontWeight: 700, marginBottom: 8 }}>
+        <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>
           Comparativo Jurídico
         </h1>
         <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>

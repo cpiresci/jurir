@@ -51,7 +51,7 @@ export default function HistoricoPage() {
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '100px 24px 60px' }}>
-      <h1 className="t-display" style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 8 }}>
+      <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>
         Histórico de Análises
       </h1>
       <p style={{ color: 'var(--p4)', fontSize: '.88rem', marginBottom: 24 }}>

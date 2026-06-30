@@ -74,7 +74,7 @@ export default function CheckoutSuccessPage() {
               <CheckCircle size={40} style={{ color: info.color }} />
             </div>
 
-            <h1 className="t-display" style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: 8 }}>
+            <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>
               Pagamento confirmado!
             </h1>
             <p style={{ color: info.color, fontWeight: 600, marginBottom: 8 }}>{info.label}</p>

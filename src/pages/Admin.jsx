@@ -297,7 +297,7 @@ export default function AdminPage() {
         </div>
       </aside>
       <main style={{ marginLeft: 200, flex: 1, padding: "28px 32px", minWidth: 0 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 400, color: T.text, marginBottom: 24 }}>{TABS.find(t => t.id===tab)?.label}</h1>
+        <h1 style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, color: T.text, marginBottom: 24 }}>{TABS.find(t => t.id===tab)?.label}</h1>
         {CONTENT[tab]}
       </main>
     </div>

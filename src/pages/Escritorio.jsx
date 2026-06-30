@@ -41,7 +41,7 @@ export default function EscritorioPage() {
       <PageWrap>
         <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
           <Building2 size={48} style={{ color: 'var(--co7)', marginBottom: 16 }} />
-          <h2 className="t-display" style={{ fontSize: '1.5rem', marginBottom: 8 }}>Crie sua Organização</h2>
+          <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', marginBottom: 8 }}>Crie sua Organização</h1>
           <p style={{ color: 'var(--p4)', marginBottom: 24 }}>
             Configure o espaço da sua equipe no Jurir Escritório.
           </p>
@@ -84,7 +84,7 @@ export default function EscritorioPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
         <Building2 size={28} style={{ color: 'var(--co7)' }} />
         <div>
-          <h1 className="t-display" style={{ fontSize: '1.6rem', fontWeight: 700 }}>{org.name}</h1>
+          <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700 }}>{org.name}</h1>
           <p style={{ color: 'var(--p4)', fontSize: '.8rem' }}>Plano Escritório · {role === 'owner' ? 'Proprietário' : role === 'admin' ? 'Admin' : 'Membro'}</p>
         </div>
       </div>

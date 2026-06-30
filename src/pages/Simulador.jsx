@@ -71,7 +71,7 @@ export default function SimuladorPage() {
           letterSpacing: '.1em', marginBottom: 16 }}>
           <TrendingUp size={11}/> SIMULADOR DE INSTÂNCIAS
         </div>
-        <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.4rem)', fontWeight: 700, marginBottom: 8 }}>Simular Instâncias</h1>
+        <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>Simular Instâncias</h1>
         <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>Estima probabilidades de êxito em cada instância judiciária.</p>
       </div>
 
