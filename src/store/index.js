@@ -49,6 +49,8 @@ export const useStore = create((set, get) => ({
   running:         false,
   freeResult:      null,
   deltaResult:     null,
+  // [wire-citation-chips] Citações estruturadas (id, diploma, artigo, texto, url)
+  citations:       [],
   // [FIX] Mensagem de status para cooldown/recovery — evita 0/16 parado sem feedback
   statusMessage:   null,
 
@@ -65,6 +67,7 @@ export const useStore = create((set, get) => ({
     verdictText: '', devilText: '', jurirScore: null,
     scoreDims: null, vetoActive: false, running: false,
     freeResult: null, deltaResult: null, statusMessage: null,
+    citations: [],
     devilState: { status: 'idle', analysis: '', confidence: 0 },
     judgeState: { status: 'idle', verdict: '' },
   }),
@@ -88,6 +91,7 @@ export const useStore = create((set, get) => ({
   }}),
   setDeltaResult:     (r)             => set({ deltaResult: r }),
   setAnalysisId:      (id)            => set({ analysisId: id }),
+  setCitations:       (list)          => set({ citations: Array.isArray(list) ? list : [] }),
 
   // ── Delta ──
   deltaLoading: false,

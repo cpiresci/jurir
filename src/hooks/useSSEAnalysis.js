@@ -11,7 +11,7 @@ export function useSSEAnalysis() {
       authToken, resetAnalysis, setRunning, setAgentState,
       incrementCompleted, setVerdict, setDevil, setScore,
       setVeto, setAnalysisId, addToast, setStatusMessage,
-      setDevilState, setJudgeState,
+      setDevilState, setJudgeState, setCitations,
     } = useStore.getState();
 
     if (!authToken) {
@@ -150,6 +150,9 @@ export function useSSEAnalysis() {
 
           } else if (t === 'score') {
             setScore(ev.jurir_score ?? ev.score ?? null, ev.dimensions ?? null);
+
+          } else if (t === 'citations') {
+            setCitations(ev.citations || []);
 
           // [FIX CRÍTICO] Backend emite 'saved' APÓS o verdict com o analysis_id real
           } else if (t === 'saved') {
