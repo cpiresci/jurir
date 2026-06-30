@@ -127,7 +127,7 @@ export default function HistoricoPage() {
         <div className="modal-overlay" onClick={() => setSelected(null)}>
           <div className="modal-box" style={{ maxWidth: 700, maxHeight: '85vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-              <h3 className="t-display" style={{ fontSize: '1.2rem', fontWeight: 700 }}>Análise #{selected.id}</h3>
+              <h2 className="t-display" style={{ fontSize: '1.2rem', fontWeight: 700 }}>Análise #{selected.id}</h2>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn btn-ghost btn-sm" disabled={pdfLoading}
                   onClick={async () => {

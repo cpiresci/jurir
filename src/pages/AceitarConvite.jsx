@@ -38,7 +38,7 @@ export default function AceitarConvitePage() {
         {status === 'need_login' && (
           <>
             <Building2 size={48} style={{ color: 'var(--co7)', marginBottom: 16 }} />
-            <h2 className="t-display" style={{ fontSize: '1.4rem', marginBottom: 8 }}>Convite recebido</h2>
+            <h1 className="t-display" style={{ fontSize: "1.4rem", marginBottom: 8 }}>Convite recebido</h1>
             <p style={{ color: 'var(--p4)', marginBottom: 24 }}>Faça login ou crie uma conta para aceitar o convite.</p>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
               <button className="btn btn-cobalt" onClick={() => openModal('login')}>Entrar</button>
@@ -50,9 +50,9 @@ export default function AceitarConvitePage() {
         {status === 'success' && (
           <>
             <CheckCircle size={48} style={{ color: 'var(--jade2)', marginBottom: 16 }} />
-            <h2 className="t-display" style={{ fontSize: '1.4rem', marginBottom: 8 }}>
+            <h1 className="t-display" style={{ fontSize: '1.4rem', marginBottom: 8 }}>
               Bem-vindo{orgName ? ` a ${orgName}` : ''}!
-            </h2>
+            </h1>
             <p style={{ color: 'var(--p4)', marginBottom: 24 }}>{message || 'Você agora faz parte da organização.'}</p>
             <Link to="/escritorio" className="btn btn-cobalt">Ir para o Escritório</Link>
           </>
@@ -61,7 +61,7 @@ export default function AceitarConvitePage() {
         {status === 'error' && (
           <>
             <XCircle size={48} style={{ color: 'var(--cr3)', marginBottom: 16 }} />
-            <h2 className="t-display" style={{ fontSize: '1.4rem', marginBottom: 8 }}>Convite inválido</h2>
+            <h1 className="t-display" style={{ fontSize: "1.4rem", marginBottom: 8 }}>Convite inválido</h1>
             <p style={{ color: 'var(--p4)', marginBottom: 24 }}>{message}</p>
             <Link to="/" className="btn btn-ghost">Voltar ao início</Link>
           </>

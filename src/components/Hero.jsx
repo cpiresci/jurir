@@ -241,16 +241,16 @@ export default function Hero() {
           </div>
 
           {/* Headline */}
-          <h1 className="hero-title fade-up fade-up-1" style={{ marginBottom:6, opacity:visible?1:0 }}>
-            Você tem chance
-          </h1>
-          <h1 className="hero-title fade-up fade-up-1" style={{
-            marginBottom:'clamp(22px,4vw,36px)', opacity:visible?1:0,
-            background:'linear-gradient(135deg,var(--co8) 0%,var(--co7) 40%,var(--am4) 100%)',
-            WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-            fontStyle:'italic',
-          }}>
-            de ganhar?
+          <h1 className="hero-title fade-up fade-up-1" style={{ marginBottom:'clamp(22px,4vw,36px)', opacity:visible?1:0 }}>
+            <span style={{ display:'block', marginBottom:6 }}>Você tem chance</span>
+            <span style={{
+              display:'block',
+              background:'linear-gradient(135deg,var(--co8) 0%,var(--co7) 40%,var(--am4) 100%)',
+              WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
+              fontStyle:'italic',
+            }}>
+              de ganhar?
+            </span>
           </h1>
 
           {/* Subline */}
