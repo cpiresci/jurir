@@ -537,7 +537,7 @@ export default function AuthModal() {
                 {h2}
               </h2>
             </div>
-            <button onClick={closeModal} style={{
+            <button onClick={closeModal} aria-label="Fechar" style={{
               background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
               borderRadius: 9, color: 'var(--t3)', padding: 7, cursor: 'pointer',
               display: 'flex', transition: 'all .18s', flexShrink: 0,
