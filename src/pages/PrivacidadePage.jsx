@@ -146,7 +146,7 @@ export default function PrivacidadePage() {
           display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'rgba(0,242,254,0.06)', border: '1px solid var(--b-cobalt)',
           borderRadius: 'var(--r-pill)', padding: '5px 14px',
-          fontSize: '.7rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)',
+          fontSize: '.75rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.12em', marginBottom: 20,
         }}>
           <Shield size={11} /> POLÍTICA DE PRIVACIDADE
@@ -168,7 +168,7 @@ export default function PrivacidadePage() {
 
         <div style={{
           display: 'flex', gap: 24, flexWrap: 'wrap',
-          fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)', letterSpacing: '.08em',
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.08em',
         }}>
           <span>Última atualização: <strong style={{ color: 'var(--t3)' }}>{LAST_UPDATE}</strong></span>
           <span>Versão: <strong style={{ color: 'var(--t3)' }}>2.0</strong></span>
@@ -223,7 +223,7 @@ export default function PrivacidadePage() {
                 {sec.icon}
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t5)', letterSpacing: '.18em', marginBottom: 2 }}>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.18em', marginBottom: 2 }}>
                   SEÇÃO {String(i + 1).padStart(2, '0')}
                 </div>
                 <h2 style={{ fontFamily: 'var(--f-sans)', fontSize: '.95rem', fontWeight: 700, color: 'var(--t0)' }}>
@@ -273,7 +273,7 @@ export default function PrivacidadePage() {
       {/* ── SEUS DIREITOS ── */}
       <div style={{ marginTop: 48 }}>
         <div style={{
-          fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)',
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)',
           letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: 20,
         }}>
           Seus Direitos (LGPD, Art. 18)
@@ -418,7 +418,7 @@ export default function PrivacidadePage() {
           marginTop: 24, paddingTop: 20,
           borderTop: '1px solid var(--b-subtle)',
           display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 24,
-          fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--t5)', letterSpacing: '.06em',
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.06em',
         }}>
           <a href="https://sambanova.ai/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t5)', textDecoration: 'none' }}>
             SambaNova Privacy Policy ↗
@@ -441,7 +441,7 @@ export default function PrivacidadePage() {
       {/* ── FOOTER NOTE ── */}
       <div style={{
         marginTop: 40, textAlign: 'center',
-        fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t5)', letterSpacing: '.1em',
+        fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.1em',
       }}>
         © {new Date().getFullYear()} {APP_NAME} · INTELIGÊNCIA JURÍDICA QUÂNTICA<br />
         <span style={{ opacity: .7 }}>Esta política é parte integrante dos Termos de Uso do JURIR.</span>

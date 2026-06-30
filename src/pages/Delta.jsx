@@ -88,7 +88,7 @@ export default function DeltaPage() {
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.72rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+          padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <GitCompare size={11}/> DELTA ANALYSIS
         </div>
@@ -114,7 +114,7 @@ export default function DeltaPage() {
                 onChange={e => attachFile(e.target.files[0], slot)} />
               <button type="button" className="btn btn-ghost btn-sm" disabled={attaching[slot]}
                 onClick={() => ref.current?.click()}
-                style={{ fontSize: '.74rem', padding: '4px 10px', whiteSpace: 'nowrap' }}>
+                style={{ fontSize: '.75rem', padding: '4px 10px', whiteSpace: 'nowrap' }}>
                 {attaching[slot] ? <Loader2 size={12} className="spin"/> : <Paperclip size={12}/>}
                 {attaching[slot] ? ' Extraindo…' : ' Anexar arquivo'}
               </button>
@@ -149,7 +149,7 @@ export default function DeltaPage() {
       {result && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {result.doc_type && (
-            <div style={{ fontSize: '.72rem', fontFamily: 'var(--f-mono)', color: 'var(--au6)',
+            <div style={{ fontSize: '.75rem', fontFamily: 'var(--f-mono)', color: 'var(--au6)',
               background: 'var(--ridge)', border: '1px solid var(--b-neutral)',
               borderRadius: 'var(--r-pill)', padding: '4px 12px', alignSelf: 'flex-start',
               letterSpacing: '.08em' }}>
@@ -164,7 +164,7 @@ export default function DeltaPage() {
               { label: 'Total de Blocos',  val: result.blocks?.length ?? '—', color: 'var(--p3)' },
             ].map(({ label, val, color }) => (
               <div key={label} style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '14px 16px' }}>
-                <div style={{ fontSize: '.68rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 6 }}>{label}</div>
+                <div style={{ fontSize: '.75rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 6 }}>{label}</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, fontFamily: 'var(--f-display)', color }}>{val}</div>
               </div>
             ))}
@@ -201,9 +201,9 @@ export default function DeltaPage() {
                     <div key={i} style={{ border: `1px solid ${color}30`, borderLeft: `3px solid ${color}`,
                       borderRadius: 'var(--r-sm)', padding: '12px 14px', background: 'var(--ridge)' }}>
                       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '.68rem', background: `${color}20`, color, borderRadius: 4, padding: '2px 7px', fontFamily: 'var(--f-mono)', textTransform: 'uppercase' }}>{crit}</span>
-                        {b.category && <span style={{ fontSize: '.7rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>{b.category}</span>}
-                        {b.change_type && <span style={{ fontSize: '.7rem', color: 'var(--p4)' }}>{b.change_type}</span>}
+                        <span style={{ fontSize: '.75rem', background: `${color}20`, color, borderRadius: 4, padding: '2px 7px', fontFamily: 'var(--f-mono)', textTransform: 'uppercase' }}>{crit}</span>
+                        {b.category && <span style={{ fontSize: '.75rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>{b.category}</span>}
+                        {b.change_type && <span style={{ fontSize: '.75rem', color: 'var(--p4)' }}>{b.change_type}</span>}
                       </div>
                       {b.original && (
                         <div style={{ fontSize: '.8rem', color: 'var(--cr5)', background: 'rgba(185,28,28,0.06)',

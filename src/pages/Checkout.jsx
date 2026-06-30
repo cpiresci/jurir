@@ -57,7 +57,7 @@ export default function CheckoutPage() {
   return (
     <div style={{ maxWidth: 1060, margin: '0 auto', padding: '100px 24px 60px' }}>
       <div style={{ textAlign: 'center', marginBottom: 52 }}>
-        <div style={{ fontSize: '.72rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)', letterSpacing: '.15em', marginBottom: 10 }}>PLANOS & PREÇOS</div>
+        <div style={{ fontSize: '.75rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)', letterSpacing: '.15em', marginBottom: 10 }}>PLANOS & PREÇOS</div>
         <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 700, marginBottom: 14 }}>Escolha seu plano</h1>
         <p style={{ color: 'var(--p4)', fontSize: '.95rem', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
           De análises avulsas a integrações via API — o Jurir tem o plano certo para o seu caso.
@@ -78,7 +78,7 @@ export default function CheckoutPage() {
               {plan.badge && (
                 <div style={{
                   position: 'absolute', top: -11, left: '50%', transform: 'translateX(-50%)',
-                  background: plan.color, color: '#fff', fontSize: '.6rem', fontWeight: 700,
+                  background: plan.color, color: '#fff', fontSize: '.75rem', fontWeight: 700,
                   letterSpacing: '.12em', padding: '3px 10px', borderRadius: 20,
                   whiteSpace: 'nowrap', fontFamily: 'var(--f-mono)',
                 }}>{plan.badge}</div>
@@ -87,7 +87,7 @@ export default function CheckoutPage() {
                 <div style={{ color: plan.color }}>{plan.icon}</div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '.95rem', color: 'var(--p1)' }}>{plan.name}</div>
-                  <div style={{ fontSize: '.72rem', color: 'var(--p5)' }}>{plan.desc}</div>
+                  <div style={{ fontSize: '.75rem', color: 'var(--p5)' }}>{plan.desc}</div>
                 </div>
               </div>
               <div style={{ marginBottom: 20 }}>

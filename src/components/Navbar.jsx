@@ -111,7 +111,7 @@ export default function Navbar() {
                   <span style={{ flex: 1 }}>{label}</span>
                   {badge && !isSolo && (
                     <span style={{
-                      fontSize: '.62rem', fontFamily: 'var(--f-mono)', fontWeight: 700,
+                      fontSize: '.75rem', fontFamily: 'var(--f-mono)', fontWeight: 700,
                       color: 'var(--cr3)', background: 'rgba(220,40,40,.1)',
                       border: '1px solid rgba(220,40,40,.2)', borderRadius: 4,
                       padding: '1px 5px', letterSpacing: '.06em',
@@ -134,7 +134,7 @@ export default function Navbar() {
       <div className="nav-actions desktop-only">
         {/* Engine status */}
         <div title={engineStatus === 'online' ? 'Motor online' : 'Motor offline — cold start ~50s'}
-          style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: statusColor, letterSpacing: '.08em' }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: statusColor, letterSpacing: '.08em' }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusColor, boxShadow: engineStatus === 'online' ? `0 0 7px ${statusColor}` : 'none', animation: engineStatus === 'checking' ? 'pulse 1.4s ease-in-out infinite' : 'none', flexShrink: 0 }}/>
           {engineStatus === 'checking' ? 'MOTOR…' : engineStatus === 'online' ? 'ONLINE' : 'OFFLINE'}
         </div>

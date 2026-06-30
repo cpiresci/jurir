@@ -50,7 +50,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
         <ul key={`ul${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 5 }}>
           {items.map((it, j) => (
             <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: baseColor, lineHeight: 1.7, letterSpacing: '.01em' }}>
-              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 3, fontSize: '.65rem' }}>◆</span>
+              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 3, fontSize: '.75rem' }}>◆</span>
               <span>{parseInline(it)}</span>
             </li>
           ))}
@@ -65,7 +65,7 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
         <ol key={`ol${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 5 }}>
           {items.map((it, j) => (
             <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: baseColor, lineHeight: 1.7, letterSpacing: '.01em' }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
               <span>{parseInline(it)}</span>
             </li>
           ))}
@@ -112,11 +112,11 @@ function ScoreGauge({ score }) {
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         }}>
           <span style={{ fontFamily: 'var(--f-sans)', fontSize: '1.75rem', fontWeight: 700, color: 'var(--t0)', lineHeight: 1, letterSpacing: '-.03em' }}>{score}</span>
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.48rem', color: 'var(--t4)', letterSpacing: '.1em', marginTop: 2 }}>/100</span>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.1em', marginTop: 2 }}>/100</span>
         </div>
       </div>
-      <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t4)', letterSpacing: '.18em', textTransform: 'uppercase' }}>JURIR SCORE</span>
-      <span style={{ fontFamily: 'var(--f-sans)', fontSize: '.72rem', color, fontWeight: 600, textAlign: 'center', letterSpacing: '.02em', lineHeight: 1.3 }}>{SCORE_LABEL(score)}</span>
+      <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.18em', textTransform: 'uppercase' }}>JURIR SCORE</span>
+      <span style={{ fontFamily: 'var(--f-sans)', fontSize: '.75rem', color, fontWeight: 600, textAlign: 'center', letterSpacing: '.02em', lineHeight: 1.3 }}>{SCORE_LABEL(score)}</span>
     </div>
   );
 }
@@ -135,8 +135,8 @@ function DimBar({ label, value }) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t4)', textTransform: 'uppercase', letterSpacing: '.10em' }}>{display}</span>
-        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color, fontWeight: 600 }}>{value}</span>
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', textTransform: 'uppercase', letterSpacing: '.10em' }}>{display}</span>
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color, fontWeight: 600 }}>{value}</span>
       </div>
       <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 3, height: 4, overflow: 'hidden' }}>
         <div style={{ height: '100%', borderRadius: 3, background: color, width: `${value}%`, transition: 'width 1s cubic-bezier(.22,1,.36,1)' }} />
@@ -197,7 +197,7 @@ export default function VerdictSection() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
             <Shield size={13} style={{ color: 'var(--cr3)' }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', fontWeight: 700, color: 'var(--cr3)', letterSpacing: '.15em', textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', fontWeight: 700, color: 'var(--cr3)', letterSpacing: '.15em', textTransform: 'uppercase' }}>
               Advogado do Diabo · Contraditório
             </span>
           </div>
@@ -215,7 +215,7 @@ export default function VerdictSection() {
           borderRadius: 'var(--r-md)',
         }}>
           <Loader2 size={13} className="spin" style={{ color: 'var(--co7)', flexShrink: 0 }} />
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.72rem', color: 'var(--t3)' }}>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t3)' }}>
             ⚖️ Juiz IA deliberando o veredito final…
           </span>
         </div>
@@ -233,7 +233,7 @@ export default function VerdictSection() {
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
             <Scale size={13} style={{ color: 'var(--co7)' }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', fontWeight: 700, color: 'var(--co7)', letterSpacing: '.15em', textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', fontWeight: 700, color: 'var(--co7)', letterSpacing: '.15em', textTransform: 'uppercase' }}>
               Veredicto do Juiz IA Quantum
             </span>
             {jurirScore != null && (
@@ -242,7 +242,7 @@ export default function VerdictSection() {
                 background: `${scoreColor(jurirScore)}12`,
                 border: `1px solid ${scoreColor(jurirScore)}30`,
                 borderRadius: 999, padding: '2px 10px',
-                fontFamily: 'var(--f-mono)', fontSize: '.56rem',
+                fontFamily: 'var(--f-mono)', fontSize: '.75rem',
                 color: scoreColor(jurirScore), letterSpacing: '.10em',
               }}>
                 {SCORE_LABEL(jurirScore).toUpperCase()}
@@ -270,7 +270,7 @@ export default function VerdictSection() {
           {/* Dimensões */}
           {scoreDims && Object.keys(scoreDims).length > 0 && (
             <div style={{ marginTop: 22, borderTop: '1px solid var(--b-subtle)', paddingTop: 18 }}>
-              <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.55rem', color: 'var(--t4)', letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.16em', textTransform: 'uppercase', marginBottom: 12 }}>
                 Dimensões do Score
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px,1fr))', gap: 10 }}>
@@ -289,13 +289,13 @@ export default function VerdictSection() {
               </button>
             )}
             {analysisId && (
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--t4)' }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)' }}>
                 ID #{analysisId}
               </span>
             )}
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
               <CheckCircle2 size={12} style={{ color: 'var(--jade2)' }} />
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--t3)' }}>Análise concluída</span>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t3)' }}>Análise concluída</span>
             </div>
           </div>
         </div>

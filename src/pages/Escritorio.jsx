@@ -146,7 +146,7 @@ function DashboardTab({ token }) {
           { label: 'Membros',           value: summary.members_count },
         ].map(({ label, value }) => (
           <div key={label} style={cardSt}>
-            <div style={{ fontSize: '.72rem', color: 'var(--p4)', marginBottom: 4 }}>{label}</div>
+            <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginBottom: 4 }}>{label}</div>
             <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--co7)' }}>{value ?? '—'}</div>
           </div>
         ))}
@@ -274,7 +274,7 @@ function MembersTab({ token, org, role, addToast }) {
           <div key={m.user_id} style={{ ...cardSt, display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.82rem', color: 'var(--p1)' }}>{m.email}</div>
-              <div style={{ fontSize: '.72rem', color: 'var(--p4)', marginTop: 2 }}>
+              <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginTop: 2 }}>
                 {m.role === 'owner' ? '👑 Proprietário' : m.role === 'admin' ? '⚡ Admin' : '👤 Membro'} · {m.analyses} análises · desde {m.joined_at}
               </div>
             </div>
@@ -306,9 +306,9 @@ function MembersTab({ token, org, role, addToast }) {
           {inviteLink && (
             <div style={{ marginTop: 10, padding: '8px 12px', background: 'rgba(0,242,254,0.06)',
               borderRadius: 'var(--r-sm)', border: '1px solid var(--b-main)' }}>
-              <p style={{ fontSize: '.72rem', color: 'var(--p4)', marginBottom: 4 }}>Link de convite (válido 72h):</p>
+              <p style={{ fontSize: '.75rem', color: 'var(--p4)', marginBottom: 4 }}>Link de convite (válido 72h):</p>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <code style={{ fontSize: '.7rem', color: 'var(--co7)', flex: 1, wordBreak: 'break-all' }}>{inviteLink}</code>
+                <code style={{ fontSize: '.75rem', color: 'var(--co7)', flex: 1, wordBreak: 'break-all' }}>{inviteLink}</code>
                 <button className="btn btn-ghost btn-sm" onClick={() => { navigator.clipboard.writeText(inviteLink); }}>Copiar</button>
               </div>
             </div>

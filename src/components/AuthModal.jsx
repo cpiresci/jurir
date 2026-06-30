@@ -39,7 +39,7 @@ function QuantumInput({ label, icon: Icon, type = 'text', value, onChange, onKey
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
       <label style={{
-        fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: focused ? 'var(--cy1)' : 'var(--t4)',
+        fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: focused ? 'var(--cy1)' : 'var(--t4)',
         letterSpacing: '.14em', textTransform: 'uppercase',
         transition: 'color .2s', display: 'flex', alignItems: 'center', gap: 6,
       }}>
@@ -95,7 +95,7 @@ function QuantumInput({ label, icon: Icon, type = 'text', value, onChange, onKey
         }} />
       </div>
       {hint && (
-        <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t4)', letterSpacing: '.06em' }}>
+        <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.06em' }}>
           {hint}
         </p>
       )}
@@ -129,7 +129,7 @@ function PasswordStrength({ password }) {
         ))}
       </div>
       {score > 0 && (
-        <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: colors[score], letterSpacing: '.08em' }}>
+        <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: colors[score], letterSpacing: '.08em' }}>
           Senha {labels[score]}
         </p>
       )}
@@ -261,7 +261,7 @@ export default function AuthModal() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '4px 0' }}>
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t4)', letterSpacing: '.1em' }}>OU</span>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.1em' }}>OU</span>
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
         </div>
 
@@ -304,7 +304,7 @@ export default function AuthModal() {
           ].map(({ icon, text }) => (
             <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: '.8rem' }}>{icon}</span>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.7rem', color: 'var(--t2)', letterSpacing: '.04em' }}>{text}</span>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t2)', letterSpacing: '.04em' }}>{text}</span>
             </div>
           ))}
         </div>
@@ -325,7 +325,7 @@ export default function AuthModal() {
           }
         </button>
 
-        <p style={{ textAlign: 'center', fontSize: '.72rem', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
+        <p style={{ textAlign: 'center', fontSize: '.75rem', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
           Ao criar uma conta você concorda com nossos{' '}
           <a href="/#/privacidade" style={{ color: 'var(--cy1)', textDecoration: 'none' }}>Termos de Uso</a>
         </p>
@@ -342,7 +342,7 @@ export default function AuthModal() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <ShieldCheck size={14} style={{ color: 'var(--cy1)', flexShrink: 0 }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.7rem', color: 'var(--t2)', letterSpacing: '.04em' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t2)', letterSpacing: '.04em' }}>
               Enviaremos um link seguro para o seu email. O link expira em 1 hora.
             </span>
           </div>
@@ -399,7 +399,7 @@ export default function AuthModal() {
             <strong style={{ color: 'var(--cy1)' }}>{email}</strong>
             {' '}e clique no link para redefinir sua senha.
           </p>
-          <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)', letterSpacing: '.06em' }}>
+          <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.06em' }}>
             O link expira em 1 hora · Verifique também o spam
           </p>
         </div>
@@ -523,7 +523,7 @@ export default function AuthModal() {
                 borderRadius: 999, padding: '3px 10px',
               }}>
                 <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--cy1)', boxShadow: '0 0 6px var(--cy1)' }} />
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--cy1)', letterSpacing: '.18em', textTransform: 'uppercase' }}>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--cy1)', letterSpacing: '.18em', textTransform: 'uppercase' }}>
                   {tag}
                 </span>
               </div>
@@ -595,7 +595,7 @@ export default function AuthModal() {
             marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.04)',
           }}>
             <KeyRound size={10} style={{ color: 'var(--t5)' }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t5)', letterSpacing: '.08em' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.08em' }}>
               CONEXÃO SEGURA · CRIPTOGRAFIA END-TO-END
             </span>
             <KeyRound size={10} style={{ color: 'var(--t5)' }} />

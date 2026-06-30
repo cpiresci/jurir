@@ -104,7 +104,7 @@ export default function CheckoutSuccessPage() {
             </div>
 
             {sessionId && (
-              <p style={{ fontSize: '.7rem', color: 'var(--p5)', marginTop: 24, fontFamily: 'var(--f-mono)' }}>
+              <p style={{ fontSize: '.75rem', color: 'var(--p5)', marginTop: 24, fontFamily: 'var(--f-mono)' }}>
                 ID da sessão: {sessionId.slice(0, 24)}…
               </p>
             )}

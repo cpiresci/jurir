@@ -51,7 +51,7 @@ export default function DocumentosPage() {
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.72rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+          padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <FileText size={11}/> ANÁLISE DE DOCUMENTOS
         </div>
@@ -124,7 +124,7 @@ export default function DocumentosPage() {
               { label: 'Valor Envolvido',   val: result.valor_envolvido || '—' },
             ].map(({ label, val }) => (
               <div key={label} style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '14px 16px' }}>
-                <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8, fontWeight: 500 }}>{label}</div>
+                <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8, fontWeight: 500 }}>{label}</div>
                 <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--p1)', wordBreak: 'break-word' }}>{val}</div>
               </div>
             ))}
@@ -132,7 +132,7 @@ export default function DocumentosPage() {
 
           {result.partes && Object.values(result.partes).some(Boolean) && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
-              <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10, fontWeight: 500 }}>PARTES IDENTIFICADAS</div>
+              <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10, fontWeight: 500 }}>PARTES IDENTIFICADAS</div>
               {Object.entries(result.partes).map(([k, v]) => v && (
                 <div key={k} style={{ display: 'flex', gap: 10, fontSize: '.85rem', marginBottom: 8 }}>
                   <span style={{ color: 'var(--p4)', minWidth: 100, textTransform: 'capitalize', fontWeight: 500 }}>{k}:</span>
@@ -146,7 +146,7 @@ export default function DocumentosPage() {
             <div style={{ background: 'var(--surface)', border: '1px solid rgba(185,28,28,0.2)', borderRadius: 'var(--r-md)', padding: 18 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
                 <AlertTriangle size={14} style={{ color: 'var(--cr4)' }}/>
-                <div style={{ fontSize: '.72rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em' }}>
+                <div style={{ fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em' }}>
                   CLÁUSULAS CRÍTICAS ({result.clausulas_criticas.length})
                 </div>
               </div>
@@ -163,7 +163,7 @@ export default function DocumentosPage() {
 
           {result.texto_preview && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
-              <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>PREVIEW DO TEXTO</div>
+              <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>PREVIEW DO TEXTO</div>
               <p style={{ fontSize: '.82rem', color: 'var(--p4)', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{result.texto_preview}…</p>
             </div>
           )}

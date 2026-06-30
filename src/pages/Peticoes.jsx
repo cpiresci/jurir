@@ -37,7 +37,7 @@ export default function PeticoesPage() {
 
   const F = (key, label, placeholder = '') => (
     <div>
-      <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>{label}</label>
+      <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>{label}</label>
       <input className="fg-input" value={form[key]} placeholder={placeholder}
         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} />
     </div>
@@ -70,7 +70,7 @@ export default function PeticoesPage() {
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.72rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+          padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <Scroll size={11}/> GERADOR DE PETIÇÕES
         </div>
@@ -80,7 +80,7 @@ export default function PeticoesPage() {
 
       <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 28 }}>
         <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
+          <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
           {loadingA ? <div style={{ color: 'var(--p5)', fontSize: '.85rem' }}>Carregando…</div> : (
             <select className="fg-input" value={form.analysis_id} onChange={e => setForm(f => ({ ...f, analysis_id: e.target.value }))}>
               <option value="">Selecione uma análise…</option>
@@ -89,7 +89,7 @@ export default function PeticoesPage() {
           )}
         </div>
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TIPO DE PETIÇÃO</label>
+          <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TIPO DE PETIÇÃO</label>
           <select className="fg-input" value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}>
             {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
           </select>

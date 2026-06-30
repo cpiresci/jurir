@@ -40,7 +40,7 @@ export default function VerificarPage() {
       <div style={{ marginBottom: 40 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.72rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+          padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <ShieldCheck size={11}/> VERIFICAÇÃO DE AUTENTICIDADE
         </div>
@@ -49,7 +49,7 @@ export default function VerificarPage() {
       </div>
 
       <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 28, marginBottom: 24 }}>
-        <label style={{ display: 'block', fontSize: '.74rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>SERIAL DO RELATÓRIO</label>
+        <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>SERIAL DO RELATÓRIO</label>
         <input className="fg-input" value={serial} onChange={e => setSerial(e.target.value)}
           placeholder="JURIR-000042-A1B2C3D4"
           onKeyDown={e => e.key === 'Enter' && run()}
@@ -84,7 +84,7 @@ export default function VerificarPage() {
                 { label: 'Gerado em',     val: result.generated_at ? new Date(result.generated_at).toLocaleString('pt-BR') : '—' },
               ].map(({ label, val }) => (
                 <div key={label} style={{ background: 'var(--ridge)', borderRadius: 'var(--r-sm)', padding: '12px 14px' }}>
-                  <div style={{ fontSize: '.68rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)', marginBottom: 4 }}>{label}</div>
+                  <div style={{ fontSize: '.75rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)', marginBottom: 4 }}>{label}</div>
                   <div style={{ fontSize: '.88rem', color: 'var(--p1)', fontWeight: 600 }}>{val}</div>
                 </div>
               ))}

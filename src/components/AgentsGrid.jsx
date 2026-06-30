@@ -86,24 +86,24 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
             {area}
           </div>
           {s?.confidence > 0 && (
-            <div style={{ fontSize: '.72rem', color: 'var(--cy1)', fontFamily: 'var(--f-mono)', opacity: 0.85 }}>
+            <div style={{ fontSize: '.75rem', color: 'var(--cy1)', fontFamily: 'var(--f-mono)', opacity: 0.85 }}>
               conf: {s.confidence}%
             </div>
           )}
           {status === 'done' && !s?.confidence && (
-            <div style={{ fontSize: '.62rem', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>
+            <div style={{ fontSize: '.75rem', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>
               ✓ analisado
             </div>
           )}
           {status === 'running' && (
-            <div style={{ fontSize: '.62rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)', opacity: 0.8 }}>
+            <div style={{ fontSize: '.75rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)', opacity: 0.8 }}>
               ● analisando…
             </div>
           )}
           {riskCfg && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
               <span style={{ width: 5, height: 5, borderRadius: '50%', background: riskCfg.color, display: 'inline-block', boxShadow: `0 0 4px ${riskCfg.color}88` }}/>
-              <span style={{ fontSize: '.58rem', color: riskCfg.color, fontFamily: 'var(--f-mono)', letterSpacing: '.06em' }}>
+              <span style={{ fontSize: '.75rem', color: riskCfg.color, fontFamily: 'var(--f-mono)', letterSpacing: '.06em' }}>
                 {s.riskLevel}
               </span>
             </div>
@@ -165,7 +165,7 @@ export default function AgentsGrid() {
           </h3>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)', letterSpacing: '.1em', marginBottom: 6 }}>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.1em', marginBottom: 6 }}>
             PROGRESSO
           </div>
           {/* Progress bar */}
@@ -181,7 +181,7 @@ export default function AgentsGrid() {
               boxShadow: progress > 0 ? '0 0 10px rgba(43,138,245,0.5)' : 'none',
             }}/>
           </div>
-          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t5)', marginTop: 4 }}>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', marginTop: 4 }}>
             {Math.round(progress)}%
           </div>
         </div>

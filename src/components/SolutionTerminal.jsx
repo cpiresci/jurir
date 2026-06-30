@@ -39,7 +39,7 @@ function Badge({ badge }) {
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 6,
       padding: '2px 9px', background: s.bg, border: `1px solid ${s.border}`,
-      borderRadius: 999, fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+      borderRadius: 999, fontFamily: 'var(--f-mono)', fontSize: '.75rem',
       color: s.color, letterSpacing: '.1em',
     }}>
       {badge.label}
@@ -98,7 +98,7 @@ export default function SolutionTerminal() {
           <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981', opacity: .7 }}/>
         </div>
         <span style={{
-          fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t4)',
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
           letterSpacing: '.14em', margin: '0 auto', textAlign: 'center',
         }}>
           ANÁLISE EM EXECUÇÃO — CASO TRABALHISTA · REF #JQ-2024-0847
@@ -115,10 +115,10 @@ export default function SolutionTerminal() {
               transform: visible ? 'translateX(0)' : 'translateX(-12px)',
               transition: 'all .5s cubic-bezier(.19,1,.22,1)',
             }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--cy1)', width: 22, flexShrink: 0, paddingTop: 3 }}>→</span>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--cy1)', width: 22, flexShrink: 0, paddingTop: 3 }}>→</span>
               <div style={{ width: 2, alignSelf: 'stretch', background: 'linear-gradient(180deg,var(--cy1),var(--co8))', borderRadius: 2, flexShrink: 0, opacity: .3 }}/>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.66rem', color: 'var(--co8)', letterSpacing: '.09em', marginBottom: 4 }}>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co8)', letterSpacing: '.09em', marginBottom: 4 }}>
                   {s.agent}
                 </div>
                 <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.82rem', color: 'var(--t2)', lineHeight: 1.6 }}>
@@ -140,13 +140,13 @@ export default function SolutionTerminal() {
           transition: 'all .6s .2s',
         }}>
           <div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t4)', letterSpacing: '.18em', marginBottom: 4 }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.18em', marginBottom: 4 }}>
               JURIR SCORE · ANÁLISE #JQ-2024-0847
             </div>
             <div style={{ fontFamily: 'var(--f-display)', fontSize: '1.1rem', fontWeight: 600, fontStyle: 'italic', color: 'var(--jade2)', marginBottom: 4 }}>
               Fortemente Favorável ao Autor
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t4)', letterSpacing: '.09em' }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.09em' }}>
               Verbas rescisórias: 97% · Danos morais: 68% · Estimativa: 3-8 meses
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function SolutionTerminal() {
             }}>
               {score}
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.52rem', color: 'var(--t4)', letterSpacing: '.12em' }}>/100</div>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.12em' }}>/100</div>
           </div>
         </div>
       </div>

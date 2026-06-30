@@ -147,7 +147,7 @@ function ApiKeysTab({ token, addToast }) {
                   {k.key_prefix}…
                   {k.label && <span style={{ color: 'var(--p4)', marginLeft: 8 }}>{k.label}</span>}
                 </div>
-                <div style={{ fontSize: '.72rem', color: 'var(--p4)', marginTop: 2 }}>
+                <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginTop: 2 }}>
                   {k.is_active ? '✓ Ativa' : '✗ Revogada'} · {k.requests_count} req ·
                   Último uso: {k.last_used_at || 'nunca'} · Criada: {k.created_at}
                 </div>
@@ -246,7 +246,7 @@ function WebhooksTab({ token, addToast }) {
             <div key={h.id} style={{ ...cardSt, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.8rem', color: 'var(--co7)', wordBreak: 'break-all' }}>{h.url}</div>
-                <div style={{ fontSize: '.72rem', color: 'var(--p4)', marginTop: 4 }}>
+                <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginTop: 4 }}>
                   Eventos: <span style={{ color: 'var(--p2)' }}>{h.events}</span> · {h.is_active ? '✓ Ativo' : '✗ Inativo'} · desde {h.created_at}
                 </div>
               </div>
@@ -264,7 +264,7 @@ function WebhooksTab({ token, addToast }) {
       {/* Payload de exemplo */}
       <div style={{ ...cardSt, marginTop: 24 }}>
         <p style={{ fontSize: '.78rem', fontWeight: 600, color: 'var(--p4)', marginBottom: 8 }}>Payload de exemplo (analysis.completed):</p>
-        <pre style={{ fontSize: '.72rem', color: 'var(--co6)', margin: 0, overflowX: 'auto' }}>{JSON.stringify({
+        <pre style={{ fontSize: '.75rem', color: 'var(--co6)', margin: 0, overflowX: 'auto' }}>{JSON.stringify({
           event: "analysis.completed",
           data: {
             analysis_id: 142,

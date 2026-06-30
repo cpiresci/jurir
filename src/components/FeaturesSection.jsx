@@ -176,7 +176,7 @@ function FeatureCard({ f, onCta, index }) {
 
       {/* Label mono */}
       <div style={{
-        fontFamily: 'var(--f-mono)', fontSize: '.56rem', color: f.accent,
+        fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: f.accent,
         letterSpacing: '.20em', textTransform: 'uppercase', marginBottom: 14,
         opacity: hovered ? 1 : 0.6,
         transition: 'opacity .2s',
@@ -225,7 +225,7 @@ function FeatureCard({ f, onCta, index }) {
           background: f.tagJade ? 'rgba(16,185,129,0.07)' : `${f.accent}0d`,
           border: f.tagJade ? '1px solid rgba(16,185,129,0.18)' : `1px solid ${f.accent}22`,
           borderRadius: 999,
-          fontFamily: 'var(--f-mono)', fontSize: '.50rem',
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem',
           color: f.tagJade ? 'var(--jade2)' : f.accent,
           letterSpacing: '.10em',
         }}>
@@ -240,7 +240,7 @@ function FeatureCard({ f, onCta, index }) {
           border: `1px solid ${hovered ? f.accent : 'rgba(255,255,255,0.10)'}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all .25s',
-          fontSize: '.7rem',
+          fontSize: '.75rem',
           color: hovered ? '#07070A' : 'rgba(255,255,255,0.35)',
           fontWeight: 700,
           flexShrink: 0,
@@ -394,7 +394,7 @@ export default function FeaturesSection() {
                   color: 'var(--co7)', letterSpacing: '.04em',
                 }}>{s.n}</div>
                 <div style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+                  fontFamily: 'var(--f-mono)', fontSize: '.75rem',
                   color: 'var(--t3)', letterSpacing: '.14em',
                   textTransform: 'uppercase', marginTop: 2,
                 }}>{s.label}</div>
@@ -428,7 +428,7 @@ export default function FeaturesSection() {
         {/* Bottom CTA */}
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <p style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.6rem',
+            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
             color: 'var(--t4)', letterSpacing: '.18em',
             textTransform: 'uppercase', marginBottom: 18,
           }}>

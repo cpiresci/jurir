@@ -58,7 +58,7 @@ export default function CtaFinal() {
             Analisar Meu Caso Agora — Grátis <ArrowRight size={15}/>
           </button>
         </div>
-        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t4)', letterSpacing: '.1em' }}>
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.1em' }}>
           Sem cadastro · Resultado em 3 minutos · 100% gratuito para começar
         </div>
       </div>
