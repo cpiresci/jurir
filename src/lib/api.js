@@ -313,7 +313,7 @@ export async function testWebhook(id, token) {
 }
 
 export async function deltaHtml(body, token) {
-  return apiFetch('/api/delta/html', { method: 'POST', body: JSON.stringify(body) }, token);
+  return apiFetch('/api/analyze/delta/html', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
 
