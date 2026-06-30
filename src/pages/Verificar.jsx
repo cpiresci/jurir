@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ShieldCheck, Loader2, CheckCircle, XCircle, Search } from 'lucide-react';
 import { verifySerial } from '../lib/api';
 
 export default function VerificarPage() {
-  const [serial,  setSerial]  = useState('');
+  const [searchParams] = useSearchParams();
+  const [serial,  setSerial]  = useState(searchParams.get('serial') || '');
   const [loading, setLoading] = useState(false);
   const [result,  setResult]  = useState(null);
   const [error,   setError]   = useState('');
 
-  const run = async () => {
-    if (!serial.trim()) { setError('Insira o serial do relatório.'); return; }
+  const verify = async (value) => {
+    const target = (value ?? serial).trim();
+    if (!target) { setError('Insira o serial do relatório.'); return; }
     setLoading(true); setResult(null); setError('');
     try {
-      const data = await verifySerial(serial.trim());
+      const data = await verifySerial(target);
       setResult(data);
     } catch (e) {
       setError(e.message || 'Relatório não encontrado.');
@@ -20,6 +23,17 @@ export default function VerificarPage() {
       setLoading(false);
     }
   };
+
+  const run = () => verify();
+
+  // [fix-verify-link] Quando o link vem do rodapé do PDF / QR code
+  // (?serial=JURIR-...), verifica automaticamente ao carregar a página
+  // em vez de exigir que o usuário cole o serial manualmente de novo.
+  useEffect(() => {
+    const fromUrl = searchParams.get('serial');
+    if (fromUrl) verify(fromUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', padding: '100px 24px 60px' }}>

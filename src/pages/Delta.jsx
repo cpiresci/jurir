@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import SoloBanner from '../components/SoloBanner';
-import { GitCompare, Loader2, TrendingUp } from 'lucide-react';
+import { GitCompare, Loader2, TrendingUp, Paperclip } from 'lucide-react';
 import { useStore } from '../store';
-import { analyzeDelta, deltaHtml } from '../lib/api';
+import { analyzeDelta, deltaHtml, analyzeDocument } from '../lib/api';
 
 export default function DeltaPage() {
   const { authToken, userData, openModal, addToast } = useStore();
@@ -18,6 +18,32 @@ export default function DeltaPage() {
   const [result,  setResult]  = useState(null);
   const [htmlDiff, setHtmlDiff] = useState(null);
   const [htmlLoading, setHtmlLoading] = useState(false);
+  // [fix-delta-anexar] Antes só existia colagem manual nos textareas.
+  // Agora dá pra anexar PDF/DOCX/TXT direto — reaproveita o mesmo
+  // extrator de texto (analyzeDocument → /api/document/analyze) já
+  // usado na tela de Upload de Documentos.
+  const [attaching, setAttaching] = useState({ 1: false, 2: false });
+  const fileInput1 = useRef(null);
+  const fileInput2 = useRef(null);
+
+  const attachFile = async (file, slot) => {
+    if (!file) return;
+    if (!file.name.match(/\.(pdf|docx|txt)$/i)) { addToast('Somente PDF, DOCX ou TXT.', 'error'); return; }
+    if (file.size > 10 * 1024 * 1024)           { addToast('Máximo 10 MB.', 'error'); return; }
+    if (!authToken) { openModal('login'); return; }
+    setAttaching(s => ({ ...s, [slot]: true }));
+    try {
+      const data = await analyzeDocument(file, authToken);
+      const texto = data.texto_completo || data.document_analysis?.textoLimpo || '';
+      if (!texto) { addToast('Não foi possível extrair texto do arquivo.', 'error'); return; }
+      if (slot === 1) setDoc1(texto); else setDoc2(texto);
+      addToast(`${file.name} anexado e extraído.`, 'success');
+    } catch (e) {
+      addToast(`Erro ao anexar: ${e.message}`, 'error');
+    } finally {
+      setAttaching(s => ({ ...s, [slot]: false }));
+    }
+  };
 
   const run = async () => {
     if (!authToken) { openModal('login'); return; }
@@ -68,13 +94,23 @@ export default function DeltaPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         {[
-          { label: 'Documento Original (V1)', value: doc1, set: setDoc1, placeholder: 'Cole aqui a versão original…' },
-          { label: 'Documento Revisado (V2)',  value: doc2, set: setDoc2, placeholder: 'Cole aqui a versão revisada…' },
-        ].map(({ label, value, set, placeholder }) => (
+          { label: 'Documento Original (V1)', value: doc1, set: setDoc1, placeholder: 'Cole aqui a versão original…', slot: 1, ref: fileInput1 },
+          { label: 'Documento Revisado (V2)',  value: doc2, set: setDoc2, placeholder: 'Cole aqui a versão revisada…', slot: 2, ref: fileInput2 },
+        ].map(({ label, value, set, placeholder, slot, ref }) => (
           <div key={label}>
-            <label style={{ display: 'block', fontSize: '.78rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>
-              {label}
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <label style={{ fontSize: '.78rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)' }}>
+                {label}
+              </label>
+              <input ref={ref} type="file" accept=".pdf,.docx,.txt" style={{ display: 'none' }}
+                onChange={e => attachFile(e.target.files[0], slot)} />
+              <button type="button" className="btn btn-ghost btn-sm" disabled={attaching[slot]}
+                onClick={() => ref.current?.click()}
+                style={{ fontSize: '.74rem', padding: '4px 10px', whiteSpace: 'nowrap' }}>
+                {attaching[slot] ? <Loader2 size={12} className="spin"/> : <Paperclip size={12}/>}
+                {attaching[slot] ? ' Extraindo…' : ' Anexar arquivo'}
+              </button>
+            </div>
             <textarea value={value} onChange={e => set(e.target.value)} placeholder={placeholder}
               style={{ width: '100%', minHeight: 280, resize: 'vertical',
                 background: 'rgba(12,12,30,0.7)', border: '1px solid var(--b-neutral)',
