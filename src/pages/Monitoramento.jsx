@@ -90,7 +90,7 @@ export default function MonitoramentoPage() {
   );
 
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '100px 24px 60px' }}>
+    <div style={{ maxWidth: '100%', margin: '0 auto', padding: '100px 24px 60px' }}>
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',

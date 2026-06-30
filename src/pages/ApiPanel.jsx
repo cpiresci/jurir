@@ -279,7 +279,7 @@ function WebhooksTab({ token, addToast }) {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────
-function PageWrap({ children }) { return <div style={{ maxWidth: 860, margin: '0 auto', padding: '100px 24px 60px' }}>{children}</div>; }
+function PageWrap({ children }) { return <div style={{ maxWidth: '100%', margin: '0 auto', padding: '100px 24px 60px' }}>{children}</div>; }
 function Loading() { return <div style={{ color: 'var(--p4)', padding: 40, textAlign: 'center' }}>Carregando…</div>; }
 function Empty({ text }) { return <div style={{ color: 'var(--p4)', padding: 40, textAlign: 'center' }}>{text}</div>; }
 function Unauth() { const { openModal } = useStore(); return <div style={{ textAlign: 'center', paddingTop: 40 }}><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Faça login para acessar o Painel API.</p><button className="btn btn-cobalt" onClick={() => openModal('login')}>Entrar</button></div>; }

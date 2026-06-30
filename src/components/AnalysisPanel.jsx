@@ -147,7 +147,7 @@ export default function AnalysisPanel() {
 
   return (
     <section id="analise" style={{ padding: '100px 24px 80px' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ maxWidth: '100%' }}>
 
         {/* Section header */}
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
