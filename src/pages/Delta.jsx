@@ -51,7 +51,15 @@ export default function DeltaPage() {
     setLoading(true); setResult(null);
     try {
       const data = await analyzeDelta({ doc_v1: doc1, doc_v2: doc2, language: lang }, authToken);
-      setResult(data);
+      // [fix-delta-shape] toDict() aninha métricas em data.stats e blocos em data.diff_blocks.
+      // Normaliza para o shape plano que o JSX já espera (result.delta_risk_score, etc.)
+      setResult({
+        ...data,
+        delta_risk_score:   data.stats?.delta_risk_score   ?? data.delta_risk_score,
+        overall_change_pct: data.stats?.overall_change_pct ?? data.overall_change_pct,
+        critical_count:     data.stats?.critical           ?? data.critical_count,
+        blocks:             data.diff_blocks               ?? data.blocks ?? [],
+      });
     } catch (e) {
       addToast(`Erro: ${e.message}`, 'error');
     } finally {
@@ -140,6 +148,14 @@ export default function DeltaPage() {
 
       {result && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {result.doc_type && (
+            <div style={{ fontSize: '.72rem', fontFamily: 'var(--f-mono)', color: 'var(--au6)',
+              background: 'var(--ridge)', border: '1px solid var(--b-neutral)',
+              borderRadius: 'var(--r-pill)', padding: '4px 12px', alignSelf: 'flex-start',
+              letterSpacing: '.08em' }}>
+              TIPO DETECTADO: {result.doc_type.toUpperCase()}
+            </div>
+          )}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 12 }}>
             {[
               { label: 'Delta Risk Score', val: result.delta_risk_score ?? '—', color: result.delta_risk_score > 70 ? 'var(--cr4)' : 'var(--au6)' },

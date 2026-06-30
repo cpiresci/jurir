@@ -59,7 +59,9 @@ export default function EscritorioPage() {
               setCreating(true);
               try {
                 const d = await createOrg(orgName.trim(), authToken);
-                setOrg({ id: d.id, name: d.name, plan: d.plan, has_logo: false });
+                // [fix-org-logo] Antes ignorava has_logo retornado pelo servidor, sempre setava false.
+                // Agora usa o valor real — evita flash de "sem logo" quando logo já existe.
+                setOrg({ id: d.id, name: d.name, plan: d.plan, has_logo: d.org?.has_logo ?? false });
                 setRole('owner');
                 addToast('Organização criada!', 'success');
               } catch (e) {
