@@ -42,7 +42,9 @@ export default function SimuladorPage() {
     setLoading(true); setResult(null);
     try {
       const data = await simulateInstances({ analysis_id: Number(analysisId), area }, authToken);
-      setResult(data);
+      // [fix-sim-shape] simulationToDict retorna instancias[] — indexar por chave para o JSX
+      const instMap = Object.fromEntries((data.instancias || []).map(i => [i.instancia, i]));
+      setResult({ ...data, ...instMap });
     } catch (e) {
       addToast(`Erro: ${e.message}`, 'error');
     } finally {
@@ -101,50 +103,49 @@ export default function SimuladorPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12 }}>
             {INSTANCES.map(({ key, label }) => {
               const raw = result[key];
-              const pct = typeof raw === 'object' ? (raw?.prob ?? raw?.probability ?? raw?.pct ?? 0) : (Number(raw) || 0);
+              // [fix-sim-card] campo correto é probabilidade_exito (snake_case do simulationToDict)
+              const pct = typeof raw === 'object'
+                ? (raw?.probabilidade_exito ?? raw?.prob ?? raw?.probability ?? raw?.pct ?? 0)
+                : (Number(raw) || 0);
               const color = pctColor(pct);
+              const dias  = raw?.tempo_estimado_dias;
+              const adm   = raw?.admissibilidade;
               return (
                 <div key={key} style={{ background: 'var(--surface)', border: `1px solid ${color}30`, borderRadius: 'var(--r-md)', padding: '18px 16px' }}>
                   <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8 }}>{label}</div>
                   <div style={{ fontFamily: 'var(--f-display)', fontSize: '2rem', fontWeight: 700, color, marginBottom: 10 }}>{pct.toFixed(0)}%</div>
-                  <div style={{ height: 6, background: 'var(--b-subtle)', borderRadius: 'var(--r-pill)', overflow: 'hidden' }}>
+                  <div style={{ height: 6, background: 'var(--b-subtle)', borderRadius: 'var(--r-pill)', overflow: 'hidden', marginBottom: 8 }}>
                     <div style={{ height: '100%', width: `${Math.min(pct,100)}%`, background: color, borderRadius: 'var(--r-pill)', transition: 'width .8s ease' }}/>
                   </div>
+                  {dias && <div style={{ fontSize: '.68rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>~{dias}d{adm != null ? ` · adm ${adm.toFixed(0)}%` : ''}</div>}
                 </div>
               );
             })}
           </div>
 
-          {result.estrategia_recomendada && (
-            <div style={{ background: 'var(--surface)', border: '1px solid var(--bg)', borderRadius: 'var(--r-md)', padding: 20 }}>
-              <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 10 }}>ESTRATÉGIA RECOMENDADA</div>
-              <p style={{ fontSize: '.88rem', color: 'var(--p2)', lineHeight: 1.7 }}>{result.estrategia_recomendada}</p>
-            </div>
-          )}
-
-          {result.fatores_positivos?.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <div style={{ background: 'var(--surface)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 'var(--r-md)', padding: 18 }}>
-                <div style={{ fontSize: '.72rem', color: 'var(--jade2)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>✓ FATORES POSITIVOS</div>
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {result.fatores_positivos.map((f, i) => <li key={i} style={{ fontSize: '.83rem', color: 'var(--p3)' }}>• {f}</li>)}
-                </ul>
+          {(result.recomendacao || result.estrategia_recomendada) && (
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+                <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em' }}>ESTRATÉGIA RECOMENDADA</div>
+                {result.melhor_instancia && <div style={{ fontSize: '.68rem', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>✓ MELHOR: {result.melhor_instancia}</div>}
               </div>
-              {result.fatores_negativos?.length > 0 && (
-                <div style={{ background: 'var(--surface)', border: '1px solid rgba(185,28,28,0.2)', borderRadius: 'var(--r-md)', padding: 18 }}>
-                  <div style={{ fontSize: '.72rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>✗ FATORES DE RISCO</div>
-                  <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {result.fatores_negativos.map((f, i) => <li key={i} style={{ fontSize: '.83rem', color: 'var(--p4)' }}>• {f}</li>)}
-                  </ul>
-                </div>
-              )}
+              <p style={{ fontSize: '.88rem', color: 'var(--p2)', lineHeight: 1.7 }}>{result.recomendacao || result.estrategia_recomendada}</p>
             </div>
           )}
 
-          {result.observacoes && (
+          {/* [fix-sim-obs] Backend não tem fatores_positivos/negativos/observacoes —
+               exibe detalhes das instâncias (obs + requisitos) quando disponíveis */}
+          {result.instancias?.some(i => i.requisitos) && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
-              <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>OBSERVAÇÕES</div>
-              <p style={{ fontSize: '.85rem', color: 'var(--p3)', lineHeight: 1.7 }}>{result.observacoes}</p>
+              <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 12 }}>REQUISITOS DE ADMISSIBILIDADE</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {result.instancias.filter(i => i.requisitos).map((i, idx) => (
+                  <div key={idx} style={{ fontSize: '.83rem', color: 'var(--p3)', display: 'flex', gap: 8 }}>
+                    <span style={{ color: 'var(--au6)', fontFamily: 'var(--f-mono)', flexShrink: 0 }}>{i.label.split(' ')[0]}</span>
+                    <span>{i.requisitos}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
