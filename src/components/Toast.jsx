@@ -9,7 +9,7 @@ export default function Toast() {
       {toasts.map(t => (
         <div key={t.id} className={`toast ${t.type || 'info'}`}>
           <span style={{ flex: 1 }}>{t.message}</span>
-          <button onClick={() => removeToast(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t4)', padding: 2, display: 'flex', flexShrink: 0 }}>
+          <button onClick={() => removeToast(t.id)} aria-label="Fechar notificação" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t4)', padding: 2, display: 'flex', flexShrink: 0 }}>
             <X size={13}/>
           </button>
         </div>
