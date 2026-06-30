@@ -226,7 +226,7 @@ export default function PrivacidadePage() {
                 <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.18em', marginBottom: 2 }}>
                   SEÇÃO {String(i + 1).padStart(2, '0')}
                 </div>
-                <h2 style={{ fontFamily: 'var(--f-sans)', fontSize: '.95rem', fontWeight: 700, color: 'var(--t0)' }}>
+                <h2 style={{ fontFamily: 'var(--f-sans)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--t0)' }}>
                   {sec.title}
                 </h2>
               </div>
@@ -316,7 +316,7 @@ export default function PrivacidadePage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--f-sans)', fontWeight: 700,
-          fontSize: '.95rem', color: 'var(--t0)', marginBottom: 12,
+          fontSize: '1.15rem', color: 'var(--t0)', marginBottom: 12,
         }}>
           Cookies e Armazenamento Local
         </h2>
@@ -340,7 +340,7 @@ export default function PrivacidadePage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--f-sans)', fontWeight: 700,
-          fontSize: '.9rem', color: 'var(--cr4)', marginBottom: 10,
+          fontSize: '1.15rem', color: 'var(--cr4)', marginBottom: 10,
         }}>
           Menores de Idade
         </h2>
@@ -361,7 +361,7 @@ export default function PrivacidadePage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--f-sans)', fontWeight: 700,
-          fontSize: '.9rem', color: 'var(--t0)', marginBottom: 10,
+          fontSize: '1.15rem', color: 'var(--t0)', marginBottom: 10,
         }}>
           Alterações nesta Política
         </h2>
