@@ -1,4 +1,4 @@
-import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, ExternalLink, BookOpen } from 'lucide-react';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
 
@@ -145,17 +145,56 @@ function DimBar({ label, value }) {
   );
 }
 
+// ── Citações estruturadas (chips clicáveis → fonte oficial) ───────────────────
+function CitationChips({ citations }) {
+  if (!citations || !citations.length) return null;
+  return (
+    <div style={{ marginTop: 22, borderTop: '1px solid var(--b-subtle)', paddingTop: 18 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>
+        <BookOpen size={12} style={{ color: 'var(--co7)' }} />
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.16em', textTransform: 'uppercase' }}>
+          Fontes Citadas
+        </span>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {citations.map((c) => (
+          <a
+            key={c.id}
+            href={c.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={c.texto}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'rgba(0,242,254,0.05)', border: '1px solid rgba(0,242,254,0.18)',
+              borderRadius: 999, padding: '5px 12px', textDecoration: 'none',
+              fontFamily: 'var(--f-mono)', fontSize: '.74rem', color: 'var(--co7)',
+              letterSpacing: '.02em', transition: 'background .15s ease, border-color .15s ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,242,254,0.10)'; e.currentTarget.style.borderColor = 'rgba(0,242,254,0.32)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,242,254,0.05)'; e.currentTarget.style.borderColor = 'rgba(0,242,254,0.18)'; }}
+          >
+            <span>{c.diploma} {c.artigo}</span>
+            <ExternalLink size={10} style={{ flexShrink: 0, opacity: .7 }} />
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function VerdictSection() {
   const {
     verdictText, devilText, jurirScore, scoreDims,
     vetoActive, analysisId, authToken, addToast, running,
+    citations,
   } = useStore(s => ({
     verdictText: s.verdictText, devilText: s.devilText,
     jurirScore:  s.jurirScore,  scoreDims: s.scoreDims,
     vetoActive:  s.vetoActive,  analysisId: s.analysisId,
     authToken:   s.authToken,   addToast:  s.addToast,
-    running:     s.running,
+    running:     s.running,     citations: s.citations,
   }));
 
   const judgeState = useStore(s => s.judgeState);
@@ -280,6 +319,8 @@ export default function VerdictSection() {
               </div>
             </div>
           )}
+
+          <CitationChips citations={citations} />
 
           {/* Ações */}
           <div style={{ marginTop: 18, paddingTop: 16, borderTop: '1px solid var(--b-subtle)', display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
