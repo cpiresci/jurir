@@ -252,12 +252,16 @@ export default function VerdictSection() {
           <div style={{ height: 1, background: 'var(--b-subtle)', marginBottom: 20 }} />
 
           {/* Corpo */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
-            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <div style={{ minWidth: 0 }}>
               <MarkdownBlock text={verdictText} baseColor="var(--t1)" />
             </div>
             {jurirScore != null && (
-              <div style={{ flexShrink: 0, paddingTop: 4 }}>
+              <div style={{
+                display: 'flex', justifyContent: 'center',
+                borderTop: '1px solid var(--b-subtle)',
+                paddingTop: 24,
+              }}>
                 <ScoreGauge score={jurirScore} />
               </div>
             )}

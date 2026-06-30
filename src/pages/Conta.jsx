@@ -229,7 +229,7 @@ export default function ContaPage() {
 }
 
 function PageWrap({ children }) {
-  return <div style={{ maxWidth:860, margin:'0 auto', padding:'100px 24px 60px' }}>{children}</div>;
+  return <div style={{ maxWidth:'100%', margin:'0 auto', padding:'100px 24px 60px' }}>{children}</div>;
 }
 const cardSt = {
   background:'var(--surface)', border:'1px solid var(--b-neutral)',

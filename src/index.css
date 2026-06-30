@@ -887,9 +887,9 @@ body::after {
 main > section, main > div { min-height: auto; }
 
 .page-wrap {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 96px 24px 80px;
+  max-width: 100%;
+  margin: 0;
+  padding: 96px 40px 80px;
 }
 
 /* ══════════════════════════════════════════════════
