@@ -43,7 +43,7 @@ function TestimonialCard({ t }) {
           background: 'var(--g-quantum)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
         }}>{t.score}</div>
         <span style={{
-          fontFamily: 'var(--f-mono)', fontSize: '.56rem', color: 'var(--jade2)',
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--jade2)',
           letterSpacing: '.12em', background: 'rgba(16,185,129,0.15)',
           border: '1px solid rgba(16,185,129,0.2)', borderRadius: 999, padding: '2px 9px',
         }}>{t.verdict}</span>
@@ -60,7 +60,7 @@ function TestimonialCard({ t }) {
         }}>{t.initial}</div>
         <div>
           <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.8rem', fontWeight: 600, color: 'var(--t1)' }}>{t.name}</div>
-          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.56rem', color: 'var(--t4)', letterSpacing: '.07em' }}>{t.role}</div>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.07em' }}>{t.role}</div>
         </div>
       </div>
     </div>
@@ -109,7 +109,7 @@ export default function TestimonialsSection() {
                 color: a.color, lineHeight: 1, marginBottom: 6,
               }}>{a.val}</div>
               <div style={{
-                fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t4)',
+                fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
                 letterSpacing: '.1em', lineHeight: 1.5, whiteSpace: 'pre-line',
               }}>{a.label}</div>
             </div>

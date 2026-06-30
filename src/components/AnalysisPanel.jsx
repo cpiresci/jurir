@@ -181,17 +181,17 @@ export default function AnalysisPanel() {
             flexWrap: 'wrap', gap: 10,
             background: 'var(--bg-card2)',
           }}>
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--t4)', letterSpacing: '.12em' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.12em' }}>
               CASO JURÍDICO
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.63rem', color: 'var(--t5)' }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)' }}>
                 {charCount}/4000
               </span>
               <div className="mode-pill">
                 {LANGS.map(l => (
                   <button key={l.id} className={`mode-pill-btn${lang === l.id ? ' active' : ''}`}
-                    onClick={() => setLang(l.id)} style={{ padding: '5px 11px', fontSize: '.68rem' }}>
+                    onClick={() => setLang(l.id)} style={{ padding: '5px 11px', fontSize: '.75rem' }}>
                     {l.label}
                   </button>
                 ))}
@@ -212,7 +212,7 @@ export default function AnalysisPanel() {
 
             {/* Chips de exemplo */}
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', marginTop: 10, marginBottom: 18 }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.58rem', color: 'var(--t5)', letterSpacing: '.1em', alignSelf: 'center', flexShrink: 0 }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.1em', alignSelf: 'center', flexShrink: 0 }}>
                 EXEMPLOS
               </span>
               {EXAMPLES.map((ex, i) => (
@@ -223,7 +223,7 @@ export default function AnalysisPanel() {
                     border: '1px solid rgba(0,242,254,0.18)',
                     borderRadius: 'var(--r-sm)',
                     padding: '4px 10px',
-                    fontFamily: 'var(--f-mono)', fontSize: '.6rem',
+                    fontFamily: 'var(--f-mono)', fontSize: '.75rem',
                     color: 'var(--co7)', cursor: 'pointer',
                     letterSpacing: '.04em',
                     transition: 'all .15s',
@@ -248,12 +248,12 @@ export default function AnalysisPanel() {
             {/* Status indicator transparente */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {isPremiumMode ? (
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.66rem', color: 'var(--co7)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--co7)', boxShadow: '0 0 6px rgba(20,114,217,0.6)', display: 'inline-block', animation: 'pulse 2s ease-in-out infinite' }}/>
                   16 agentes · Juiz IA · JURIR Score
                 </span>
               ) : (
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.66rem', color: 'var(--t4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--jade2)', display: 'inline-block' }}/>
                   Gratuito · sem cadastro
                 </span>
@@ -377,7 +377,7 @@ function MarkdownVerdict({ text }) {
         <ul key={`ul-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
             <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
-              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: '.65rem' }}>◆</span>
+              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: '.75rem' }}>◆</span>
               <span>{parseInline(item)}</span>
             </li>
           ))}
@@ -398,7 +398,7 @@ function MarkdownVerdict({ text }) {
         <ol key={`ol-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
             <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.62rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
               <span>{parseInline(item)}</span>
             </li>
           ))}
@@ -451,7 +451,7 @@ function FreeResult({ result }) {
           <div style={{
             background: 'rgba(0,242,254,0.06)', border: '1px solid var(--b-cobalt)',
             borderRadius: 'var(--r-md)', padding: '8px 14px',
-            fontFamily: 'var(--f-mono)', fontSize: '.68rem',
+            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
             color: 'var(--co7)', letterSpacing: '.08em', flexShrink: 0,
           }}>
             ⚖️ {agentArea}
@@ -460,7 +460,7 @@ function FreeResult({ result }) {
             <div style={{
               background: `${rC}11`, border: `1px solid ${rC}33`,
               borderRadius: 'var(--r-md)', padding: '8px 14px',
-              fontFamily: 'var(--f-mono)', fontSize: '.68rem',
+              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
               color: rC, letterSpacing: '.08em', flexShrink: 0,
             }}>
               RISCO {riskLevel}
@@ -468,7 +468,7 @@ function FreeResult({ result }) {
           )}
           {confidence && (
             <div style={{
-              fontFamily: 'var(--f-mono)', fontSize: '.68rem',
+              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
               color: 'var(--t4)', letterSpacing: '.06em',
               padding: '8px 0', flexShrink: 0,
             }}>
@@ -498,7 +498,7 @@ function FreeResult({ result }) {
             }}>
               {score}
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.48rem', color: 'var(--t4)', letterSpacing: '.18em', marginTop: 3 }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.18em', marginTop: 3 }}>
               / 100
             </div>
           </div>
@@ -517,7 +517,7 @@ function FreeResult({ result }) {
                 transition: 'clip-path 1.2s cubic-bezier(.22,1,.36,1)',
               }}/>
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.57rem', color: 'var(--t5)', letterSpacing: '.07em', lineHeight: 1.5 }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.07em', lineHeight: 1.5 }}>
               Baseado na análise inicial · Score completo disponível no relatório premium
             </div>
           </div>
@@ -561,7 +561,7 @@ function FreeResult({ result }) {
         >
           🔓 Ver Relatório Completo — R$ 19,90
         </button>
-        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.6rem', color: 'var(--t5)', letterSpacing: '.08em', marginTop: 10 }}>
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.08em', marginTop: 10 }}>
           16 agentes · JURIR Score dimensional · PDF profissional · acesso imediato
         </div>
       </div>

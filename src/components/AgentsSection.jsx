@@ -90,7 +90,7 @@ export default function AgentsSection() {
                   {a.name}
                 </div>
                 <div style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.55rem', color: 'var(--t4)',
+                  fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
                   letterSpacing: '.09em', marginTop: 3,
                 }}>
                   ESPECIALISTA {a.id}

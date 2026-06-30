@@ -109,7 +109,7 @@ export default function HistoricoPage() {
                   <div style={{ fontSize: '.88rem', color: 'var(--p1)', marginBottom: 4, fontWeight: 500 }}>
                     {a.prompt?.slice(0, 100) || `Análise #${a.id}`}{(a.prompt?.length || 0) > 100 ? '…' : ''}
                   </div>
-                  <div style={{ fontSize: '.72rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>
+                  <div style={{ fontSize: '.75rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>
                     {a.created_at ? new Date(a.created_at).toLocaleString('pt-BR') : '—'}
                     {a.jurir_score != null && ` · Score: ${a.jurir_score}`}
                     {a.tribunal && ` · ${a.tribunal}`}
@@ -144,7 +144,7 @@ export default function HistoricoPage() {
             <p style={{ fontSize: '.82rem', color: 'var(--p4)', marginBottom: 16, fontStyle: 'italic' }}>{selected.prompt}</p>
             {selected.verdict && (
               <div>
-                <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VEREDICTO</div>
+                <div style={{ fontSize: '.75rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VEREDICTO</div>
                 <p style={{ fontSize: '.88rem', color: 'var(--p2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{selected.verdict}</p>
               </div>
             )}

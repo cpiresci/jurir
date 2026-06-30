@@ -86,7 +86,7 @@ function StatCounter({ value, unit, label }) {
         <span style={{ fontSize: '44%', color: 'var(--co8)', marginLeft: 5 }}>{unit}</span>
       </div>
       <div style={{
-        fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+        fontFamily: 'var(--f-mono)', fontSize: '.75rem',
         color: 'var(--t4)', letterSpacing: '.12em',
         marginTop: 8, textTransform: 'uppercase',
         opacity: visible ? 1 : 0,
@@ -151,7 +151,7 @@ function NavColumn({ col, mobile }) {
           flexShrink: 0,
         }}/>
         <span style={{
-          fontFamily: 'var(--f-mono)', fontSize: '.52rem',
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem',
           letterSpacing: '.22em', color: 'var(--co7)',
           textTransform: 'uppercase', flex: 1, textAlign: 'left',
         }}>
@@ -159,7 +159,7 @@ function NavColumn({ col, mobile }) {
         </span>
         {mobile && (
           <span style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.65rem',
+            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
             color: 'var(--t4)',
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform .2s',
@@ -287,7 +287,7 @@ export default function Footer() {
                   JUR<em style={{ fontStyle: 'italic', color: '#00f2fe' }}>IR</em>
                 </div>
                 <div style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.40rem',
+                  fontFamily: 'var(--f-mono)', fontSize: '.75rem',
                   letterSpacing: '.28em', color: 'var(--t4)',
                   marginTop: 5, textTransform: 'uppercase',
                 }}>
@@ -332,7 +332,7 @@ export default function Footer() {
                 animation: 'pulse 2.5s ease-in-out infinite',
               }}/>
               <span style={{
-                fontFamily: 'var(--f-mono)', fontSize: '.50rem',
+                fontFamily: 'var(--f-mono)', fontSize: '.75rem',
                 letterSpacing: '.16em', color: 'var(--co7)',
                 textTransform: 'uppercase',
               }}>
@@ -349,7 +349,7 @@ export default function Footer() {
               borderLeft: '2px solid rgba(0,242,254,0.22)',
             }}>
               <div style={{
-                fontFamily: 'var(--f-mono)', fontSize: '.48rem',
+                fontFamily: 'var(--f-mono)', fontSize: '.75rem',
                 letterSpacing: '.15em', color: 'var(--co7)',
                 marginBottom: 7, textTransform: 'uppercase',
                 display: 'flex', alignItems: 'center', gap: 6,
@@ -357,7 +357,7 @@ export default function Footer() {
                 <span>⚖</span> Aviso Legal
               </div>
               <p style={{
-                fontSize: '.72rem', color: 'var(--t4)',
+                fontSize: '.75rem', color: 'var(--t4)',
                 lineHeight: 1.68, fontFamily: 'var(--f-sans)', margin: 0,
               }}>
                 Ferramenta de análise jurídica assistida por IA. Não substitui
@@ -398,7 +398,7 @@ export default function Footer() {
           padding: mobile ? '20px 0 28px' : '22px 0 30px',
         }}>
           <div style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.54rem',
+            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
             letterSpacing: '.10em', color: 'var(--t4)',
             lineHeight: 1.6,
           }}>
@@ -412,7 +412,7 @@ export default function Footer() {
             flexWrap: 'wrap', gap: mobile ? 6 : 6,
           }}>
             <span style={{
-              fontFamily: 'var(--f-mono)', fontSize: '.48rem',
+              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
               color: 'var(--t5)', letterSpacing: '.10em',
               marginRight: 6, textTransform: 'uppercase',
             }}>
@@ -433,7 +433,7 @@ export default function Footer() {
                   flexShrink: 0,
                 }}/>
                 <span style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.50rem',
+                  fontFamily: 'var(--f-mono)', fontSize: '.75rem',
                   color: 'var(--t4)', letterSpacing: '.06em',
                 }}>
                   {p.name}

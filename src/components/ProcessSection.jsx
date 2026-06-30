@@ -68,7 +68,7 @@ function ProcessCard({ step }) {
           position: 'absolute', top: -5, right: -5,
           width: 19, height: 19, borderRadius: '50%',
           background: 'linear-gradient(135deg,#00f2fe,#4facfe)',
-          fontFamily: 'var(--f-mono)', fontSize: '.48rem', fontWeight: 700,
+          fontFamily: 'var(--f-mono)', fontSize: '.75rem', fontWeight: 700,
           color: '#050507',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>

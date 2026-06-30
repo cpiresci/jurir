@@ -40,7 +40,7 @@ export default function ResetPasswordPage() {
       <div style={{ width: '100%', maxWidth: 400, background: 'var(--surface)', border: '1px solid var(--b-neutral)',
         borderRadius: 'var(--r-xl)', padding: 32 }}>
 
-        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t5)',
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)',
           letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 8 }}>
           JURIR · ACESSO
         </div>
@@ -57,7 +57,7 @@ export default function ResetPasswordPage() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div>
-              <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)',
+              <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
                 letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 7, display: 'block' }}>
                 Nova senha
               </label>
@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
                 onKeyDown={e => e.key === 'Enter' && handle()}/>
             </div>
             <div>
-              <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.65rem', color: 'var(--t4)',
+              <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
                 letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 7, display: 'block' }}>
                 Confirmar senha
               </label>
