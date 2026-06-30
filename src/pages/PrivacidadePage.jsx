@@ -1,7 +1,7 @@
 import { Shield, Lock, Eye, Database, UserCheck, Mail, Trash2, Globe, AlertTriangle, ChevronRight } from 'lucide-react';
 
 const LAST_UPDATE = '09 de junho de 2026';
-const CONTACT_EMAIL = 'privacidade@jurir.com.br';
+const CONTACT_EMAIL = 'privacidade@jurir.com';
 const APP_NAME = 'JURIR';
 
 const sections = [
