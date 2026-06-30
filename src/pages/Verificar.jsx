@@ -44,7 +44,7 @@ export default function VerificarPage() {
           letterSpacing: '.1em', marginBottom: 16 }}>
           <ShieldCheck size={11}/> VERIFICAÇÃO DE AUTENTICIDADE
         </div>
-        <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.4rem)', fontWeight: 700, marginBottom: 8 }}>Verificar Relatório</h1>
+        <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>Verificar Relatório</h1>
         <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>Confirme a autenticidade de um relatório JURIR pelo serial no rodapé do PDF.</p>
       </div>
 

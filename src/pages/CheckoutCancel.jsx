@@ -6,7 +6,7 @@ export default function CheckoutCancelPage() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ maxWidth: 420, width: '100%', textAlign: 'center' }}>
         <XCircle size={48} style={{ color: 'var(--cr3)', marginBottom: 20 }} />
-        <h1 className="t-display" style={{ fontSize: '1.6rem', fontWeight: 700, marginBottom: 8 }}>
+        <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>
           Pagamento cancelado
         </h1>
         <p style={{ color: 'var(--p4)', fontSize: '.9rem', lineHeight: 1.6, marginBottom: 32 }}>

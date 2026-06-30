@@ -98,7 +98,7 @@ export default function MonitoramentoPage() {
           letterSpacing: '.1em', marginBottom: 16 }}>
           <Activity size={11}/> MONITORAMENTO PROCESSUAL
         </div>
-        <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.4rem)', fontWeight: 700, marginBottom: 8 }}>Monitorar Processos</h1>
+        <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>Monitorar Processos</h1>
         <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>Acompanhe movimentações via DATAJUD com atualizações automáticas diárias.</p>
       </div>
 

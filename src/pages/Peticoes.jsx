@@ -74,7 +74,7 @@ export default function PeticoesPage() {
           letterSpacing: '.1em', marginBottom: 16 }}>
           <Scroll size={11}/> GERADOR DE PETIÇÕES
         </div>
-        <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.4rem)', fontWeight: 700, marginBottom: 8 }}>Gerar Petição</h1>
+        <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>Gerar Petição</h1>
         <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>Gera petição .docx a partir de uma análise existente.</p>
       </div>
 

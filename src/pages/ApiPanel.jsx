@@ -22,7 +22,7 @@ export default function ApiPanelPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
         <Zap size={28} style={{ color: 'var(--co7)' }} />
         <div>
-          <h1 className="t-display" style={{ fontSize: '1.6rem', fontWeight: 700 }}>Painel API</h1>
+          <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700 }}>Painel API</h1>
           <p style={{ color: 'var(--p4)', fontSize: '.8rem' }}>Plano API · Integração via chaves e webhooks</p>
         </div>
       </div>

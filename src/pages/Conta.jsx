@@ -57,7 +57,7 @@ export default function ContaPage() {
 
   return (
     <PageWrap>
-      <h1 className="t-display" style={{ fontSize:'1.8rem', fontWeight:700, marginBottom:6 }}>Minha Conta</h1>
+      <h1 className="t-display" style={{ fontSize:'clamp(1.75rem,4vw,2.25rem)', fontWeight:700, marginBottom:6 }}>Minha Conta</h1>
       <p style={{ color:'var(--p4)', fontSize:'.84rem', marginBottom:32 }}>{user.email}</p>
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:16, marginBottom:24 }}>
