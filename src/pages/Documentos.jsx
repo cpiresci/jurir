@@ -115,26 +115,27 @@ export default function DocumentosPage() {
 
       {result && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {/* [fix-doc-typo] Labels usavam var(--p5) quase invisível no tema dark. */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 12 }}>
             {[
-              { label: 'Tipo',              val: result.tipo_documento || '—' },
+              { label: 'Tipo de Documento', val: result.tipo_documento || '—' },
               { label: 'Páginas',           val: result.paginas ?? '—' },
               { label: 'Cláusulas Críticas',val: result.warnings_count ?? 0 },
               { label: 'Valor Envolvido',   val: result.valor_envolvido || '—' },
             ].map(({ label, val }) => (
               <div key={label} style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '14px 16px' }}>
-                <div style={{ fontSize: '.68rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 6 }}>{label}</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--p1)' }}>{val}</div>
+                <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8, fontWeight: 500 }}>{label}</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--p1)', wordBreak: 'break-word' }}>{val}</div>
               </div>
             ))}
           </div>
 
-          {result.partes && (
+          {result.partes && Object.values(result.partes).some(Boolean) && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
-              <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>PARTES</div>
+              <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10, fontWeight: 500 }}>PARTES IDENTIFICADAS</div>
               {Object.entries(result.partes).map(([k, v]) => v && (
-                <div key={k} style={{ display: 'flex', gap: 10, fontSize: '.85rem', marginBottom: 6 }}>
-                  <span style={{ color: 'var(--p5)', minWidth: 90, textTransform: 'capitalize' }}>{k}:</span>
+                <div key={k} style={{ display: 'flex', gap: 10, fontSize: '.85rem', marginBottom: 8 }}>
+                  <span style={{ color: 'var(--p4)', minWidth: 100, textTransform: 'capitalize', fontWeight: 500 }}>{k}:</span>
                   <span style={{ color: 'var(--p1)' }}>{v}</span>
                 </div>
               ))}
