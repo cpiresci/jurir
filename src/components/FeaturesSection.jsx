@@ -210,7 +210,7 @@ function FeatureCard({ f, onCta, index }) {
       {/* Desc */}
       <p style={{
         fontFamily: 'var(--f-display)', fontSize: '.79rem',
-        color: 'rgba(255,255,255,0.38)',
+        color: 'var(--t3)',
         lineHeight: 1.65, fontWeight: 400, flex: 1,
       }}>
         {f.desc}
@@ -395,7 +395,7 @@ export default function FeaturesSection() {
                 }}>{s.n}</div>
                 <div style={{
                   fontFamily: 'var(--f-mono)', fontSize: '.52rem',
-                  color: 'rgba(255,255,255,0.28)', letterSpacing: '.14em',
+                  color: 'var(--t3)', letterSpacing: '.14em',
                   textTransform: 'uppercase', marginTop: 2,
                 }}>{s.label}</div>
               </div>
@@ -429,7 +429,7 @@ export default function FeaturesSection() {
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <p style={{
             fontFamily: 'var(--f-mono)', fontSize: '.6rem',
-            color: 'rgba(255,255,255,0.22)', letterSpacing: '.18em',
+            color: 'var(--t4)', letterSpacing: '.18em',
             textTransform: 'uppercase', marginBottom: 18,
           }}>
             Comece gratuitamente · Sem cartão de crédito
