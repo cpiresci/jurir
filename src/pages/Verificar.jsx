@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { ShieldCheck, Loader2, CheckCircle, XCircle, Search } from 'lucide-react';
+import { useSearchParams, Link } from 'react-router-dom';
+import { ShieldCheck, Loader2, CheckCircle, XCircle, Search, MessageCircle, Linkedin } from 'lucide-react';
 import { verifySerial } from '../lib/api';
 
 export default function VerificarPage() {
@@ -91,8 +91,38 @@ export default function VerificarPage() {
             </div>
           )}
           {result.aviso && <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', marginTop: 16, fontStyle: 'italic', lineHeight: 1.6 }}>⚠ {result.aviso}</p>}
+
+          {/* [bloco10-growth] Compartilhamento — canais reais de advogado
+              brasileiro. O selo já é uma prova pública de autenticidade;
+              compartilhar é o próprio advogado endossando o produto. */}
+          {result.valid && (
+            <div style={{ display: 'flex', gap: 10, marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--b-neutral)' }}>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(`Verifiquei a autenticidade deste relatório jurídico gerado com IA na Jurir: ${window.location.href}`)}`}
+                target="_blank" rel="noopener noreferrer"
+                className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <MessageCircle size={14} /> WhatsApp
+              </a>
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                target="_blank" rel="noopener noreferrer"
+                className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <Linkedin size={14} /> LinkedIn
+              </a>
+            </div>
+          )}
         </div>
       )}
+
+      {/* [bloco10-growth] Rodapé fixo — essa página é indexável e
+          compartilhável (link de todo QR/PDF gerado), então sempre carrega
+          uma chamada pra ação, com ou sem resultado de busca. */}
+      <div style={{ textAlign: 'center', marginTop: 40, paddingTop: 24, borderTop: '1px solid var(--b-neutral)' }}>
+        <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', fontFamily: 'var(--f-mono)', letterSpacing: '.04em' }}>
+          Gerado com <Link to="/" style={{ color: 'var(--cy1)', textDecoration: 'none' }}>Jurir</Link> — analise seu caso em{' '}
+          <Link to="/" style={{ color: 'var(--cy1)', textDecoration: 'none' }}>jurir.com</Link>
+        </p>
+      </div>
     </div>
   );
 }

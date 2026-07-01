@@ -292,10 +292,22 @@ export default function AuthModal() {
     await finishAuth(token, user);
   });
 
+  // [bloco10-referral] Link de indicação chega como /#/?ref=CODIGO na home;
+  // guardamos no localStorage no primeiro carregamento (ver main.jsx/App.jsx
+  // não é necessário — basta ler direto da URL atual quando o modal abre,
+  // já que o usuário normalmente clica em "Criar conta" na mesma página).
+  const getRefFromUrl = () => {
+    try {
+      const hash = window.location.hash || '';
+      const qs = hash.includes('?') ? hash.split('?')[1] : window.location.search.replace('?', '');
+      return new URLSearchParams(qs).get('ref');
+    } catch { return null; }
+  };
+
   const handleRegister = () => doWakeAndRun(async () => {
     if (!email || !pwd) { throw new Error('Preencha todos os campos.'); }
     if (pwd.length < 8) { throw new Error('Senha mínima de 8 caracteres.'); }
-    await register(email, pwd);
+    await register(email, pwd, getRefFromUrl());
     addToast('Conta criada! Faça login.', 'success');
     goTo(PHASE.LOGIN);
   });

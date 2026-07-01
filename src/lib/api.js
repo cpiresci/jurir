@@ -105,8 +105,13 @@ export async function wakeUp(signal) {
 export async function login(email, password, two_factor_code = null) {
   return apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password, two_factor_code }) });
 }
-export async function register(email, password) {
-  return apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) });
+export async function register(email, password, ref = null) {
+  return apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password, ref }) });
+}
+
+// [bloco10-referral]
+export async function getReferralInfo(token) {
+  return apiFetch('/api/account/referral', {}, token);
 }
 export async function getMe(token) {
   return apiFetch('/api/auth/me', {}, token);
