@@ -4,7 +4,43 @@ import { Bell, Plus, Trash2, Loader2, RefreshCw, Activity } from 'lucide-react';
 import { useStore } from '../store';
 import { addMonitoring, listMonitoring, removeMonitoring, checkMonitoring } from '../lib/api';
 
-const TRIBUNAIS = ['TJSP','TJRJ','TJMG','TJRS','TJPR','TJSC','TJBA','TJPE','TJCE','TJGO','STJ','STF','TRT2','TRT15','TRF1','TRF3'];
+// Cobertura nacional completa (DataJud/CNJ) — agrupada por região pra não virar
+// um dropdown ilegível de 60+ itens. STF fica fora: não é coberto pela API
+// pública do DataJud (só STJ/TST/TSE/STM entre os superiores).
+const TRIBUNAIS_GRUPOS = [
+  {
+    label: 'Superiores',
+    tribunais: ['STJ', 'TST', 'TSE', 'STM'],
+  },
+  {
+    label: 'Federais (TRF)',
+    tribunais: ['TRF1', 'TRF2', 'TRF3', 'TRF4', 'TRF5', 'TRF6'],
+  },
+  {
+    label: 'Sudeste',
+    tribunais: ['TJSP', 'TJRJ', 'TJMG', 'TJES'],
+  },
+  {
+    label: 'Sul',
+    tribunais: ['TJPR', 'TJSC', 'TJRS'],
+  },
+  {
+    label: 'Nordeste',
+    tribunais: ['TJBA', 'TJPE', 'TJCE', 'TJMA', 'TJPB', 'TJRN', 'TJAL', 'TJSE', 'TJPI'],
+  },
+  {
+    label: 'Norte',
+    tribunais: ['TJPA', 'TJAM', 'TJAC', 'TJAP', 'TJRO', 'TJRR', 'TJTO'],
+  },
+  {
+    label: 'Centro-Oeste',
+    tribunais: ['TJGO', 'TJMT', 'TJMS', 'TJDFT'],
+  },
+  {
+    label: 'Trabalho (TRT)',
+    tribunais: Array.from({ length: 24 }, (_, i) => `TRT${i + 1}`),
+  },
+];
 
 export default function MonitoramentoPage() {
   const { authToken, userData, openModal, addToast } = useStore();
@@ -113,7 +149,11 @@ export default function MonitoramentoPage() {
           <div>
             <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TRIBUNAL</label>
             <select className="fg-input" value={form.tribunal} onChange={e => setForm(f => ({ ...f, tribunal: e.target.value }))}>
-              {TRIBUNAIS.map(t => <option key={t} value={t}>{t}</option>)}
+              {TRIBUNAIS_GRUPOS.map(g => (
+                <optgroup key={g.label} label={g.label}>
+                  {g.tribunais.map(t => <option key={t} value={t}>{t}</option>)}
+                </optgroup>
+              ))}
             </select>
           </div>
           <button className="btn btn-crimson" onClick={handleAdd} disabled={adding} style={{ alignSelf: 'flex-end' }}>
@@ -169,3 +209,4 @@ export default function MonitoramentoPage() {
     </div>
   );
 }
+
