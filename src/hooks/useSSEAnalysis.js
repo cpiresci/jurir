@@ -102,12 +102,14 @@ export function useSSEAnalysis() {
           } else if (t === 'agent_done') {
             const conf = typeof ev.confidence === 'number' ? ev.confidence : 0;
             setAgentState(ev.agent_id, {
-              status:     'done',
-              area:       ev.area,
-              confidence: conf,
-              analysis:   ev.analysis,
-              topRisk:    ev.top_risk,
-              riskLevel:  ev.risk_level || null,
+              status:           'done',
+              area:             ev.area,
+              confidence:       conf,
+              analysis:         ev.analysis,
+              topRisk:          ev.top_risk,
+              riskLevel:        ev.risk_level || null,
+              outOfScope:       !!ev.outOfScope,
+              outOfScopeReason: ev.outOfScopeReason || '',
             });
             incrementCompleted();
 

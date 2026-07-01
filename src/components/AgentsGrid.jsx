@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { CheckCircle, Loader2, XCircle, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle, Loader2, XCircle, Clock, ChevronDown, ChevronUp, MinusCircle } from 'lucide-react';
 import { AGENT_AREAS } from '../lib/constants';
 import { useStore } from '../store';
 
@@ -25,11 +25,13 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
   const agentStates = useStore(s => s.agentStates);
   const s      = agentStates[id];
   const status = s?.status || 'idle';
+  const outOfScope = !!s?.outOfScope;
   const analysis  = s?.analysis || '';
   const PREVIEW   = 1000;
   const needsExpand = analysis.length > PREVIEW;
   const displayText = expanded ? analysis : analysis.slice(0, PREVIEW);
-  const riskCfg = s?.riskLevel ? RISK_CFG[s.riskLevel] : null;
+  // Fora de escopo nunca leva selo de risco — recusa honesta não tem "nível de risco".
+  const riskCfg = (s?.riskLevel && !outOfScope) ? RISK_CFG[s.riskLevel] : null;
 
   /* pop animation when transitioning to done */
   useEffect(() => {
@@ -47,7 +49,9 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
   const glowStyle = status === 'running'
     ? { boxShadow: '0 0 0 1px rgba(20,114,217,0.35), 0 0 18px rgba(20,114,217,0.12)', borderColor: 'rgba(20,114,217,0.4)' }
     : status === 'done'
-      ? { boxShadow: '0 0 0 1px rgba(16,185,129,0.25), 0 0 12px rgba(16,185,129,0.07)', borderColor: 'rgba(16,185,129,0.28)' }
+      ? (outOfScope
+          ? { boxShadow: '0 0 0 1px rgba(148,163,184,0.22)', borderColor: 'rgba(148,163,184,0.28)' }
+          : { boxShadow: '0 0 0 1px rgba(16,185,129,0.25), 0 0 12px rgba(16,185,129,0.07)', borderColor: 'rgba(16,185,129,0.28)' })
       : {};
 
   return (
@@ -77,7 +81,7 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
             fontSize: '.92rem', fontWeight: 700,
-            color: status === 'done' ? 'var(--t0)' : 'var(--t2)',
+            color: status === 'done' ? (outOfScope ? 'var(--t3)' : 'var(--t0)') : 'var(--t2)',
             fontFamily: 'var(--f-sans)',
             letterSpacing: '.02em',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -90,7 +94,12 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
               conf: {s.confidence}%
             </div>
           )}
-          {status === 'done' && !s?.confidence && (
+          {status === 'done' && outOfScope && (
+            <div style={{ fontSize: '.75rem', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
+              ○ fora do escopo
+            </div>
+          )}
+          {status === 'done' && !outOfScope && !s?.confidence && (
             <div style={{ fontSize: '.75rem', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>
               ✓ analisado
             </div>
@@ -109,7 +118,11 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
             </div>
           )}
         </div>
-        <div style={{ flexShrink: 0 }}>{STATUS_ICON[status]}</div>
+        <div style={{ flexShrink: 0 }}>
+          {status === 'done' && outOfScope
+            ? <MinusCircle size={12} style={{ color: 'var(--t4)' }}/>
+            : STATUS_ICON[status]}
+        </div>
       </div>
 
       {/* Analysis text */}
@@ -117,10 +130,11 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
         <div>
           <div style={{
             fontSize: '1rem',
-            color: 'var(--t1)',
+            color: outOfScope ? 'var(--t3)' : 'var(--t1)',
             lineHeight: 1.75,
             fontFamily: 'var(--f-sans)',
             fontWeight: 400,
+            fontStyle: outOfScope ? 'italic' : 'normal',
             letterSpacing: '.01em',
           }}>
             {displayText}
