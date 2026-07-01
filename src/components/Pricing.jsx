@@ -186,7 +186,7 @@ function PlanCard({ plan, wide = false }) {
           position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
           background: 'linear-gradient(135deg,#00f2fe,#4facfe)',
           borderRadius: '0 0 10px 10px', padding: '4px 16px',
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
           fontWeight: 700, color: '#050507', letterSpacing: '.1em', whiteSpace: 'nowrap',
           zIndex: 2,
         }}>
@@ -196,21 +196,21 @@ function PlanCard({ plan, wide = false }) {
       <div style={{ position: 'relative', zIndex: 1, marginTop: isPopular ? 18 : 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
           <span style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
             color: 'var(--t3)', letterSpacing: '.2em', textTransform: 'uppercase',
           }}>{plan.label}</span>
           {plan.badge && !isPopular && (
             <span style={{
               background: p.badgeBg, border: `1px solid ${p.border}`,
               borderRadius: 999, padding: '3px 10px',
-              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+              fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
               color: p.badgeColor, letterSpacing: '.1em',
             }}>{plan.badge}</span>
           )}
         </div>
         <div style={{ marginBottom: 4 }}>
           <span style={{
-            fontFamily: 'var(--f-display)', fontSize: '3rem', fontWeight: 600, lineHeight: 1,
+            fontFamily: 'var(--f-display)', fontSize: 'var(--fs-6xl)', fontWeight: 600, lineHeight: 1,
             background: plan.color === 'free' ? 'none' : `linear-gradient(135deg, ${p.badgeColor}, ${p.checkColor})`,
             WebkitBackgroundClip: plan.color === 'free' ? 'unset' : 'text',
             WebkitTextFillColor: plan.color === 'free' ? 'var(--t0)' : 'transparent',
@@ -219,12 +219,12 @@ function PlanCard({ plan, wide = false }) {
             {plan.price}
           </span>
         </div>
-        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', marginBottom: plan.note ? 10 : 20, letterSpacing: '.06em' }}>
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', marginBottom: plan.note ? 10 : 20, letterSpacing: '.06em' }}>
           {plan.sub}
         </div>
         {plan.note && (
           <div style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: p.badgeColor,
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: p.badgeColor,
             background: p.badgeBg, border: `1px solid ${p.border}`,
             borderRadius: 8, padding: '8px 12px', marginBottom: 16, lineHeight: 1.5,
           }}>{plan.note}</div>
@@ -234,7 +234,7 @@ function PlanCard({ plan, wide = false }) {
           {plan.features.map((f, i) => (
             <li key={i} style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
               <Check size={12} style={{ color: p.checkColor, flexShrink: 0, marginTop: 3 }}/>
-              <span style={{ fontSize: '.8rem', color: 'var(--t2)', lineHeight: 1.45 }}>{f}</span>
+              <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--t2)', lineHeight: 1.45 }}>{f}</span>
             </li>
           ))}
         </ul>
@@ -242,7 +242,7 @@ function PlanCard({ plan, wide = false }) {
           onClick={handleCta}
           style={{
             width: '100%', padding: '13px 0', borderRadius: 999,
-            fontFamily: 'var(--f-mono)', fontSize: '.78rem', fontWeight: 700,
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700,
             letterSpacing: '.08em', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             background: p.ctaBg,
@@ -280,7 +280,7 @@ export default function Pricing() {
               poder jurídico
             </em>
           </h2>
-          <p style={{ color: 'var(--t3)', fontSize: '.9rem', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
+          <p style={{ color: 'var(--t3)', fontSize: 'var(--fs-base)', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
             Do diagnóstico gratuito à infraestrutura completa para escritórios e plataformas.
           </p>
         </div>
@@ -294,7 +294,7 @@ export default function Pricing() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '8px 0 16px' }}>
           <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,transparent,rgba(124,58,237,.2),rgba(229,176,75,.15),transparent)' }}/>
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.22em', whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.22em', whiteSpace: 'nowrap' }}>
             PLANOS PARA ESCRITÓRIOS & PLATAFORMAS
           </span>
           <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,rgba(229,176,75,.15),rgba(124,58,237,.2),transparent)' }}/>
@@ -310,7 +310,7 @@ export default function Pricing() {
         <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
           {['🔒 Pagamento 100% seguro','✅ 30 dias de garantia','⚡ Acesso imediato','🚫 Cancele quando quiser','📄 NF disponível'].map((item, i) => (
             <span key={i} style={{
-              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+              fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
               color: 'var(--t4)', letterSpacing: '.08em',
             }}>{item}</span>
           ))}

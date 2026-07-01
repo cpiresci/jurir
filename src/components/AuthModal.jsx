@@ -39,7 +39,7 @@ function QuantumInput({ label, icon: Icon, type = 'text', value, onChange, onKey
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
       <label style={{
-        fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: focused ? 'var(--cy1)' : 'var(--t4)',
+        fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: focused ? 'var(--cy1)' : 'var(--t4)',
         letterSpacing: '.14em', textTransform: 'uppercase',
         transition: 'color .2s', display: 'flex', alignItems: 'center', gap: 6,
       }}>
@@ -63,7 +63,7 @@ function QuantumInput({ label, icon: Icon, type = 'text', value, onChange, onKey
             borderRadius: 10,
             padding: '13px 16px 13px 16px',
             paddingRight: isPwd ? 44 : 16,
-            fontFamily: 'var(--f-sans)', fontSize: '.88rem', color: 'var(--t1)',
+            fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-base)', color: 'var(--t1)',
             outline: 'none', transition: 'all .2s',
             boxShadow: focused ? '0 0 0 3px rgba(0,242,254,0.07), inset 0 1px 0 rgba(0,242,254,0.04)' : 'none',
           }}
@@ -95,7 +95,7 @@ function QuantumInput({ label, icon: Icon, type = 'text', value, onChange, onKey
         }} />
       </div>
       {hint && (
-        <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.06em' }}>
+        <p style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.06em' }}>
           {hint}
         </p>
       )}
@@ -129,7 +129,7 @@ function PasswordStrength({ password }) {
         ))}
       </div>
       {score > 0 && (
-        <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: colors[score], letterSpacing: '.08em' }}>
+        <p style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: colors[score], letterSpacing: '.08em' }}>
           Senha {labels[score]}
         </p>
       )}
@@ -149,7 +149,7 @@ function Banner({ type, children }) {
     <div style={{
       padding: '10px 14px', borderRadius: 9,
       background: styles.bg, border: `1px solid ${styles.border}`,
-      color: styles.color, fontSize: '.8rem',
+      color: styles.color, fontSize: 'var(--fs-sm)',
       display: 'flex', alignItems: 'flex-start', gap: 8,
       animation: 'fade-in .2s',
     }}>
@@ -246,12 +246,12 @@ export default function AuthModal() {
         {wakeMsg && (
           <Banner type="info">
             <Loader2 size={13} className="spin" style={{ flexShrink: 0, marginTop: 1 }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem' }}>{wakeMsg}</span>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)' }}>{wakeMsg}</span>
           </Banner>
         )}
         {err && <Banner type="error">{err}</Banner>}
 
-        <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', height: 46, fontSize: '.88rem', marginTop: 4 }}
+        <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', height: 46, fontSize: 'var(--fs-base)', marginTop: 4 }}
           disabled={loading} onClick={handleLogin}>
           {loading
             ? <><Loader2 size={15} className="spin" /> Autenticando…</>
@@ -261,13 +261,13 @@ export default function AuthModal() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '4px 0' }}>
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.1em' }}>OU</span>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.1em' }}>OU</span>
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
         </div>
 
         <button onClick={() => goTo(PHASE.FORGOT)}
           style={{ background: 'none', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9,
-            color: 'var(--t3)', fontSize: '.78rem', cursor: 'pointer', width: '100%', padding: '10px 0',
+            color: 'var(--t3)', fontSize: 'var(--fs-xs)', cursor: 'pointer', width: '100%', padding: '10px 0',
             transition: 'all .2s', fontFamily: 'var(--f-sans)',
           }}
           onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,242,254,0.18)'; e.currentTarget.style.color = 'var(--cy1)'; }}
@@ -303,8 +303,8 @@ export default function AuthModal() {
             { icon: '📄', text: 'Geração de petições e relatórios' },
           ].map(({ icon, text }) => (
             <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: '.8rem' }}>{icon}</span>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t2)', letterSpacing: '.04em' }}>{text}</span>
+              <span style={{ fontSize: 'var(--fs-sm)' }}>{icon}</span>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t2)', letterSpacing: '.04em' }}>{text}</span>
             </div>
           ))}
         </div>
@@ -312,12 +312,12 @@ export default function AuthModal() {
         {wakeMsg && (
           <Banner type="info">
             <Loader2 size={13} className="spin" style={{ flexShrink: 0, marginTop: 1 }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem' }}>{wakeMsg}</span>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)' }}>{wakeMsg}</span>
           </Banner>
         )}
         {err && <Banner type="error">{err}</Banner>}
 
-        <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', height: 46, fontSize: '.88rem', marginTop: 4 }}
+        <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', height: 46, fontSize: 'var(--fs-base)', marginTop: 4 }}
           disabled={loading} onClick={handleRegister}>
           {loading
             ? <><Loader2 size={15} className="spin" /> Criando conta…</>
@@ -325,7 +325,7 @@ export default function AuthModal() {
           }
         </button>
 
-        <p style={{ textAlign: 'center', fontSize: '.75rem', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
+        <p style={{ textAlign: 'center', fontSize: 'var(--fs-xs)', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
           Ao criar uma conta você concorda com nossos{' '}
           <a href="/#/privacidade" style={{ color: 'var(--cy1)', textDecoration: 'none' }}>Termos de Uso</a>
         </p>
@@ -342,7 +342,7 @@ export default function AuthModal() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <ShieldCheck size={14} style={{ color: 'var(--cy1)', flexShrink: 0 }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t2)', letterSpacing: '.04em' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t2)', letterSpacing: '.04em' }}>
               Enviaremos um link seguro para o seu email. O link expira em 1 hora.
             </span>
           </div>
@@ -354,7 +354,7 @@ export default function AuthModal() {
 
         {err && <Banner type="error">{err}</Banner>}
 
-        <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', height: 46, fontSize: '.88rem' }}
+        <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', height: 46, fontSize: 'var(--fs-base)' }}
           disabled={loading} onClick={handleForgot}>
           {loading
             ? <><Loader2 size={15} className="spin" /> Enviando…</>
@@ -363,7 +363,7 @@ export default function AuthModal() {
         </button>
 
         <button onClick={() => goTo(PHASE.LOGIN)}
-          style={{ background: 'none', border: 'none', color: 'var(--t3)', fontSize: '.78rem',
+          style={{ background: 'none', border: 'none', color: 'var(--t3)', fontSize: 'var(--fs-xs)',
             cursor: 'pointer', width: '100%', textAlign: 'center', fontFamily: 'var(--f-sans)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '4px 0',
             transition: 'color .15s',
@@ -391,15 +391,15 @@ export default function AuthModal() {
         </div>
 
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <h3 style={{ fontFamily: 'var(--f-display)', fontSize: '1.3rem', fontWeight: 500, color: 'var(--t0)' }}>
+          <h3 style={{ fontFamily: 'var(--f-display)', fontSize: 'var(--fs-xl)', fontWeight: 500, color: 'var(--t0)' }}>
             Email enviado!
           </h3>
-          <p style={{ color: 'var(--t2)', fontSize: '.85rem', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--t2)', fontSize: 'var(--fs-base)', lineHeight: 1.6 }}>
             Verifique a caixa de entrada de{' '}
             <strong style={{ color: 'var(--cy1)' }}>{email}</strong>
             {' '}e clique no link para redefinir sua senha.
           </p>
-          <p style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.06em' }}>
+          <p style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.06em' }}>
             O link expira em 1 hora · Verifique também o spam
           </p>
         </div>
@@ -410,7 +410,7 @@ export default function AuthModal() {
             <RotateCcw size={14} /> Reenviar email
           </button>
           <button onClick={() => goTo(PHASE.LOGIN)}
-            style={{ background: 'none', border: 'none', color: 'var(--t3)', fontSize: '.8rem',
+            style={{ background: 'none', border: 'none', color: 'var(--t3)', fontSize: 'var(--fs-sm)',
               cursor: 'pointer', fontFamily: 'var(--f-sans)', padding: '6px 0', transition: 'color .15s',
             }}
             onMouseEnter={e => e.currentTarget.style.color = 'var(--cy1)'}
@@ -523,12 +523,12 @@ export default function AuthModal() {
                 borderRadius: 999, padding: '3px 10px',
               }}>
                 <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--cy1)', boxShadow: '0 0 6px var(--cy1)' }} />
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--cy1)', letterSpacing: '.18em', textTransform: 'uppercase' }}>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--cy1)', letterSpacing: '.18em', textTransform: 'uppercase' }}>
                   {tag}
                 </span>
               </div>
               <h2 className="t-display" style={{
-                fontFamily: 'var(--f-display)', fontSize: '1.75rem', fontWeight: 400,
+                fontFamily: 'var(--f-display)', fontSize: 'var(--fs-3xl)', fontWeight: 400,
                 color: 'var(--t0)', lineHeight: 1.2,
                 background: phase === PHASE.SENT ? 'var(--g-quantum)' : undefined,
                 WebkitBackgroundClip: phase === PHASE.SENT ? 'text' : undefined,
@@ -575,7 +575,7 @@ export default function AuthModal() {
 
           {/* ── Rodapé: toggle login/register ── */}
           {showTabs && (
-            <p style={{ textAlign: 'center', fontSize: '.78rem', color: 'var(--t4)', marginTop: 22, fontFamily: 'var(--f-sans)' }}>
+            <p style={{ textAlign: 'center', fontSize: 'var(--fs-xs)', color: 'var(--t4)', marginTop: 22, fontFamily: 'var(--f-sans)' }}>
               {phase === PHASE.LOGIN
                 ? <>Não tem conta?{' '}<button onClick={() => goTo(PHASE.REGISTER)}
                     style={{ background: 'none', border: 'none', color: 'var(--cy1)', fontSize: 'inherit', cursor: 'pointer', fontWeight: 600 }}>
@@ -594,11 +594,11 @@ export default function AuthModal() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             marginTop: 18, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.04)',
           }}>
-            <KeyRound size={10} style={{ color: 'var(--t5)' }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.08em' }}>
+            <KeyRound size={10} style={{ color: 'var(--t3)' }} />
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.08em' }}>
               CONEXÃO SEGURA · CRIPTOGRAFIA END-TO-END
             </span>
-            <KeyRound size={10} style={{ color: 'var(--t5)' }} />
+            <KeyRound size={10} style={{ color: 'var(--t3)' }} />
           </div>
         </div>
       </div>

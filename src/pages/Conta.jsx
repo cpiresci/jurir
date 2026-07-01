@@ -58,7 +58,7 @@ export default function ContaPage() {
   return (
     <PageWrap>
       <h1 className="t-display" style={{ fontSize:'clamp(1.75rem,4vw,2.25rem)', fontWeight:700, marginBottom:6 }}>Minha Conta</h1>
-      <p style={{ color:'var(--p4)', fontSize:'.84rem', marginBottom:32 }}>{user.email}</p>
+      <p style={{ color:'var(--p4)', fontSize: 'var(--fs-sm)', marginBottom:32 }}>{user.email}</p>
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:16, marginBottom:24 }}>
 
@@ -66,11 +66,11 @@ export default function ContaPage() {
         <div style={cardSt}>
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
             <div style={{ color:planColor }}>{PLAN_ICON[user.plan] || <User size={18}/>}</div>
-            <span style={{ fontSize:'.72rem', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>PLANO ATUAL</span>
+            <span style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>PLANO ATUAL</span>
           </div>
-          <div style={{ fontSize:'1.5rem', fontWeight:700, color:planColor, marginBottom:4 }}>{planLabel}</div>
+          <div style={{ fontSize: 'var(--fs-2xl)', fontWeight:700, color:planColor, marginBottom:4 }}>{planLabel}</div>
           {user.plan_expires_at && (
-            <div style={{ fontSize:'.78rem', color:'var(--p4)', marginBottom:4 }}>
+            <div style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:4 }}>
               Válido até <strong style={{ color:'var(--p2)' }}>{user.plan_expires_at}</strong>
               {user.days_left != null && (
                 <span style={{ color: user.days_left < 5 ? 'var(--cr3)' : 'var(--p5)', marginLeft:6 }}>
@@ -79,7 +79,7 @@ export default function ContaPage() {
               )}
             </div>
           )}
-          <div style={{ fontSize:'.78rem', color:'var(--p4)', marginBottom:16 }}>
+          <div style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:16 }}>
             Membro desde {user.member_since}
           </div>
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
@@ -99,7 +99,7 @@ export default function ContaPage() {
         <div style={cardSt}>
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
             <BarChart2 size={18} style={{ color:'var(--co7)' }}/>
-            <span style={{ fontSize:'.72rem', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>USO & CRÉDITOS</span>
+            <span style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>USO & CRÉDITOS</span>
           </div>
           <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
             {[
@@ -109,7 +109,7 @@ export default function ContaPage() {
               { label:'Créditos livres',   value: user.credits },
               { label:'Créditos premium',  value: user.premium_credits },
             ].map(({ label, value }) => (
-              <div key={label} style={{ display:'flex', justifyContent:'space-between', fontSize:'.82rem' }}>
+              <div key={label} style={{ display:'flex', justifyContent:'space-between', fontSize: 'var(--fs-sm)' }}>
                 <span style={{ color:'var(--p4)' }}>{label}</span>
                 <span style={{ color:'var(--p2)', fontWeight:600, fontFamily:'var(--f-mono)' }}>{value}</span>
               </div>
@@ -124,7 +124,7 @@ export default function ContaPage() {
                   width:`${Math.min((usage.today / usage.free_limit) * 100, 100)}%`,
                   transition:'width .3s' }}/>
               </div>
-              <p style={{ fontSize:'.7rem', color:'var(--p5)', marginTop:4 }}>
+              <p style={{ fontSize: 'var(--fs-2xs)', color:'var(--p5)', marginTop:4 }}>
                 {usage.today >= usage.free_limit
                   ? '⚠ Limite diário atingido — faça upgrade'
                   : `${usage.free_limit - usage.today} análises restantes hoje`}
@@ -135,7 +135,7 @@ export default function ContaPage() {
           {/* Barra mensal — Escritório e API */}
           {usage.monthly && usage.monthly.limit && (
             <div style={{ marginTop:14 }}>
-              <div style={{ display:'flex', justifyContent:'space-between', fontSize:'.72rem', color:'var(--p4)', marginBottom:5 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:5 }}>
                 <span style={{ fontFamily:'var(--f-mono)', letterSpacing:'.06em' }}>
                   {usage.monthly.plan === 'escritorio' ? 'ANÁLISES / MÊS' : 'REQUISIÇÕES / MÊS'}
                 </span>
@@ -149,7 +149,7 @@ export default function ContaPage() {
                   width:`${Math.min((usage.monthly.count / usage.monthly.limit) * 100, 100)}%`,
                   transition:'width .3s' }}/>
               </div>
-              <p style={{ fontSize:'.7rem', color:'var(--p5)', marginTop:4 }}>
+              <p style={{ fontSize: 'var(--fs-2xs)', color:'var(--p5)', marginTop:4 }}>
                 {usage.monthly.count >= usage.monthly.limit
                   ? '⚠ Limite mensal atingido — renova em ' + usage.monthly.month
                   : `${usage.monthly.limit - usage.monthly.count} restantes em ${usage.monthly.month}`}
@@ -163,10 +163,10 @@ export default function ContaPage() {
           <div style={cardSt}>
             <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
               <Building2 size={18} style={{ color:'var(--co7)' }}/>
-              <span style={{ fontSize:'.72rem', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>ORGANIZAÇÃO</span>
+              <span style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>ORGANIZAÇÃO</span>
             </div>
-            <div style={{ fontSize:'1rem', fontWeight:700, color:'var(--p1)', marginBottom:4 }}>{org.name}</div>
-            <div style={{ fontSize:'.78rem', color:'var(--p4)', marginBottom:16 }}>
+            <div style={{ fontSize: 'var(--fs-md)', fontWeight:700, color:'var(--p1)', marginBottom:4 }}>{org.name}</div>
+            <div style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:16 }}>
               Papel: <strong style={{ color:'var(--co7)' }}>{org.role === 'owner' ? 'Proprietário' : org.role === 'admin' ? 'Admin' : 'Membro'}</strong>
               {org.has_logo && <span style={{ marginLeft:8, color:'var(--jade2)' }}>· Logo configurado</span>}
             </div>
@@ -180,21 +180,21 @@ export default function ContaPage() {
         <div style={cardSt}>
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
             <CreditCard size={18} style={{ color:'var(--au6)' }}/>
-            <span style={{ fontSize:'.72rem', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>PAGAMENTOS RECENTES</span>
+            <span style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>PAGAMENTOS RECENTES</span>
           </div>
           <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
             {payments.map(p => (
               <div key={p.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center',
-                fontSize:'.82rem', padding:'8px 0', borderBottom:'1px solid var(--b-subtle)' }}>
+                fontSize: 'var(--fs-sm)', padding:'8px 0', borderBottom:'1px solid var(--b-subtle)' }}>
                 <div>
                   <span style={{ color:'var(--p2)', fontWeight:500 }}>{PLAN_LABEL[p.plan] || p.plan}</span>
-                  <span style={{ color:'var(--p5)', marginLeft:8, fontSize:'.72rem' }}>{p.created_at}</span>
+                  <span style={{ color:'var(--p5)', marginLeft:8, fontSize: 'var(--fs-xs)' }}>{p.created_at}</span>
                 </div>
                 <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                   <span style={{ color:'var(--jade2)', fontFamily:'var(--f-mono)', fontWeight:600 }}>
                     R$ {p.amount_brl.toFixed(2)}
                   </span>
-                  <span style={{ fontSize:'.7rem', padding:'2px 8px', borderRadius:99,
+                  <span style={{ fontSize: 'var(--fs-2xs)', padding:'2px 8px', borderRadius:99,
                     background: p.status === 'succeeded' ? 'rgba(0,200,130,.1)' : 'rgba(200,0,0,.1)',
                     color: p.status === 'succeeded' ? 'var(--jade2)' : 'var(--cr3)' }}>
                     {p.status === 'succeeded' ? 'pago' : p.status}
@@ -212,10 +212,10 @@ export default function ContaPage() {
           background:'rgba(180,140,60,.05)', display:'flex', gap:12, alignItems:'flex-start' }}>
           <AlertTriangle size={18} style={{ color:'var(--au6)', flexShrink:0, marginTop:2 }}/>
           <div>
-            <p style={{ fontSize:'.84rem', fontWeight:600, color:'var(--au5)', marginBottom:4 }}>
+            <p style={{ fontSize: 'var(--fs-sm)', fontWeight:600, color:'var(--au5)', marginBottom:4 }}>
               Você está no plano gratuito
             </p>
-            <p style={{ fontSize:'.78rem', color:'var(--p4)', lineHeight:1.6 }}>
+            <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', lineHeight:1.6 }}>
               Limite de {usage.free_limit} análises premium por dia. Faça upgrade para análises ilimitadas e acesso a todas as ferramentas.
             </p>
             <a href="#/premium" className="btn btn-cobalt btn-sm" style={{ marginTop:10, display:'inline-flex' }}>

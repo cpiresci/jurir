@@ -3,7 +3,7 @@
    ║  Tema Escuro · Void Dark · Cyan Quantum · Suprema Corte            ║
    ╚══════════════════════════════════════════════════════════════════════╝ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Syne:wght@400;500;600;700;800&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -102,6 +102,26 @@
   --t3: rgba(255,255,255,0.58);       /* ~7.4:1 — captions/labels (era 0.40, falhava) */
   --t4: rgba(255,255,255,0.42);       /* ~4.6:1 — placeholder/auxiliar (era 0.22, falhava) */
   --t5: rgba(255,255,255,0.16);       /* decorativo apenas — nunca usar em texto legível */
+
+  /* ---- Escala tipográfica modular (base 16px) ----
+     Substitui os 67 valores soltos de fontSize por tokens fixos.
+     Cada token é o "arredondamento" mais próximo do valor real usado no código. */
+  --fs-4xs: .5rem;      /* 8px  */
+  --fs-3xs: .625rem;    /* 10px */
+  --fs-2xs: .6875rem;   /* 11px */
+  --fs-xs:  .75rem;     /* 12px */
+  --fs-sm:  .8125rem;   /* 13px */
+  --fs-base:.875rem;    /* 14px */
+  --fs-md:  1rem;       /* 16px */
+  --fs-lg:  1.125rem;   /* 18px */
+  --fs-xl:  1.25rem;    /* 20px */
+  --fs-2xl: 1.5rem;     /* 24px */
+  --fs-3xl: 1.75rem;    /* 28px */
+  --fs-4xl: 2rem;       /* 32px */
+  --fs-5xl: 2.5rem;     /* 40px */
+  --fs-6xl: 3rem;       /* 48px */
+  --fs-7xl: 3.5rem;     /* 56px */
+  --fs-8xl: 5rem;       /* 80px */
 
   /* ── MARBLE aliases (legacy compat) ── */
   --shell: #0C0C14;

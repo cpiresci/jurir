@@ -146,7 +146,7 @@ export default function PrivacidadePage() {
           display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'rgba(0,242,254,0.06)', border: '1px solid var(--b-cobalt)',
           borderRadius: 'var(--r-pill)', padding: '5px 14px',
-          fontSize: '.75rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)',
+          fontSize: 'var(--fs-xs)', color: 'var(--co7)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.12em', marginBottom: 20,
         }}>
           <Shield size={11} /> POLÍTICA DE PRIVACIDADE
@@ -161,14 +161,14 @@ export default function PrivacidadePage() {
           <em style={{ fontStyle: 'italic', color: 'var(--co7)' }}>nossa prioridade</em>
         </h1>
 
-        <p style={{ fontSize: '.95rem', color: 'var(--t3)', lineHeight: 1.8, maxWidth: 600, marginBottom: 24 }}>
+        <p style={{ fontSize: 'var(--fs-md)', color: 'var(--t3)', lineHeight: 1.8, maxWidth: 600, marginBottom: 24 }}>
           Esta Política de Privacidade descreve como o <strong style={{ color: 'var(--t1)' }}>JURIR</strong> coleta,
           utiliza e protege seus dados pessoais. Leia com atenção antes de utilizar a plataforma.
         </p>
 
         <div style={{
           display: 'flex', gap: 24, flexWrap: 'wrap',
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.08em',
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.08em',
         }}>
           <span>Última atualização: <strong style={{ color: 'var(--t3)' }}>{LAST_UPDATE}</strong></span>
           <span>Versão: <strong style={{ color: 'var(--t3)' }}>2.0</strong></span>
@@ -186,10 +186,10 @@ export default function PrivacidadePage() {
       }}>
         <AlertTriangle size={18} style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2 }} />
         <div>
-          <div style={{ fontFamily: 'var(--f-sans)', fontWeight: 600, fontSize: '.82rem', color: 'var(--t1)', marginBottom: 6 }}>
+          <div style={{ fontFamily: 'var(--f-sans)', fontWeight: 600, fontSize: 'var(--fs-sm)', color: 'var(--t1)', marginBottom: 6 }}>
             Conformidade com a LGPD
           </div>
-          <p style={{ fontSize: '.8rem', color: 'var(--t3)', lineHeight: 1.7 }}>
+          <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.7 }}>
             Esta política está em conformidade com a Lei Geral de Proteção de Dados Pessoais (LGPD — Lei nº 13.709/2018).
             Ao utilizar o JURIR, você consente com o processamento descrito neste documento.
             O JURIR atua como <strong>Controlador</strong> dos dados pessoais que processa.
@@ -223,10 +223,10 @@ export default function PrivacidadePage() {
                 {sec.icon}
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.18em', marginBottom: 2 }}>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.18em', marginBottom: 2 }}>
                   SEÇÃO {String(i + 1).padStart(2, '0')}
                 </div>
-                <h2 style={{ fontFamily: 'var(--f-sans)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--t0)' }}>
+                <h2 style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-lg)', fontWeight: 700, color: 'var(--t0)' }}>
                   {sec.title}
                 </h2>
               </div>
@@ -239,7 +239,7 @@ export default function PrivacidadePage() {
                   <div key={bi} style={{ marginBottom: bi < sec.content.length - 1 ? 24 : 0 }}>
                     <div style={{
                       fontFamily: 'var(--f-sans)', fontWeight: 600,
-                      fontSize: '.78rem', color: 'var(--t2)',
+                      fontSize: 'var(--fs-xs)', color: 'var(--t2)',
                       marginBottom: 12, paddingBottom: 8,
                       borderBottom: '1px solid var(--b-subtle)',
                     }}>
@@ -249,7 +249,7 @@ export default function PrivacidadePage() {
                       {block.items.map((item, ii) => (
                         <li key={ii} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                           <ChevronRight size={13} style={{ color: sec.color, flexShrink: 0, marginTop: 3 }} />
-                          <span style={{ fontSize: '.84rem', color: 'var(--t3)', lineHeight: 1.65 }}>{item}</span>
+                          <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.65 }}>{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -260,7 +260,7 @@ export default function PrivacidadePage() {
                   {sec.items.map((item, ii) => (
                     <li key={ii} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                       <ChevronRight size={13} style={{ color: sec.color, flexShrink: 0, marginTop: 3 }} />
-                      <span style={{ fontSize: '.84rem', color: 'var(--t3)', lineHeight: 1.65 }}>{item}</span>
+                      <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.65 }}>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -273,7 +273,7 @@ export default function PrivacidadePage() {
       {/* ── SEUS DIREITOS ── */}
       <div style={{ marginTop: 48 }}>
         <div style={{
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)',
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)',
           letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: 20,
         }}>
           Seus Direitos (LGPD, Art. 18)
@@ -290,12 +290,12 @@ export default function PrivacidadePage() {
             }}>
               <div style={{
                 fontFamily: 'var(--f-sans)', fontWeight: 700,
-                fontSize: '.8rem', color: 'var(--t1)', marginBottom: 6,
+                fontSize: 'var(--fs-sm)', color: 'var(--t1)', marginBottom: 6,
               }}>
                 {r.title}
               </div>
               <div style={{
-                fontFamily: 'var(--f-sans)', fontSize: '.75rem',
+                fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)',
                 color: 'var(--t4)', lineHeight: 1.55,
               }}>
                 {r.desc}
@@ -316,15 +316,15 @@ export default function PrivacidadePage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--f-sans)', fontWeight: 700,
-          fontSize: '1.15rem', color: 'var(--t0)', marginBottom: 12,
+          fontSize: 'var(--fs-lg)', color: 'var(--t0)', marginBottom: 12,
         }}>
           Cookies e Armazenamento Local
         </h2>
-        <p style={{ fontSize: '.84rem', color: 'var(--t3)', lineHeight: 1.7, marginBottom: 10 }}>
+        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.7, marginBottom: 10 }}>
           O aplicativo JURIR utiliza armazenamento local (<em>localStorage</em>) exclusivamente para manter sua sessão autenticada
           e preferências da interface (tema, idioma). Não utilizamos cookies de rastreamento, publicidade ou analytics de terceiros.
         </p>
-        <p style={{ fontSize: '.84rem', color: 'var(--t3)', lineHeight: 1.7 }}>
+        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.7 }}>
           No aplicativo Android, o <strong>Capacitor WebView</strong> usa armazenamento interno isolado, acessível apenas pelo JURIR,
           sem acesso de outros aplicativos.
         </p>
@@ -340,11 +340,11 @@ export default function PrivacidadePage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--f-sans)', fontWeight: 700,
-          fontSize: '1.15rem', color: 'var(--cr4)', marginBottom: 10,
+          fontSize: 'var(--fs-lg)', color: 'var(--cr4)', marginBottom: 10,
         }}>
           Menores de Idade
         </h2>
-        <p style={{ fontSize: '.82rem', color: 'var(--t3)', lineHeight: 1.7 }}>
+        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.7 }}>
           O JURIR é destinado exclusivamente a maiores de 18 anos ou emancipados. Não coletamos intencionalmente dados de menores.
           Se identificarmos que um usuário é menor de idade, a conta será encerrada e os dados excluídos imediatamente.
         </p>
@@ -361,11 +361,11 @@ export default function PrivacidadePage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--f-sans)', fontWeight: 700,
-          fontSize: '1.15rem', color: 'var(--t0)', marginBottom: 10,
+          fontSize: 'var(--fs-lg)', color: 'var(--t0)', marginBottom: 10,
         }}>
           Alterações nesta Política
         </h2>
-        <p style={{ fontSize: '.82rem', color: 'var(--t3)', lineHeight: 1.7 }}>
+        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.7 }}>
           Podemos atualizar esta política periodicamente. Quando houver alterações relevantes, notificaremos por e-mail
           e/ou por aviso na plataforma com antecedência mínima de 15 dias. O uso continuado após a vigência das alterações
           constitui aceite da nova política.
@@ -391,11 +391,11 @@ export default function PrivacidadePage() {
           <Mail size={20} />
         </div>
         <h2 className="t-display" style={{
-          fontSize: '1.4rem', fontWeight: 600, color: 'var(--t0)', marginBottom: 10,
+          fontSize: 'var(--fs-2xl)', fontWeight: 600, color: 'var(--t0)', marginBottom: 10,
         }}>
           Encarregado de Dados (DPO)
         </h2>
-        <p style={{ fontSize: '.86rem', color: 'var(--t3)', lineHeight: 1.7, marginBottom: 20, maxWidth: 440, margin: '0 auto 20px' }}>
+        <p style={{ fontSize: 'var(--fs-base)', color: 'var(--t3)', lineHeight: 1.7, marginBottom: 20, maxWidth: 440, margin: '0 auto 20px' }}>
           Para exercer seus direitos, solicitar exclusão de dados, ou tirar dúvidas sobre esta política,
           entre em contato com nosso Encarregado de Proteção de Dados:
         </p>
@@ -403,7 +403,7 @@ export default function PrivacidadePage() {
           display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--co7)', color: '#fff',
           borderRadius: 'var(--r-pill)', padding: '10px 24px',
-          fontFamily: 'var(--f-sans)', fontWeight: 600, fontSize: '.84rem',
+          fontFamily: 'var(--f-sans)', fontWeight: 600, fontSize: 'var(--fs-sm)',
           textDecoration: 'none',
           boxShadow: 'var(--shadow-cobalt)',
           transition: 'opacity .15s',
@@ -418,21 +418,21 @@ export default function PrivacidadePage() {
           marginTop: 24, paddingTop: 20,
           borderTop: '1px solid var(--b-subtle)',
           display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 24,
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.06em',
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.06em',
         }}>
-          <a href="https://sambanova.ai/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t5)', textDecoration: 'none' }}>
+          <a href="https://sambanova.ai/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t3)', textDecoration: 'none' }}>
             SambaNova Privacy Policy ↗
           </a>
-          <a href="https://cerebras.ai/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t5)', textDecoration: 'none' }}>
+          <a href="https://cerebras.ai/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t3)', textDecoration: 'none' }}>
             Cerebras Privacy Policy ↗
           </a>
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t5)', textDecoration: 'none' }}>
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t3)', textDecoration: 'none' }}>
             Google Privacy Policy ↗
           </a>
-          <a href="https://openrouter.ai/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t5)', textDecoration: 'none' }}>
+          <a href="https://openrouter.ai/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t3)', textDecoration: 'none' }}>
             OpenRouter Privacy Policy ↗
           </a>
-          <a href="https://stripe.com/br/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t5)', textDecoration: 'none' }}>
+          <a href="https://stripe.com/br/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--t3)', textDecoration: 'none' }}>
             Stripe Privacy Policy ↗
           </a>
         </div>
@@ -441,7 +441,7 @@ export default function PrivacidadePage() {
       {/* ── FOOTER NOTE ── */}
       <div style={{
         marginTop: 40, textAlign: 'center',
-        fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.1em',
+        fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.1em',
       }}>
         © {new Date().getFullYear()} {APP_NAME} · INTELIGÊNCIA JURÍDICA QUÂNTICA<br />
         <span style={{ opacity: .7 }}>Esta política é parte integrante dos Termos de Uso do JURIR.</span>

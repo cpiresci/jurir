@@ -51,14 +51,14 @@ export default function DocumentosPage() {
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+          padding: '5px 14px', fontSize: 'var(--fs-xs)', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <FileText size={11}/> ANÁLISE DE DOCUMENTOS
         </div>
         <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>
           Upload de Documentos
         </h1>
-        <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>
+        <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-base)' }}>
           Faça upload de contratos, petições ou qualquer documento jurídico. O sistema extrai cláusulas críticas e gera um prompt enriquecido para análise completa.
         </p>
       </div>
@@ -80,7 +80,7 @@ export default function DocumentosPage() {
           <>
             <FileText size={32} style={{ color: 'var(--jade2)', marginBottom: 10 }}/>
             <div style={{ fontWeight: 600, color: 'var(--p1)', marginBottom: 4 }}>{file.name}</div>
-            <div style={{ fontSize: '.78rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)' }}>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)' }}>
               {(file.size / 1024).toFixed(0)} KB · clique para trocar
             </div>
           </>
@@ -88,13 +88,13 @@ export default function DocumentosPage() {
           <>
             <Upload size={32} style={{ color: 'var(--p5)', marginBottom: 10 }}/>
             <div style={{ fontWeight: 600, color: 'var(--p2)', marginBottom: 4 }}>Arraste ou clique para selecionar</div>
-            <div style={{ fontSize: '.78rem', color: 'var(--p5)' }}>PDF · DOCX · TXT · máx. 10 MB</div>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)' }}>PDF · DOCX · TXT · máx. 10 MB</div>
           </>
         )}
       </div>
 
       <div style={{ marginBottom: 20 }}>
-        <label style={{ display: 'block', fontSize: '.78rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>
+        <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>
           CONTEXTO ADICIONAL (opcional)
         </label>
         <textarea value={context} onChange={e => setContext(e.target.value)}
@@ -102,7 +102,7 @@ export default function DocumentosPage() {
           style={{ width: '100%', minHeight: 80, resize: 'vertical',
             background: 'rgba(12,12,30,0.7)', border: '1px solid var(--b-neutral)',
             borderRadius: 'var(--r-md)', color: 'var(--p1)', fontFamily: 'var(--f-sans)',
-            fontSize: '.88rem', lineHeight: 1.6, padding: '12px 16px', outline: 'none' }}
+            fontSize: 'var(--fs-base)', lineHeight: 1.6, padding: '12px 16px', outline: 'none' }}
           onFocus={e => e.target.style.borderColor = 'var(--cr3)'}
           onBlur={e  => e.target.style.borderColor = 'var(--b-neutral)'}
         />
@@ -124,17 +124,17 @@ export default function DocumentosPage() {
               { label: 'Valor Envolvido',   val: result.valor_envolvido || '—' },
             ].map(({ label, val }) => (
               <div key={label} style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '14px 16px' }}>
-                <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8, fontWeight: 500 }}>{label}</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--p1)', wordBreak: 'break-word' }}>{val}</div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8, fontWeight: 500 }}>{label}</div>
+                <div style={{ fontSize: 'var(--fs-md)', fontWeight: 700, color: 'var(--p1)', wordBreak: 'break-word' }}>{val}</div>
               </div>
             ))}
           </div>
 
           {result.partes && Object.values(result.partes).some(Boolean) && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
-              <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10, fontWeight: 500 }}>PARTES IDENTIFICADAS</div>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10, fontWeight: 500 }}>PARTES IDENTIFICADAS</div>
               {Object.entries(result.partes).map(([k, v]) => v && (
-                <div key={k} style={{ display: 'flex', gap: 10, fontSize: '.85rem', marginBottom: 8 }}>
+                <div key={k} style={{ display: 'flex', gap: 10, fontSize: 'var(--fs-base)', marginBottom: 8 }}>
                   <span style={{ color: 'var(--p4)', minWidth: 100, textTransform: 'capitalize', fontWeight: 500 }}>{k}:</span>
                   <span style={{ color: 'var(--p1)' }}>{v}</span>
                 </div>
@@ -146,7 +146,7 @@ export default function DocumentosPage() {
             <div style={{ background: 'var(--surface)', border: '1px solid rgba(185,28,28,0.2)', borderRadius: 'var(--r-md)', padding: 18 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
                 <AlertTriangle size={14} style={{ color: 'var(--cr4)' }}/>
-                <div style={{ fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em' }}>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--cr4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em' }}>
                   CLÁUSULAS CRÍTICAS ({result.clausulas_criticas.length})
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function DocumentosPage() {
                 {result.clausulas_criticas.map((c, i) => (
                   <div key={i} style={{ background: 'rgba(185,28,28,0.05)', border: '1px solid rgba(185,28,28,0.15)',
                     borderRadius: 'var(--r-sm)', padding: '10px 14px' }}>
-                    <div style={{ fontSize: '.82rem', color: 'var(--p2)', lineHeight: 1.6 }}>{c}</div>
+                    <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--p2)', lineHeight: 1.6 }}>{c}</div>
                   </div>
                 ))}
               </div>
@@ -163,15 +163,15 @@ export default function DocumentosPage() {
 
           {result.texto_preview && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
-              <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>PREVIEW DO TEXTO</div>
-              <p style={{ fontSize: '.82rem', color: 'var(--p4)', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{result.texto_preview}…</p>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 10 }}>PREVIEW DO TEXTO</div>
+              <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{result.texto_preview}…</p>
             </div>
           )}
 
           {result.enriched_prompt && (
             <div style={{ background: 'linear-gradient(135deg, var(--surface), var(--ridge))',
               border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-lg)', padding: 20, textAlign: 'center' }}>
-              <div style={{ fontSize: '.88rem', color: 'var(--p2)', marginBottom: 12 }}>
+              <div style={{ fontSize: 'var(--fs-base)', color: 'var(--p2)', marginBottom: 12 }}>
                 Documento processado. Envie para análise jurídica completa pelos 16 agentes.
               </div>
               <button className="btn btn-crimson" onClick={useAsPrompt}>

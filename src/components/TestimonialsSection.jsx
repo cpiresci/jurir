@@ -35,32 +35,32 @@ function TestimonialCard({ t }) {
     >
       <div style={{
         position: 'absolute', top: -8, left: 18, fontFamily: 'var(--f-display)',
-        fontSize: '5rem', color: 'rgba(0,242,254,0.08)', lineHeight: 1, pointerEvents: 'none',
+        fontSize: 'var(--fs-8xl)', color: 'rgba(0,242,254,0.08)', lineHeight: 1, pointerEvents: 'none',
       }}>&ldquo;</div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, position: 'relative' }}>
         <div style={{
-          fontFamily: 'var(--f-display)', fontSize: '1.6rem', fontWeight: 700,
+          fontFamily: 'var(--f-display)', fontSize: 'var(--fs-2xl)', fontWeight: 700,
           background: 'var(--g-quantum)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
         }}>{t.score}</div>
         <span style={{
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--jade2)',
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--jade2)',
           letterSpacing: '.12em', background: 'rgba(16,185,129,0.15)',
           border: '1px solid rgba(16,185,129,0.2)', borderRadius: 999, padding: '2px 9px',
         }}>{t.verdict}</span>
       </div>
       <div style={{
-        fontFamily: 'var(--f-display)', fontSize: '.88rem', color: 'var(--t2)',
+        fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)', color: 'var(--t2)',
         lineHeight: 1.75, marginBottom: 18, fontStyle: 'italic', position: 'relative',
       }}>{t.text}</div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{
           width: 34, height: 34, borderRadius: '50%', background: 'var(--g-quantum)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.8rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'var(--fs-sm)',
           color: 'var(--void)', fontFamily: 'var(--f-sans)', fontWeight: 700, flexShrink: 0,
         }}>{t.initial}</div>
         <div>
-          <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.8rem', fontWeight: 600, color: 'var(--t1)' }}>{t.name}</div>
-          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.07em' }}>{t.role}</div>
+          <div style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', fontWeight: 600, color: 'var(--t1)' }}>{t.name}</div>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.07em' }}>{t.role}</div>
         </div>
       </div>
     </div>
@@ -83,7 +83,7 @@ export default function TestimonialsSection() {
           <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>sabe a verdade</span>
         </h2>
         <p style={{
-          fontFamily: 'var(--f-display)', fontSize: '.9rem', color: 'var(--t3)',
+          fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)', color: 'var(--t3)',
           lineHeight: 1.75, maxWidth: 540, margin: '0 auto 48px',
         }}>
           Casos reais de usuários que tomaram decisões mais inteligentes com o JURIR Score.
@@ -109,7 +109,7 @@ export default function TestimonialsSection() {
                 color: a.color, lineHeight: 1, marginBottom: 6,
               }}>{a.val}</div>
               <div style={{
-                fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
+                fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)',
                 letterSpacing: '.1em', lineHeight: 1.5, whiteSpace: 'pre-line',
               }}>{a.label}</div>
             </div>

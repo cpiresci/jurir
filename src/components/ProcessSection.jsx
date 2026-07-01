@@ -57,7 +57,7 @@ function ProcessCard({ step }) {
         background: 'rgba(0,242,254,0.06)',
         border: '1px solid rgba(0,242,254,0.10)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '1.2rem', marginBottom: 16,
+        fontSize: 'var(--fs-xl)', marginBottom: 16,
         position: 'relative',
         boxShadow: '0 0 0 6px rgba(0,242,254,0.03)',
         flexShrink: 0,
@@ -68,7 +68,7 @@ function ProcessCard({ step }) {
           position: 'absolute', top: -5, right: -5,
           width: 19, height: 19, borderRadius: '50%',
           background: 'linear-gradient(135deg,#00f2fe,#4facfe)',
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem', fontWeight: 700,
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700,
           color: '#050507',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
@@ -77,13 +77,13 @@ function ProcessCard({ step }) {
       </div>
 
       <h3 style={{
-        fontFamily: 'var(--f-sans)', fontSize: '.84rem', fontWeight: 700,
+        fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', fontWeight: 700,
         color: 'var(--t0)', marginBottom: 9, letterSpacing: '.01em',
       }}>
         {step.title}
       </h3>
       <p style={{
-        fontFamily: 'var(--f-display)', fontSize: '.78rem', color: 'var(--t3)',
+        fontFamily: 'var(--f-display)', fontSize: 'var(--fs-xs)', color: 'var(--t3)',
         lineHeight: 1.65, fontWeight: 400,
       }}>
         {step.desc}
@@ -124,7 +124,7 @@ export default function ProcessSection() {
           <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>funciona</span>
         </h2>
         <p style={{
-          fontFamily: 'var(--f-display)', fontSize: '.9rem', color: 'var(--t3)',
+          fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)', color: 'var(--t3)',
           lineHeight: 1.75, maxWidth: 540, margin: '0 auto 56px',
         }}>
           Quatro etapas que transformam a descrição do seu caso em um veredicto

@@ -40,11 +40,11 @@ export default function ResetPasswordPage() {
       <div style={{ width: '100%', maxWidth: 400, background: 'var(--surface)', border: '1px solid var(--b-neutral)',
         borderRadius: 'var(--r-xl)', padding: 32 }}>
 
-        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)',
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)',
           letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 8 }}>
           JURIR · ACESSO
         </div>
-        <h2 className="t-display" style={{ fontSize: '1.7rem', fontWeight: 400, color: 'var(--t0)', marginBottom: 24 }}>
+        <h2 className="t-display" style={{ fontSize: 'var(--fs-3xl)', fontWeight: 400, color: 'var(--t0)', marginBottom: 24 }}>
           Nova senha
         </h2>
 
@@ -52,12 +52,12 @@ export default function ResetPasswordPage() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '24px 0' }}>
             <CheckCircle size={40} style={{ color: 'var(--jade2)' }}/>
             <p style={{ color: 'var(--t2)', textAlign: 'center' }}>Senha redefinida com sucesso!</p>
-            <p style={{ color: 'var(--t4)', fontSize: '.82rem' }}>Redirecionando…</p>
+            <p style={{ color: 'var(--t4)', fontSize: 'var(--fs-sm)' }}>Redirecionando…</p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div>
-              <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
+              <label style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)',
                 letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 7, display: 'block' }}>
                 Nova senha
               </label>
@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
                 onKeyDown={e => e.key === 'Enter' && handle()}/>
             </div>
             <div>
-              <label style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
+              <label style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)',
                 letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 7, display: 'block' }}>
                 Confirmar senha
               </label>
@@ -76,7 +76,7 @@ export default function ResetPasswordPage() {
             </div>
 
             {err && (
-              <p style={{ color: 'var(--cr3)', fontSize: '.8rem', padding: '9px 12px',
+              <p style={{ color: 'var(--cr3)', fontSize: 'var(--fs-sm)', padding: '9px 12px',
                 background: 'rgba(192,24,24,0.05)', border: '1px solid rgba(192,24,24,0.2)',
                 borderRadius: 'var(--r-sm)' }}>
                 {err}

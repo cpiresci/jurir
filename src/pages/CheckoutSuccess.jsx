@@ -78,7 +78,7 @@ export default function CheckoutSuccessPage() {
               Pagamento confirmado!
             </h1>
             <p style={{ color: info.color, fontWeight: 600, marginBottom: 8 }}>{info.label}</p>
-            <p style={{ color: 'var(--p4)', fontSize: '.9rem', lineHeight: 1.6, marginBottom: 32 }}>
+            <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-base)', lineHeight: 1.6, marginBottom: 32 }}>
               {info.msg}
             </p>
 
@@ -104,7 +104,7 @@ export default function CheckoutSuccessPage() {
             </div>
 
             {sessionId && (
-              <p style={{ fontSize: '.75rem', color: 'var(--p5)', marginTop: 24, fontFamily: 'var(--f-mono)' }}>
+              <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', marginTop: 24, fontFamily: 'var(--f-mono)' }}>
                 ID da sessão: {sessionId.slice(0, 24)}…
               </p>
             )}
