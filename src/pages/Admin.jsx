@@ -215,11 +215,11 @@ function FinancialTab({ api }) {
 }
 
 function SystemTab({ api }) {
-  const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
+  const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [rag, setRag] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
   const load = useCallback(() => {
     setLoading(true);
-    Promise.all([api("/api/health").catch(()=>null), api("/api/admin/llm/status").catch(()=>null), api("/api/admin/logs?limit=50").catch(()=>[])])
-      .then(([h,l,lg]) => { setHealth(h); setLlm(l); setLogs(lg.logs||lg||[]); }).finally(() => setLoading(false));
+    Promise.all([api("/api/health").catch(()=>null), api("/api/admin/llm/status").catch(()=>null), api("/api/admin/rag/status").catch(()=>null), api("/api/admin/logs?limit=50").catch(()=>[])])
+      .then(([h,l,r,lg]) => { setHealth(h); setLlm(l); setRag(r); setLogs(lg.logs||lg||[]); }).finally(() => setLoading(false));
   }, [api]);
   useEffect(() => { load(); }, [load]);
   async function resetCB(name) { try { await api(`/api/admin/llm/${name}/reset`, { method: "POST" }); load(); } catch(e) { alert(e.message); } }
@@ -233,7 +233,23 @@ function SystemTab({ api }) {
           <div style={{ marginTop: 8 }}><Badge color={health?.status==="ok"?T.success:T.danger} bg={health?.status==="ok"?T.successLight:T.dangerLight}>{health?.status||(loading?"…":"offline")}</Badge></div>
           {health?.uptime && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Uptime: {health.uptime}</div>}
         </div>
+        {rag?.embedding && (
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `4px solid ${rag.embedding.degraded ? T.danger : (rag.embedding.provider === "voyage" ? T.warning : T.success)}` }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.textMuted }}>Embedding RAG</div>
+            <div style={{ marginTop: 8 }}>
+              <Badge color={rag.embedding.degraded ? T.danger : (rag.embedding.provider === "voyage" ? T.warning : T.success)} bg={rag.embedding.degraded ? T.dangerLight : (rag.embedding.provider === "voyage" ? T.warningLight : T.successLight)}>
+                {rag.embedding.provider} · dim {rag.embedding.dim}
+              </Badge>
+            </div>
+            {rag.rag_corpus && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Corpus: {rag.rag_corpus.total_chunks} trechos · Qdrant {rag.rag_corpus.qdrant_ready ? "conectado" : "indisponível"}</div>}
+          </div>
+        )}
       </div>
+      {rag?.embedding?.warning && (
+        <div style={{ background: T.dangerLight, border: `1px solid ${T.danger}`, borderRadius: 8, padding: "12px 16px", marginBottom: 24, fontSize: 13, color: T.danger }}>
+          ⚠ {rag.embedding.warning}
+        </div>
+      )}
       {providers.length > 0 && (
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted, marginBottom: 12 }}>Circuit Breakers LLM</div>
