@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useStore } from '../store';
 import { checkHealth } from '../lib/api';
@@ -23,6 +23,19 @@ export default function Navbar() {
   const [engineStatus, setEngineStatus]= useState('checking');
   const toolsRef = useRef(null);
   const { authToken, userData, clearAuth, openModal, addToast } = useStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Navega para a Home (se necessário) e faz scroll suave até a seção com o id informado.
+  // Corrige o bug de "/#analise" colidir com o HashRouter (o "#" já pertence ao roteador).
+  const goToSection = (id) => {
+    if (location.pathname === '/') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 250);
+    }
+  };
 
   const isSolo = !!(authToken && userData?.is_unlimited);
   const ferramentas = isSolo
@@ -81,9 +94,9 @@ export default function Navbar() {
 
       {/* Center links */}
       <div className="nav-links desktop-only">
-        <NLink href="/#analise" onClick={() => setTimeout(() => document.getElementById("analise")?.scrollIntoView({ behavior: "smooth" }), 100)}>Análise</NLink>
-        <NLink href="/#agentes" onClick={() => setTimeout(() => document.getElementById("agentes")?.scrollIntoView({ behavior: "smooth" }), 100)}>Agentes</NLink>
-        <NLink href="/#precos" onClick={() => setTimeout(() => document.getElementById("precos")?.scrollIntoView({ behavior: "smooth" }), 100)}>Preços</NLink>
+        <NLink onClick={() => goToSection('analise')}>Análise</NLink>
+        <NLink onClick={() => goToSection('agentes')}>Agentes</NLink>
+        <NLink onClick={() => goToSection('precos')}>Preços</NLink>
 
         {/* Tools dropdown */}
         <div ref={toolsRef} style={{ position: 'relative' }}>
@@ -162,9 +175,9 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="mobile-menu">
-          <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("analise")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Análise</a>
-          <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("agentes")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Agentes</a>
-          <a style={mobileLink} onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById("precos")?.scrollIntoView({ behavior: "smooth" }), 100); }}>Preços</a>
+          <a style={mobileLink} onClick={() => { setMobileOpen(false); goToSection('analise'); }}>Análise</a>
+          <a style={mobileLink} onClick={() => { setMobileOpen(false); goToSection('agentes'); }}>Agentes</a>
+          <a style={mobileLink} onClick={() => { setMobileOpen(false); goToSection('precos'); }}>Preços</a>
           {ferramentas.map(({ to, label, icon }) => (
             <Link key={to} to={to} style={{ ...mobileLink, display: 'flex', gap: 8, alignItems: 'center' }} onClick={() => setMobileOpen(false)}>
               <span>{icon}</span>{label}
@@ -211,8 +224,14 @@ const mobileLink = {
   letterSpacing: '.02em', textDecoration: 'none', padding: '10px 4px',
   borderBottom: '1px solid var(--b-subtle)', display: 'block',
 };
-function NLink({ href, children, isRouter }) {
+function NLink({ href, children, isRouter, onClick }) {
   const st = navLinkSt();
-  if (isRouter) return <Link to={href} style={st} onMouseEnter={e => e.currentTarget.style.color='var(--co7)'} onMouseLeave={e => e.currentTarget.style.color='var(--t2)'}>{children}</Link>;
-  return <a href={href} style={st} onMouseEnter={e => e.currentTarget.style.color='var(--co7)'} onMouseLeave={e => e.currentTarget.style.color='var(--t2)'}>{children}</a>;
+  const hoverProps = {
+    onMouseEnter: e => e.currentTarget.style.color = 'var(--co7)',
+    onMouseLeave: e => e.currentTarget.style.color = 'var(--t2)',
+  };
+  if (isRouter) return <Link to={href} style={st} {...hoverProps}>{children}</Link>;
+  // Anchors puramente comportamentais (scroll para seção da Home): sem href,
+  // para não colidir com o HashRouter. onClick agora é de fato usado.
+  return <a style={{ ...st, cursor: 'pointer' }} onClick={onClick} {...hoverProps}>{children}</a>;
 }

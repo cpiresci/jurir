@@ -1,30 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
+// type: 'route'  -> navegação real via React Router (SPA, sem reload)
+// type: 'scroll' -> vai para a Home (se preciso) e rola até o id informado em `target`
 const NAV_COLS = [
   {
     heading: 'Análise',
     links: [
-      { label: 'Motor Jurídico',       href: '/#analise' },
-      { label: 'Conselho de Agentes',  href: '/#agentes' },
-      { label: 'Delta Analysis',       href: '/delta' },
-      { label: 'Upload de Documentos', href: '/documentos' },
+      { label: 'Motor Jurídico',       type: 'scroll', target: 'analise' },
+      { label: 'Conselho de Agentes',  type: 'scroll', target: 'agentes' },
+      { label: 'Delta Analysis',       type: 'route',  to: '/delta' },
+      { label: 'Upload de Documentos', type: 'route',  to: '/documentos' },
     ],
   },
   {
     heading: 'Ferramentas',
     links: [
-      { label: 'Gerador de Petições', href: '/peticoes' },
-      { label: 'Simulador Judicial',  href: '/simulador' },
-      { label: 'Monitoramento',       href: '/monitoramento' },
-      { label: 'Verificar Relatório', href: '/verificar' },
+      { label: 'Gerador de Petições', type: 'route', to: '/peticoes' },
+      { label: 'Simulador Judicial',  type: 'route', to: '/simulador' },
+      { label: 'Monitoramento',       type: 'route', to: '/monitoramento' },
+      { label: 'Verificar Relatório', type: 'route', to: '/verificar' },
     ],
   },
   {
     heading: 'Plataforma',
     links: [
-      { label: 'Planos e Preços',         href: '/#precos' },
-      { label: 'Política de Privacidade', href: '/privacidade' },
-      { label: 'Aviso Legal',             href: '/privacidade' },
+      { label: 'Planos e Preços',         type: 'scroll', target: 'precos' },
+      { label: 'Política de Privacidade', type: 'route',  to: '/privacidade' },
+      { label: 'Aviso Legal',             type: 'scroll', target: 'aviso-legal' },
     ],
   },
 ];
@@ -99,38 +102,48 @@ function StatCounter({ value, unit, label }) {
 }
 
 /* ── FooterLink ─────────────────────────────────────────────────────── */
-function FooterLink({ href, children }) {
+// Renderiza <Link> do React Router para rotas internas (evita full-reload/404
+// no GitHub Pages) ou um <a> comportamental que rola até uma seção da Home.
+function FooterLink({ link, onScroll, children }) {
   const [hov, setHov] = useState(false);
+  const style = {
+    display: 'flex', alignItems: 'center', gap: 10,
+    fontSize: 'var(--fs-sm)', fontFamily: 'var(--f-sans)',
+    color: hov ? 'var(--co7)' : 'var(--t3)',
+    textDecoration: 'none',
+    transition: 'color .2s',
+    padding: '5px 0',
+    cursor: 'pointer',
+  };
+  const indicator = (
+    <span style={{
+      display: 'inline-block',
+      width: hov ? 20 : 6, height: 1,
+      background: hov
+        ? 'linear-gradient(90deg,var(--co7),var(--co8))'
+        : 'rgba(0,242,254,0.18)',
+      transition: 'width .25s ease',
+      flexShrink: 0, borderRadius: 2,
+    }}/>
+  );
+  const hoverProps = { onMouseEnter: () => setHov(true), onMouseLeave: () => setHov(false) };
+
+  if (link.type === 'route') {
+    return (
+      <Link to={link.to} style={style} {...hoverProps}>
+        {indicator}{children}
+      </Link>
+    );
+  }
   return (
-    <a
-      href={href}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        fontSize: 'var(--fs-sm)', fontFamily: 'var(--f-sans)',
-        color: hov ? 'var(--co7)' : 'var(--t3)',
-        textDecoration: 'none',
-        transition: 'color .2s',
-        padding: '5px 0',
-      }}
-    >
-      <span style={{
-        display: 'inline-block',
-        width: hov ? 20 : 6, height: 1,
-        background: hov
-          ? 'linear-gradient(90deg,var(--co7),var(--co8))'
-          : 'rgba(0,242,254,0.18)',
-        transition: 'width .25s ease',
-        flexShrink: 0, borderRadius: 2,
-      }}/>
-      {children}
+    <a style={style} onClick={() => onScroll(link.target)} {...hoverProps}>
+      {indicator}{children}
     </a>
   );
 }
 
 /* ── NavColumn accordion no mobile ─────────────────────────────────── */
-function NavColumn({ col, mobile }) {
+function NavColumn({ col, mobile, onScroll }) {
   const [open, setOpen] = useState(false);
   const isOpen = !mobile || open;
 
@@ -176,7 +189,7 @@ function NavColumn({ col, mobile }) {
         transition: 'max-height .3s ease, opacity .25s ease',
       }}>
         {col.links.map(l => (
-          <FooterLink key={l.label} href={l.href}>{l.label}</FooterLink>
+          <FooterLink key={l.label} link={l} onScroll={onScroll}>{l.label}</FooterLink>
         ))}
       </div>
     </div>
@@ -187,6 +200,18 @@ function NavColumn({ col, mobile }) {
 export default function Footer() {
   const year   = new Date().getFullYear();
   const mobile = useIsMobile(768);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Mesma lógica do Navbar: vai para a Home (se necessário) e rola até o id.
+  const goToSection = (id) => {
+    if (location.pathname === '/') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 250);
+    }
+  };
 
   return (
     <footer style={{
@@ -341,7 +366,7 @@ export default function Footer() {
             </div>
 
             {/* Aviso legal */}
-            <div style={{
+            <div id="aviso-legal" style={{
               padding: '14px 16px',
               background: 'rgba(0,242,254,0.02)',
               border: '1px solid rgba(0,242,254,0.07)',
@@ -376,14 +401,14 @@ export default function Footer() {
                   borderTop: '1px solid rgba(0,242,254,0.06)',
                   padding: '16px 0',
                 }}>
-                  <NavColumn col={col} mobile={true} />
+                  <NavColumn col={col} mobile={true} onScroll={goToSection} />
                 </div>
               ))}
             </div>
           ) : (
             /* Desktop: 3 colunas inline */
             NAV_COLS.map(col => (
-              <NavColumn key={col.heading} col={col} mobile={false} />
+              <NavColumn key={col.heading} col={col} mobile={false} onScroll={goToSection} />
             ))
           )}
         </div>
