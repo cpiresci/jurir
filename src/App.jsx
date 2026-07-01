@@ -22,6 +22,9 @@ import CheckoutCancelPage   from './pages/CheckoutCancel';
 import ContaPage            from './pages/Conta';
 import ResetPasswordPage    from './pages/ResetPassword';
 import VerifyEmailPage      from './pages/VerifyEmail';
+import IndiquePage          from './pages/Indique';
+import BlogPage             from './pages/Blog';
+import BlogPostPage         from './pages/BlogPost';
 import { useStore } from './store';
 
 export default function App() {
@@ -52,6 +55,9 @@ export default function App() {
             <Route path="/conta"           element={<ContaPage />} />
             <Route path="/reset-password"   element={<ResetPasswordPage />} />
             <Route path="/verify-email"     element={<VerifyEmailPage />} />
+            <Route path="/indique"          element={<IndiquePage />} />
+            <Route path="/blog"             element={<BlogPage />} />
+            <Route path="/blog/:slug"       element={<BlogPostPage />} />
           </Routes>
         </main>
       </div>
