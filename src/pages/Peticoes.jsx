@@ -5,10 +5,18 @@ import { useStore } from '../store';
 import { getAnalyses, generatePetition, previewPetition } from '../lib/api';
 
 const TIPOS = [
-  'Petição Inicial', 'Recurso de Apelação', 'Contestação',
+  'Petição Inicial', 'Recurso de Apelação', 'Contestação', 'Réplica',
   'Agravo de Instrumento', 'Embargos de Declaração',
   'Mandado de Segurança', 'Habeas Corpus',
+  'Recurso Especial', 'Recurso Extraordinário',
 ];
+
+// [bloco2] campos condicionais por tipo — MS/HC têm autoridade coatora
+// em vez de réu; Embargos precisa do vício apontado; REsp/RE não usa vara.
+const TIPOS_COM_AUTORIDADE_COATORA = new Set(['Mandado de Segurança', 'Habeas Corpus']);
+const TIPOS_COM_VICIO              = new Set(['Embargos de Declaração']);
+const TIPOS_COM_PACIENTE           = new Set(['Habeas Corpus']);
+const TIPOS_COM_INSTANCIA_RECURSO  = new Set(['Recurso Especial', 'Recurso Extraordinário']);
 
 export default function PeticoesPage() {
   const { authToken, userData, openModal, addToast } = useStore();
@@ -26,6 +34,8 @@ export default function PeticoesPage() {
     analysis_id: '', tipo: 'Petição Inicial',
     autor_nome: '', autor_qualif: '', reu_nome: '', reu_qualif: '',
     vara: '', numero_processo: '', advogado_nome: '', advogado_oab: '', cidade: 'São Paulo',
+    autoridade_coatora: '', omissao_contradicao_obscuridade: '',
+    paciente_nome: '', instancia_recurso: 'STJ',
   });
 
   useEffect(() => {
@@ -225,6 +235,33 @@ export default function PeticoesPage() {
             {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
+        {TIPOS_COM_AUTORIDADE_COATORA.has(form.tipo) && (
+          <div style={{ marginBottom: 20 }}>
+            {F('autoridade_coatora', 'AUTORIDADE COATORA', 'Ex: Delegado(a) Titular da 5ª DP / Secretário(a) da Fazenda')}
+          </div>
+        )}
+        {TIPOS_COM_PACIENTE.has(form.tipo) && (
+          <div style={{ marginBottom: 20 }}>
+            {F('paciente_nome', 'PACIENTE (se diferente do impetrante)', 'Nome do(a) paciente')}
+          </div>
+        )}
+        {TIPOS_COM_VICIO.has(form.tipo) && (
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>VÍCIO APONTADO (OMISSÃO / CONTRADIÇÃO / OBSCURIDADE)</label>
+            <input className="fg-input" value={form.omissao_contradicao_obscuridade}
+              placeholder="Ex: a decisão não enfrentou o pedido de honorários sucumbenciais"
+              onChange={e => setForm(f => ({ ...f, omissao_contradicao_obscuridade: e.target.value }))} />
+          </div>
+        )}
+        {TIPOS_COM_INSTANCIA_RECURSO.has(form.tipo) && (
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>INSTÂNCIA DO RECURSO</label>
+            <select className="fg-input" value={form.instancia_recurso} onChange={e => setForm(f => ({ ...f, instancia_recurso: e.target.value }))}>
+              <option value="STJ">STJ — Recurso Especial</option>
+              <option value="STF">STF — Recurso Extraordinário</option>
+            </select>
+          </div>
+        )}
         <div style={{ height: 1, background: 'var(--b-neutral)', marginBottom: 24 }}/>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 24 }}>
           {F('autor_nome',    'NOME DO AUTOR',       'Ex: João da Silva')}
