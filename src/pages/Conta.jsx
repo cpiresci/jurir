@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
-import { User, CreditCard, BarChart2, Building2, Zap, Code2, AlertTriangle, RefreshCw, ShieldCheck, Upload, Clock, XCircle } from 'lucide-react';
+import { User, CreditCard, BarChart2, Building2, Zap, Code2, AlertTriangle, RefreshCw, ShieldCheck, Upload, Clock, XCircle, MailWarning, Smartphone, Copy, Check } from 'lucide-react';
 import { useStore } from '../store';
-import { apiFetch, submitOabVerification } from '../lib/api';
+import { apiFetch, submitOabVerification, resendVerification, setup2FA, verify2FA, disable2FA } from '../lib/api';
 
 const PLAN_LABEL = { free:'Gratuito', credito:'Crédito Avulso', mensal:'Solo', escritorio:'Escritório', api:'API' };
 const PLAN_COLOR = { free:'var(--p5)', credito:'var(--au6)', mensal:'var(--cr3)', escritorio:'var(--co7)', api:'var(--jade2)' };
@@ -59,6 +59,10 @@ export default function ContaPage() {
     <PageWrap>
       <h1 className="t-display" style={{ fontSize:'clamp(1.75rem,4vw,2.25rem)', fontWeight:700, marginBottom:6 }}>Minha Conta</h1>
       <p style={{ color:'var(--p4)', fontSize: 'var(--fs-sm)', marginBottom:32 }}>{user.email}</p>
+
+      {/* [bloco6-auth] Banner de email não verificado — bloqueia geração de
+          peças e monitoramento até confirmar (ver requireEmailVerified no backend). */}
+      {!user.email_verified && <EmailVerifyBanner authToken={authToken} addToast={addToast} />}
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:16, marginBottom:24 }}>
 
@@ -175,6 +179,8 @@ export default function ContaPage() {
         )}
         {/* [bloco5-oab] Verificação de OAB */}
         <OabCard oab={user.oab} authToken={authToken} addToast={addToast} onUpdated={load} />
+        {/* [bloco6-auth] Autenticação em duas etapas */}
+        <TwoFactorCard enabled={user.two_factor_enabled} authToken={authToken} addToast={addToast} onUpdated={load} />
       </div>
 
       {/* Histórico de pagamentos */}
@@ -340,6 +346,181 @@ function OabCard({ oab, authToken, addToast, onUpdated }) {
               {sending ? 'Enviando…' : (status === 'rejected' ? 'Reenviar' : 'Enviar para verificação')}
             </button>
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── [bloco6-auth] Banner de email não verificado ────────────────────────
+function EmailVerifyBanner({ authToken, addToast }) {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const handleResend = async () => {
+    setSending(true);
+    try {
+      await resendVerification(authToken);
+      setSent(true);
+      addToast('Email de confirmação reenviado!', 'success');
+    } catch (e) {
+      addToast(e.message, 'error');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div style={{ ...cardSt, marginBottom:16, border:'1px solid var(--b-gold)',
+      background:'rgba(180,140,60,.05)', display:'flex', gap:12, alignItems:'flex-start' }}>
+      <MailWarning size={18} style={{ color:'var(--au6)', flexShrink:0, marginTop:2 }}/>
+      <div style={{ flex:1 }}>
+        <p style={{ fontSize: 'var(--fs-sm)', fontWeight:600, color:'var(--au5)', marginBottom:4 }}>
+          Confirme seu email
+        </p>
+        <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', lineHeight:1.6, marginBottom:10 }}>
+          Geração de peças e monitoramento de processos ficam bloqueados até você confirmar seu email.
+        </p>
+        <button className="btn btn-ghost btn-sm" onClick={handleResend} disabled={sending || sent}>
+          {sent ? 'Email reenviado ✓' : sending ? 'Enviando…' : 'Reenviar email de confirmação'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── [bloco6-auth] Card de autenticação em duas etapas (TOTP) ────────────
+// Estados: off (botão pra ativar) / setup (mostra QR + campo de código) /
+// backup (mostra os 8 códigos gerados, uma única vez) / on (badge ativo).
+function TwoFactorCard({ enabled, authToken, addToast, onUpdated }) {
+  const [step, setStep] = useState(enabled ? 'on' : 'off');
+  const [qrCode, setQrCode] = useState(null);
+  const [secret, setSecret] = useState(null);
+  const [code, setCode] = useState('');
+  const [backupCodes, setBackupCodes] = useState(null);
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleStartSetup = async () => {
+    setBusy(true);
+    try {
+      const data = await setup2FA(authToken);
+      setQrCode(data.qr_code);
+      setSecret(data.secret);
+      setStep('setup');
+    } catch (e) {
+      addToast(e.message, 'error');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!code.trim()) { addToast('Digite o código do app autenticador.', 'error'); return; }
+    setBusy(true);
+    try {
+      const data = await verify2FA(code.trim(), authToken);
+      setBackupCodes(data.backup_codes);
+      setStep('backup');
+      onUpdated();
+    } catch (e) {
+      addToast(e.message, 'error');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDisable = async () => {
+    if (!password) { addToast('Digite sua senha atual pra desativar.', 'error'); return; }
+    if (!confirm('Desativar a autenticação em duas etapas?')) return;
+    setBusy(true);
+    try {
+      await disable2FA(password, authToken);
+      addToast('2FA desativado.', 'success');
+      setStep('off'); setPassword(''); setQrCode(null); setSecret(null); setBackupCodes(null);
+      onUpdated();
+    } catch (e) {
+      addToast(e.message, 'error');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const copyBackupCodes = () => {
+    navigator.clipboard?.writeText(backupCodes.join('\n')).then(() => {
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div style={cardSt}>
+      <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+        <Smartphone size={18} style={{ color: step === 'on' ? 'var(--jade2)' : 'var(--co7)' }}/>
+        <span style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>AUTENTICAÇÃO EM 2 ETAPAS</span>
+      </div>
+
+      {step === 'off' && (
+        <div>
+          <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:12, lineHeight:1.6 }}>
+            Adicione uma camada extra de segurança com um app autenticador (Google Authenticator, Authy, etc).
+          </p>
+          <button className="btn btn-cobalt btn-sm" onClick={handleStartSetup} disabled={busy}>
+            {busy ? 'Gerando…' : 'Ativar 2FA'}
+          </button>
+        </div>
+      )}
+
+      {step === 'setup' && (
+        <div>
+          <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:10, lineHeight:1.6 }}>
+            Escaneie o QR code no seu app autenticador e digite o código gerado.
+          </p>
+          {qrCode && (
+            <img src={qrCode} alt="QR code 2FA" style={{ width:160, height:160, borderRadius:8, marginBottom:10, background:'#fff', padding:8 }}/>
+          )}
+          <p style={{ fontSize: 'var(--fs-2xs)', color:'var(--p5)', fontFamily:'var(--f-mono)', marginBottom:12, wordBreak:'break-all' }}>
+            Não consegue escanear? Digite manualmente: <strong style={{ color:'var(--p3)' }}>{secret}</strong>
+          </p>
+          <div style={{ display:'flex', gap:8, marginBottom:10 }}>
+            <input value={code} onChange={e => setCode(e.target.value)} placeholder="Código de 6 dígitos"
+              style={{ flex:1, padding:'8px 10px', borderRadius:'var(--r-sm)', border:'1px solid var(--b-neutral)', background:'var(--surface)', color:'var(--p1)', fontSize:'var(--fs-sm)' }}/>
+          </div>
+          <button className="btn btn-cobalt btn-sm" onClick={handleConfirm} disabled={busy}>
+            {busy ? 'Confirmando…' : 'Confirmar e ativar'}
+          </button>
+        </div>
+      )}
+
+      {step === 'backup' && backupCodes && (
+        <div>
+          <p style={{ fontSize: 'var(--fs-sm)', fontWeight:600, color:'var(--jade2)', marginBottom:6 }}>2FA ativado ✓</p>
+          <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:10, lineHeight:1.6 }}>
+            Guarde estes 8 códigos de backup em local seguro — cada um funciona uma única vez se você perder o autenticador. Eles não serão mostrados de novo.
+          </p>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:6, padding:12,
+            background:'var(--b-subtle)', borderRadius:'var(--r-sm)', marginBottom:10, fontFamily:'var(--f-mono)', fontSize:'var(--fs-sm)' }}>
+            {backupCodes.map(c => <span key={c} style={{ color:'var(--p2)' }}>{c}</span>)}
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={copyBackupCodes} style={{ display:'inline-flex', alignItems:'center', gap:6, marginBottom:10 }}>
+            {copied ? <Check size={14}/> : <Copy size={14}/>} {copied ? 'Copiado!' : 'Copiar códigos'}
+          </button>
+          <div>
+            <button className="btn btn-cobalt btn-sm" onClick={() => setStep('on')}>Concluir</button>
+          </div>
+        </div>
+      )}
+
+      {step === 'on' && (
+        <div>
+          <p style={{ fontSize: 'var(--fs-md)', fontWeight:700, color:'var(--jade2)', marginBottom:12 }}>Ativado ✓</p>
+          <div style={{ display:'flex', gap:8, marginBottom:8 }}>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Senha atual"
+              style={{ flex:1, padding:'8px 10px', borderRadius:'var(--r-sm)', border:'1px solid var(--b-neutral)', background:'var(--surface)', color:'var(--p1)', fontSize:'var(--fs-sm)' }}/>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={handleDisable} disabled={busy} style={{ color:'var(--cr3)' }}>
+            {busy ? '…' : 'Desativar 2FA'}
+          </button>
         </div>
       )}
     </div>

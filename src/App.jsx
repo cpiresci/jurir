@@ -21,6 +21,7 @@ import CheckoutSuccessPage  from './pages/CheckoutSuccess';
 import CheckoutCancelPage   from './pages/CheckoutCancel';
 import ContaPage            from './pages/Conta';
 import ResetPasswordPage    from './pages/ResetPassword';
+import VerifyEmailPage      from './pages/VerifyEmail';
 import { useStore } from './store';
 
 export default function App() {
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/cancel"          element={<CheckoutCancelPage />} />
             <Route path="/conta"           element={<ContaPage />} />
             <Route path="/reset-password"   element={<ResetPasswordPage />} />
+            <Route path="/verify-email"     element={<VerifyEmailPage />} />
           </Routes>
         </main>
       </div>

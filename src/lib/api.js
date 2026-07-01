@@ -99,14 +99,42 @@ export async function wakeUp(signal) {
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────
-export async function login(email, password) {
-  return apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+// [bloco6-auth] two_factor_code opcional — quando a conta tem 2FA ativo,
+// o backend responde { requires_2fa: true } sem token na 1ª chamada; o
+// AuthModal reenvia com o código preenchido.
+export async function login(email, password, two_factor_code = null) {
+  return apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password, two_factor_code }) });
 }
 export async function register(email, password) {
   return apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) });
 }
 export async function getMe(token) {
   return apiFetch('/api/auth/me', {}, token);
+}
+
+// [bloco6-auth] Verificação de email
+export async function verifyEmail(token) {
+  return apiFetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`);
+}
+export async function resendVerification(token) {
+  return apiFetch('/api/auth/resend-verification', { method: 'POST' }, token);
+}
+
+// [bloco6-auth] Login com Google — credential é o ID token JWT retornado
+// pelo Google Identity Services no callback de renderButton.
+export async function googleLogin(credential, two_factor_code = null) {
+  return apiFetch('/api/auth/google', { method: 'POST', body: JSON.stringify({ credential, two_factor_code }) });
+}
+
+// [bloco6-auth] 2FA (TOTP) — gerenciado em Minha Conta
+export async function setup2FA(token) {
+  return apiFetch('/api/account/2fa/setup', { method: 'POST' }, token);
+}
+export async function verify2FA(code, token) {
+  return apiFetch('/api/account/2fa/verify', { method: 'POST', body: JSON.stringify({ code }) }, token);
+}
+export async function disable2FA(password, token) {
+  return apiFetch('/api/account/2fa/disable', { method: 'POST', body: JSON.stringify({ password }) }, token);
 }
 
 // ── Análise ───────────────────────────────────────────────────────────

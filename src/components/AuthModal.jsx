@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Loader2, Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight, CheckCircle2, ShieldCheck, RotateCcw, KeyRound } from 'lucide-react';
 import { useStore } from '../store';
-import { login, register, getMe, wakeUp, forgotPassword } from '../lib/api';
+import { login, register, getMe, wakeUp, forgotPassword, googleLogin } from '../lib/api';
+import { GOOGLE_CLIENT_ID } from '../lib/constants';
 
 /* ─── Constantes de fase ─── */
-const PHASE = { LOGIN: 'login', REGISTER: 'register', FORGOT: 'forgot', SENT: 'sent' };
+const PHASE = { LOGIN: 'login', REGISTER: 'register', FORGOT: 'forgot', SENT: 'sent', TWOFA: 'twofa' };
 
 /* ─── Partícula decorativa ─── */
 function QuantumOrb({ style }) {
@@ -158,6 +159,48 @@ function Banner({ type, children }) {
   );
 }
 
+/* ─── Botão "Continuar com Google" (Google Identity Services) ─── */
+/* [bloco6-auth] Sem lib React pesada — usa o script global carregado em
+   index.html e renderiza o botão oficial do Google num container próprio.
+   Fica escondido se GOOGLE_CLIENT_ID não estiver configurado. */
+function GoogleButton({ onCredential, disabled }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID || !containerRef.current) return;
+    let cancelled = false;
+
+    const render = () => {
+      if (cancelled || !window.google?.accounts?.id || !containerRef.current) return;
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (resp) => onCredential(resp.credential),
+      });
+      containerRef.current.innerHTML = '';
+      window.google.accounts.id.renderButton(containerRef.current, {
+        theme: 'filled_black', size: 'large', shape: 'pill', width: 320, text: 'continue_with',
+      });
+    };
+
+    if (window.google?.accounts?.id) render();
+    else {
+      const tid = setInterval(() => {
+        if (window.google?.accounts?.id) { clearInterval(tid); render(); }
+      }, 300);
+      return () => { cancelled = true; clearInterval(tid); };
+    }
+    return () => { cancelled = true; };
+  }, []);
+
+  if (!GOOGLE_CLIENT_ID) return null;
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? 'none' : 'auto' }}>
+      <div ref={containerRef} />
+    </div>
+  );
+}
+
 /* ══════════════════════════════════════════════════════ */
 export default function AuthModal() {
   const { modalOpen, closeModal, setAuth, addToast } = useStore();
@@ -169,10 +212,16 @@ export default function AuthModal() {
   const [wakeMsg, setWakeMsg] = useState('');
   const abortRef = useRef(null);
 
+  // [bloco6-auth] Desafio de 2FA — guarda como reautenticar depois do
+  // código: ou { kind: 'password' } (reusa email/pwd já digitados) ou
+  // { kind: 'google', credential } (reenvia o mesmo credential do Google).
+  const [twoFaCode, setTwoFaCode] = useState('');
+  const [pending2fa, setPending2fa] = useState(null);
+
   /* Resetar ao abrir */
   useEffect(() => {
     setPhase(modalOpen === 'register' ? PHASE.REGISTER : PHASE.LOGIN);
-    setErr(''); setEmail(''); setPwd('');
+    setErr(''); setEmail(''); setPwd(''); setTwoFaCode(''); setPending2fa(null);
   }, [modalOpen]);
 
   if (!modalOpen) return null;
@@ -193,14 +242,54 @@ export default function AuthModal() {
     finally { setLoading(false); }
   };
 
-  const handleLogin = () => doWakeAndRun(async () => {
-    if (!email || !pwd) { throw new Error('Preencha todos os campos.'); }
-    const data = await login(email, pwd);
-    const token = data.token || data.access_token;
-    const user = await getMe(token);
+  const finishAuth = async (token, user) => {
     setAuth(token, user);
     addToast(`Bem-vindo, ${user.email?.split('@')[0]}! ⚖`, 'success');
     closeModal();
+  };
+
+  const handleLogin = () => doWakeAndRun(async () => {
+    if (!email || !pwd) { throw new Error('Preencha todos os campos.'); }
+    const data = await login(email, pwd);
+    if (data.requires_2fa) {
+      setPending2fa({ kind: 'password' });
+      setPhase(PHASE.TWOFA);
+      return;
+    }
+    const token = data.token || data.access_token;
+    const user = await getMe(token);
+    await finishAuth(token, user);
+  });
+
+  // [bloco6-auth] Callback do botão "Continuar com Google" — chega com o
+  // ID token JWT já assinado pelo Google, sem precisar de senha.
+  const handleGoogleCredential = (credential) => doWakeAndRun(async () => {
+    const data = await googleLogin(credential);
+    if (data.requires_2fa) {
+      setPending2fa({ kind: 'google', credential });
+      setPhase(PHASE.TWOFA);
+      return;
+    }
+    const token = data.token || data.access_token;
+    const user = await getMe(token);
+    await finishAuth(token, user);
+  });
+
+  // [bloco6-auth] Confirmação do código do app autenticador (ou código de
+  // backup) — reenvia a autenticação original (senha ou Google) com o
+  // segundo fator anexado.
+  const handleVerify2fa = () => doWakeAndRun(async () => {
+    if (!twoFaCode.trim()) { throw new Error('Informe o código de autenticação.'); }
+    let data;
+    if (pending2fa?.kind === 'google') {
+      data = await googleLogin(pending2fa.credential, twoFaCode.trim());
+    } else {
+      data = await login(email, pwd, twoFaCode.trim());
+    }
+    if (data.requires_2fa) { throw new Error('Código de autenticação inválido.'); }
+    const token = data.token || data.access_token;
+    const user = await getMe(token);
+    await finishAuth(token, user);
   });
 
   const handleRegister = () => doWakeAndRun(async () => {
@@ -226,6 +315,7 @@ export default function AuthModal() {
     if (phase === PHASE.LOGIN) handleLogin();
     else if (phase === PHASE.REGISTER) handleRegister();
     else if (phase === PHASE.FORGOT) handleForgot();
+    else if (phase === PHASE.TWOFA) handleVerify2fa();
   };
 
   /* ── Conteúdo por fase ── */
@@ -264,6 +354,8 @@ export default function AuthModal() {
           <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.1em' }}>OU</span>
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
         </div>
+
+        <GoogleButton onCredential={handleGoogleCredential} disabled={loading} />
 
         <button onClick={() => goTo(PHASE.FORGOT)}
           style={{ background: 'none', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9,
@@ -324,6 +416,14 @@ export default function AuthModal() {
             : <><Sparkles size={15} /> Criar conta gratuita</>
           }
         </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '4px 0' }}>
+          <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.1em' }}>OU</span>
+          <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)' }} />
+        </div>
+
+        <GoogleButton onCredential={handleGoogleCredential} disabled={loading} />
 
         <p style={{ textAlign: 'center', fontSize: 'var(--fs-xs)', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
           Ao criar uma conta você concorda com nossos{' '}
@@ -420,6 +520,49 @@ export default function AuthModal() {
         </div>
       </div>
     ),
+
+    /* ═══ TWOFA ═══ */
+    [PHASE.TWOFA]: (
+      <>
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 14px',
+          background: 'rgba(0,242,254,0.04)', border: '1px solid rgba(0,242,254,0.10)',
+          borderRadius: 10, marginBottom: 4,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <ShieldCheck size={14} style={{ color: 'var(--cy1)', flexShrink: 0 }} />
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t2)', letterSpacing: '.04em' }}>
+              Digite o código de 6 dígitos do seu app autenticador, ou um código de backup.
+            </span>
+          </div>
+        </div>
+
+        <QuantumInput label="Código de autenticação" icon={KeyRound} type="text"
+          value={twoFaCode} onChange={e => setTwoFaCode(e.target.value)} onKeyDown={onKey}
+          placeholder="000000" autoFocus />
+
+        {err && <Banner type="error">{err}</Banner>}
+
+        <button className="btn btn-cobalt" style={{ width: '100%', justifyContent: 'center', height: 46, fontSize: 'var(--fs-base)' }}
+          disabled={loading} onClick={handleVerify2fa}>
+          {loading
+            ? <><Loader2 size={15} className="spin" /> Verificando…</>
+            : <><ArrowRight size={15} /> Confirmar</>
+          }
+        </button>
+
+        <button onClick={() => { setPhase(PHASE.LOGIN); setPending2fa(null); setTwoFaCode(''); }}
+          style={{ background: 'none', border: 'none', color: 'var(--t3)', fontSize: 'var(--fs-xs)',
+            cursor: 'pointer', width: '100%', textAlign: 'center', fontFamily: 'var(--f-sans)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '4px 0',
+            transition: 'color .15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--cy1)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--t3)'}>
+          <RotateCcw size={12} /> Voltar ao login
+        </button>
+      </>
+    ),
   };
 
   /* ── Títulos por fase ── */
@@ -428,6 +571,7 @@ export default function AuthModal() {
     [PHASE.REGISTER]: { tag: 'JURIR · CADASTRO', h2: 'Criar sua conta' },
     [PHASE.FORGOT]:   { tag: 'JURIR · SEGURANÇA', h2: 'Recuperar acesso' },
     [PHASE.SENT]:     { tag: 'JURIR · CONFIRMAÇÃO', h2: 'Verifique seu email' },
+    [PHASE.TWOFA]:    { tag: 'JURIR · SEGURANÇA', h2: 'Verificação em duas etapas' },
   };
   const { tag, h2 } = titles[phase];
 
