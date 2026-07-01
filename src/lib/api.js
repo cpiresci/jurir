@@ -278,6 +278,23 @@ export async function acceptInvite(inviteToken, token) {
   return apiFetch(`/api/org/accept-invite?token=${inviteToken}`, {}, token);
 }
 
+// [bloco5-oab] Verificação de OAB assistida
+export async function submitOabVerification(oab_number, oab_uf, doc_base64, doc_mime, token) {
+  return apiFetch('/api/account/oab-verify', {
+    method: 'POST',
+    body: JSON.stringify({ oab_number, oab_uf, doc_base64, doc_mime }),
+  }, token);
+}
+export async function listOabPending(token) {
+  return apiFetch('/api/admin/oab/pending', {}, token);
+}
+export async function approveOab(id, token) {
+  return apiFetch(`/api/admin/oab/${id}/approve`, { method: 'POST' }, token);
+}
+export async function rejectOab(id, reason, token) {
+  return apiFetch(`/api/admin/oab/${id}/reject`, { method: 'POST', body: JSON.stringify({ reason }) }, token);
+}
+
 // ── Exportação ZIP (Plano Escritório) ──────────────────────────────────
 export async function downloadZip(analysis_ids, token) {
   const r = await fetch(`${API_BASE}/api/report/zip`, {
