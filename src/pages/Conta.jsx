@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { User, CreditCard, BarChart2, Building2, Zap, Code2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { User, CreditCard, BarChart2, Building2, Zap, Code2, AlertTriangle, RefreshCw, ShieldCheck, Upload, Clock, XCircle } from 'lucide-react';
 import { useStore } from '../store';
-import { apiFetch } from '../lib/api';
+import { apiFetch, submitOabVerification } from '../lib/api';
 
 const PLAN_LABEL = { free:'Gratuito', credito:'Crédito Avulso', mensal:'Solo', escritorio:'Escritório', api:'API' };
 const PLAN_COLOR = { free:'var(--p5)', credito:'var(--au6)', mensal:'var(--cr3)', escritorio:'var(--co7)', api:'var(--jade2)' };
@@ -173,6 +173,8 @@ export default function ContaPage() {
             <a href="#/escritorio" className="btn btn-cobalt btn-sm">Acessar Escritório</a>
           </div>
         )}
+        {/* [bloco5-oab] Verificação de OAB */}
+        <OabCard oab={user.oab} authToken={authToken} addToast={addToast} onUpdated={load} />
       </div>
 
       {/* Histórico de pagamentos */}
@@ -225,6 +227,122 @@ export default function ContaPage() {
         </div>
       )}
     </PageWrap>
+  );
+}
+
+// ── [bloco5-oab] Card de verificação de OAB ─────────────────────────────
+// Estados: not_submitted (form) / pending (aguardando admin) /
+// rejected (motivo + reenviar) / verified (badge).
+const UFS = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG',
+  'PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+
+function OabCard({ oab, authToken, addToast, onUpdated }) {
+  const fileRef = useRef(null);
+  const [number, setNumber] = useState(oab?.number || '');
+  const [uf,     setUf]     = useState(oab?.uf || '');
+  const [file,   setFile]   = useState(null);
+  const [sending, setSending] = useState(false);
+
+  const handleFile = (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { addToast('Documento deve ter no máximo 5 MB.', 'error'); return; }
+    setFile(f);
+  };
+
+  const handleSubmit = async () => {
+    if (!number.trim() || !uf) { addToast('Preencha número e UF da OAB.', 'error'); return; }
+    if (!file) { addToast('Anexe uma foto ou PDF da carteira da OAB.', 'error'); return; }
+    setSending(true);
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload  = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const [header, b64] = dataUrl.split(',');
+      const mime = header.match(/:(.*?);/)?.[1] || 'application/pdf';
+      await submitOabVerification(number.trim(), uf, b64, mime, authToken);
+      addToast('OAB enviada para verificação!', 'success');
+      setFile(null);
+      onUpdated();
+    } catch (e) {
+      addToast(e.message, 'error');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const status = oab?.status || 'not_submitted';
+
+  return (
+    <div style={cardSt}>
+      <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+        <ShieldCheck size={18} style={{ color: status === 'verified' ? 'var(--jade2)' : 'var(--co7)' }}/>
+        <span style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', fontFamily:'var(--f-mono)', letterSpacing:'.1em' }}>VERIFICAÇÃO OAB</span>
+      </div>
+
+      {status === 'verified' && (
+        <div>
+          <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+            <span style={{ fontSize: 'var(--fs-md)', fontWeight:700, color:'var(--jade2)' }}>Advogado Verificado ✓</span>
+          </div>
+          <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)' }}>
+            OAB {oab.number}/{oab.uf} — verificada em {oab.verified_at}.
+          </p>
+        </div>
+      )}
+
+      {status === 'pending' && (
+        <div style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
+          <Clock size={16} style={{ color:'var(--au6)', flexShrink:0, marginTop:2 }}/>
+          <div>
+            <p style={{ fontSize: 'var(--fs-sm)', fontWeight:600, color:'var(--au5)', marginBottom:2 }}>Em análise</p>
+            <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)' }}>
+              OAB {oab.number}/{oab.uf} enviada. Nossa equipe confere manualmente — normalmente em até 2 dias úteis.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {(status === 'not_submitted' || status === 'rejected') && (
+        <div>
+          {status === 'rejected' && (
+            <div style={{ display:'flex', gap:10, alignItems:'flex-start', marginBottom:14 }}>
+              <XCircle size={16} style={{ color:'var(--cr3)', flexShrink:0, marginTop:2 }}/>
+              <div>
+                <p style={{ fontSize: 'var(--fs-sm)', fontWeight:600, color:'var(--cr3)', marginBottom:2 }}>Não aprovada</p>
+                <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)' }}>{oab.rejection_reason}</p>
+              </div>
+            </div>
+          )}
+          <p style={{ fontSize: 'var(--fs-xs)', color:'var(--p4)', marginBottom:12, lineHeight:1.6 }}>
+            Envie seu número de inscrição e uma foto/PDF da carteira da OAB pra ganhar o selo de confiança no perfil e nas peças geradas.
+          </p>
+          <div style={{ display:'flex', gap:8, marginBottom:8 }}>
+            <input value={number} onChange={e => setNumber(e.target.value)} placeholder="Nº OAB"
+              style={{ flex:1, padding:'8px 10px', borderRadius:'var(--r-sm)', border:'1px solid var(--b-neutral)', background:'var(--surface)', color:'var(--p1)', fontSize:'var(--fs-sm)' }}/>
+            <select value={uf} onChange={e => setUf(e.target.value)}
+              style={{ width:70, padding:'8px 10px', borderRadius:'var(--r-sm)', border:'1px solid var(--b-neutral)', background:'var(--surface)', color:'var(--p1)', fontSize:'var(--fs-sm)' }}>
+              <option value="">UF</option>
+              {UFS.map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+          </div>
+          <input ref={fileRef} type="file" accept="application/pdf,image/png,image/jpeg,image/webp"
+            style={{ display:'none' }} onChange={handleFile}/>
+          <button className="btn btn-ghost btn-sm" onClick={() => fileRef.current?.click()}
+            style={{ marginBottom:12, display:'inline-flex', alignItems:'center', gap:6 }}>
+            <Upload size={14}/> {file ? file.name : 'Anexar carteira OAB'}
+          </button>
+          <div>
+            <button className="btn btn-cobalt btn-sm" onClick={handleSubmit} disabled={sending}>
+              {sending ? 'Enviando…' : (status === 'rejected' ? 'Reenviar' : 'Enviar para verificação')}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -61,6 +61,7 @@ const TABS = [
   { id: "users", label: "Usuários" },
   { id: "analyses", label: "Análises" },
   { id: "financial", label: "Financeiro" },
+  { id: "oab", label: "Verificações OAB" },
   { id: "system", label: "Sistema" },
 ];
 
@@ -214,6 +215,66 @@ function FinancialTab({ api }) {
   );
 }
 
+// [bloco5-oab] Aba "Verificações OAB pendentes" — aprovar/rejeitar manual.
+function OabTab({ api }) {
+  const [pending, setPending] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState(null);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    api("/api/admin/oab/pending").then(setPending).catch(() => setPending([])).finally(() => setLoading(false));
+  }, [api]);
+  useEffect(() => { load(); }, [load]);
+
+  async function viewDoc(id) {
+    try {
+      const { doc_base64, doc_mime } = await api(`/api/admin/oab/${id}/doc`);
+      const win = window.open();
+      if (win) win.document.write(`<iframe src="data:${doc_mime};base64,${doc_base64}" style="width:100%;height:100vh;border:none"></iframe>`);
+    } catch (e) { alert(e.message); }
+  }
+
+  async function approve(id) {
+    setBusyId(id);
+    try { await api(`/api/admin/oab/${id}/approve`, { method: "POST" }); load(); }
+    catch (e) { alert(e.message); }
+    finally { setBusyId(null); }
+  }
+
+  async function reject(id) {
+    const reason = prompt("Motivo da rejeição (enviado por email ao usuário):");
+    if (reason === null) return;
+    setBusyId(id);
+    try { await api(`/api/admin/oab/${id}/reject`, { method: "POST", body: JSON.stringify({ reason }) }); load(); }
+    catch (e) { alert(e.message); }
+    finally { setBusyId(null); }
+  }
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}><Btn small variant="secondary" onClick={load}>↺ Atualizar</Btn></div>
+      <Table
+        loading={loading}
+        empty="Nenhuma verificação pendente."
+        columns={[
+          { key: "email", label: "Usuário" },
+          { key: "oab_number", label: "OAB", render: (v, row) => `${v}/${row.oab_uf}` },
+          { key: "submitted_at", label: "Enviado em", render: v => v ? new Date(v).toLocaleString("pt-BR") : "—" },
+          { key: "has_doc", label: "Doc", render: (v, row) => v ? <Btn small variant="ghost" onClick={() => viewDoc(row.id)}>Ver documento</Btn> : "—" },
+          { key: "id", label: "Ações", render: (id) => (
+            <div style={{ display: "flex", gap: 6 }}>
+              <Btn small variant="primary" disabled={busyId === id} onClick={() => approve(id)}>Aprovar</Btn>
+              <Btn small variant="danger" disabled={busyId === id} onClick={() => reject(id)}>Rejeitar</Btn>
+            </div>
+          ) },
+        ]}
+        data={pending}
+      />
+    </div>
+  );
+}
+
 function SystemTab({ api }) {
   const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [rag, setRag] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
   const load = useCallback(() => {
@@ -293,7 +354,7 @@ export default function AdminPage() {
 
   if (!token) return <Login onLogin={handleLogin} />;
 
-  const CONTENT = { dashboard: <DashboardTab api={api} />, users: <UsersTab api={api} />, analyses: <AnalysesTab api={api} />, financial: <FinancialTab api={api} />, system: <SystemTab api={api} /> };
+  const CONTENT = { dashboard: <DashboardTab api={api} />, users: <UsersTab api={api} />, analyses: <AnalysesTab api={api} />, financial: <FinancialTab api={api} />, oab: <OabTab api={api} />, system: <SystemTab api={api} /> };
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", background: T.bg }}>
