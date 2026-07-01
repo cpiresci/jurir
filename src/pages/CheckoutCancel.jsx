@@ -9,7 +9,7 @@ export default function CheckoutCancelPage() {
         <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>
           Pagamento cancelado
         </h1>
-        <p style={{ color: 'var(--p4)', fontSize: '.9rem', lineHeight: 1.6, marginBottom: 32 }}>
+        <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-base)', lineHeight: 1.6, marginBottom: 32 }}>
           Nenhuma cobrança foi realizada. Você pode tentar novamente quando quiser.
         </p>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>

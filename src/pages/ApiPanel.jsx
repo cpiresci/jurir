@@ -23,7 +23,7 @@ export default function ApiPanelPage() {
         <Zap size={28} style={{ color: 'var(--co7)' }} />
         <div>
           <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700 }}>Painel API</h1>
-          <p style={{ color: 'var(--p4)', fontSize: '.8rem' }}>Plano API · Integração via chaves e webhooks</p>
+          <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-sm)' }}>Plano API · Integração via chaves e webhooks</p>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ export default function ApiPanelPage() {
             padding: '7px 14px', border: 'none', borderRadius: 'var(--r-sm)',
             background: tab === key ? 'rgba(0,242,254,0.08)' : 'transparent',
             color: tab === key ? 'var(--co7)' : 'var(--p4)',
-            fontWeight: tab === key ? 600 : 400, fontSize: '.82rem',
+            fontWeight: tab === key ? 600 : 400, fontSize: 'var(--fs-sm)',
             cursor: 'pointer', transition: 'all .15s',
           }}>{icon}{label}</button>
         ))}
@@ -98,18 +98,18 @@ function ApiKeysTab({ token, addToast }) {
 
   return (
     <div>
-      <p style={{ fontSize: '.82rem', color: 'var(--p4)', marginBottom: 20 }}>
+      <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)', marginBottom: 20 }}>
         Use o header <code style={codeSt}>X-Api-Key: &lt;sua-chave&gt;</code> para autenticar requisições à API Jurir sem precisar de JWT.
       </p>
 
       {/* Nova key exibida uma vez */}
       {newKey && (
         <div style={{ ...cardSt, marginBottom: 20, border: '1px solid var(--jade2)', background: 'rgba(0,200,130,0.05)' }}>
-          <p style={{ fontSize: '.78rem', color: 'var(--jade2)', fontWeight: 600, marginBottom: 8 }}>
+          <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--jade2)', fontWeight: 600, marginBottom: 8 }}>
             ⚠ Chave criada. Copie agora — ela não será exibida novamente.
           </p>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <code style={{ ...codeSt, flex: 1, wordBreak: 'break-all', fontSize: '.78rem' }}>{newKey}</code>
+            <code style={{ ...codeSt, flex: 1, wordBreak: 'break-all', fontSize: 'var(--fs-xs)' }}>{newKey}</code>
             <button className="btn btn-cobalt btn-sm" onClick={copyKey}>
               {copied ? <CheckCircle size={13}/> : <Copy size={13}/>}
               {copied ? 'Copiado' : 'Copiar'}
@@ -123,7 +123,7 @@ function ApiKeysTab({ token, addToast }) {
 
       {/* Criar nova */}
       <div style={{ ...cardSt, marginBottom: 20 }}>
-        <p style={{ fontSize: '.82rem', fontWeight: 600, marginBottom: 10, color: 'var(--p2)' }}>
+        <p style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 10, color: 'var(--p2)' }}>
           <Plus size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Nova API Key
         </p>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -143,11 +143,11 @@ function ApiKeysTab({ token, addToast }) {
             <div key={k.id} style={{ ...cardSt, display: 'flex', alignItems: 'center', gap: 12 }}>
               <Key size={16} style={{ color: k.is_active ? 'var(--co7)' : 'var(--p5)', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.82rem', color: 'var(--p1)' }}>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-sm)', color: 'var(--p1)' }}>
                   {k.key_prefix}…
                   {k.label && <span style={{ color: 'var(--p4)', marginLeft: 8 }}>{k.label}</span>}
                 </div>
-                <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginTop: 2 }}>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginTop: 2 }}>
                   {k.is_active ? '✓ Ativa' : '✗ Revogada'} · {k.requests_count} req ·
                   Último uso: {k.last_used_at || 'nunca'} · Criada: {k.created_at}
                 </div>
@@ -217,14 +217,14 @@ function WebhooksTab({ token, addToast }) {
 
   return (
     <div>
-      <p style={{ fontSize: '.82rem', color: 'var(--p4)', marginBottom: 20 }}>
+      <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)', marginBottom: 20 }}>
         O Jurir enviará um POST para a URL cadastrada quando uma análise for concluída.
         A assinatura HMAC-SHA256 é enviada no header <code style={codeSt}>X-Jurir-Signature</code>.
       </p>
 
       {/* Criar */}
       <div style={{ ...cardSt, marginBottom: 20 }}>
-        <p style={{ fontSize: '.82rem', fontWeight: 600, marginBottom: 10, color: 'var(--p2)' }}>
+        <p style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 10, color: 'var(--p2)' }}>
           <Plus size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Novo Webhook
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -245,8 +245,8 @@ function WebhooksTab({ token, addToast }) {
           {hooks.map(h => (
             <div key={h.id} style={{ ...cardSt, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.8rem', color: 'var(--co7)', wordBreak: 'break-all' }}>{h.url}</div>
-                <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginTop: 4 }}>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-sm)', color: 'var(--co7)', wordBreak: 'break-all' }}>{h.url}</div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginTop: 4 }}>
                   Eventos: <span style={{ color: 'var(--p2)' }}>{h.events}</span> · {h.is_active ? '✓ Ativo' : '✗ Inativo'} · desde {h.created_at}
                 </div>
               </div>
@@ -263,8 +263,8 @@ function WebhooksTab({ token, addToast }) {
 
       {/* Payload de exemplo */}
       <div style={{ ...cardSt, marginTop: 24 }}>
-        <p style={{ fontSize: '.78rem', fontWeight: 600, color: 'var(--p4)', marginBottom: 8 }}>Payload de exemplo (analysis.completed):</p>
-        <pre style={{ fontSize: '.75rem', color: 'var(--co6)', margin: 0, overflowX: 'auto' }}>{JSON.stringify({
+        <p style={{ fontSize: 'var(--fs-xs)', fontWeight: 600, color: 'var(--p4)', marginBottom: 8 }}>Payload de exemplo (analysis.completed):</p>
+        <pre style={{ fontSize: 'var(--fs-xs)', color: 'var(--co6)', margin: 0, overflowX: 'auto' }}>{JSON.stringify({
           event: "analysis.completed",
           data: {
             analysis_id: 142,
@@ -286,5 +286,5 @@ function Unauth() { const { openModal } = useStore(); return <div style={{ textA
 function NeedPlan() { return <div style={{ textAlign: 'center', paddingTop: 40 }}><Zap size={40} style={{ color: 'var(--p5)', marginBottom: 12 }} /><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Esta área requer o <strong>Plano API</strong>.</p><a href="/#precos" className="btn btn-cobalt">Ver Planos</a></div>; }
 
 const cardSt  = { background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '14px 16px' };
-const inputSt = { width: '100%', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', color: 'var(--p1)', fontSize: '.84rem', outline: 'none' };
-const codeSt  = { fontFamily: 'var(--f-mono)', background: 'rgba(0,242,254,0.08)', padding: '2px 6px', borderRadius: 4, fontSize: '.78rem', color: 'var(--co6)' };
+const inputSt = { width: '100%', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', color: 'var(--p1)', fontSize: 'var(--fs-sm)', outline: 'none' };
+const codeSt  = { fontFamily: 'var(--f-mono)', background: 'rgba(0,242,254,0.08)', padding: '2px 6px', borderRadius: 4, fontSize: 'var(--fs-xs)', color: 'var(--co6)' };

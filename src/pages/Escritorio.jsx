@@ -85,7 +85,7 @@ export default function EscritorioPage() {
         <Building2 size={28} style={{ color: 'var(--co7)' }} />
         <div>
           <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700 }}>{org.name}</h1>
-          <p style={{ color: 'var(--p4)', fontSize: '.8rem' }}>Plano Escritório · {role === 'owner' ? 'Proprietário' : role === 'admin' ? 'Admin' : 'Membro'}</p>
+          <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-sm)' }}>Plano Escritório · {role === 'owner' ? 'Proprietário' : role === 'admin' ? 'Admin' : 'Membro'}</p>
         </div>
       </div>
 
@@ -101,7 +101,7 @@ export default function EscritorioPage() {
             padding: '7px 14px', border: 'none', borderRadius: 'var(--r-sm)',
             background: tab === key ? 'rgba(0,242,254,0.08)' : 'transparent',
             color: tab === key ? 'var(--co7)' : 'var(--p4)',
-            fontWeight: tab === key ? 600 : 400, fontSize: '.82rem',
+            fontWeight: tab === key ? 600 : 400, fontSize: 'var(--fs-sm)',
             cursor: 'pointer', transition: 'all .15s',
           }}>{icon}{label}</button>
         ))}
@@ -146,8 +146,8 @@ function DashboardTab({ token }) {
           { label: 'Membros',           value: summary.members_count },
         ].map(({ label, value }) => (
           <div key={label} style={cardSt}>
-            <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginBottom: 4 }}>{label}</div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--co7)' }}>{value ?? '—'}</div>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginBottom: 4 }}>{label}</div>
+            <div style={{ fontSize: 'var(--fs-2xl)', fontWeight: 700, color: 'var(--co7)' }}>{value ?? '—'}</div>
           </div>
         ))}
       </div>
@@ -157,7 +157,7 @@ function DashboardTab({ token }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12,
           background: 'rgba(0,242,254,0.07)', border: '1px solid var(--b-main)',
           borderRadius: 'var(--r-md)', padding: '10px 16px' }}>
-          <span style={{ fontSize: '.82rem', color: 'var(--co7)' }}>{selected.size} selecionadas</span>
+          <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--co7)' }}>{selected.size} selecionadas</span>
           <button className="btn btn-cobalt btn-sm" onClick={async () => {
             try { await downloadZip([...selected], token); }
             catch (e) { alert(e.message); }
@@ -171,7 +171,7 @@ function DashboardTab({ token }) {
       {/* Table */}
       {analyses.length === 0 ? <Empty text="Nenhuma análise encontrada." /> : (
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.82rem' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--fs-sm)' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--b-neutral)', color: 'var(--p4)' }}>
                 <th style={thSt}></th>
@@ -190,15 +190,15 @@ function DashboardTab({ token }) {
                   <td style={tdSt}>
                     <input type="checkbox" checked={selected.has(a.id)} onChange={() => toggleSelect(a.id)} />
                   </td>
-                  <td style={{ ...tdSt, color: 'var(--co7)', fontFamily: 'var(--f-mono)', fontSize: '.75rem' }}>
+                  <td style={{ ...tdSt, color: 'var(--co7)', fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)' }}>
                     {a.user_email.split('@')[0]}
                   </td>
                   <td style={{ ...tdSt, maxWidth: 260 }}>
                     <span title={a.prompt_preview}>{a.prompt_preview.slice(0, 80)}{a.prompt_preview.length > 80 ? '…' : ''}</span>
                   </td>
                   <td style={tdSt}><ScoreBadge score={a.jurir_score} /></td>
-                  <td style={{ ...tdSt, fontFamily: 'var(--f-mono)', fontSize: '.75rem' }}>{a.tribunal || '—'}</td>
-                  <td style={{ ...tdSt, color: 'var(--p4)', fontSize: '.75rem', whiteSpace: 'nowrap' }}>{a.created_at}</td>
+                  <td style={{ ...tdSt, fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)' }}>{a.tribunal || '—'}</td>
+                  <td style={{ ...tdSt, color: 'var(--p4)', fontSize: 'var(--fs-xs)', whiteSpace: 'nowrap' }}>{a.created_at}</td>
                 </tr>
               ))}
             </tbody>
@@ -260,7 +260,7 @@ function MembersTab({ token, org, role, addToast }) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <p style={{ fontSize: '.82rem', color: 'var(--p4)' }}>
+        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)' }}>
           {members.length}/{max} vagas utilizadas
         </p>
         <div style={{ height: 6, flex: 1, maxWidth: 160, background: 'var(--b-neutral)', borderRadius: 4, margin: '0 12px', overflow: 'hidden' }}>
@@ -273,8 +273,8 @@ function MembersTab({ token, org, role, addToast }) {
         {members.map(m => (
           <div key={m.user_id} style={{ ...cardSt, display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.82rem', color: 'var(--p1)' }}>{m.email}</div>
-              <div style={{ fontSize: '.75rem', color: 'var(--p4)', marginTop: 2 }}>
+              <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-sm)', color: 'var(--p1)' }}>{m.email}</div>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginTop: 2 }}>
                 {m.role === 'owner' ? '👑 Proprietário' : m.role === 'admin' ? '⚡ Admin' : '👤 Membro'} · {m.analyses} análises · desde {m.joined_at}
               </div>
             </div>
@@ -291,7 +291,7 @@ function MembersTab({ token, org, role, addToast }) {
       {/* Convidar */}
       {canManage && members.length < max && (
         <div style={{ ...cardSt }}>
-          <p style={{ fontSize: '.82rem', fontWeight: 600, marginBottom: 10, color: 'var(--p2)' }}>
+          <p style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 10, color: 'var(--p2)' }}>
             <UserPlus size={14} style={{ marginRight: 6, verticalAlign: 'middle' }} />
             Convidar novo membro
           </p>
@@ -306,9 +306,9 @@ function MembersTab({ token, org, role, addToast }) {
           {inviteLink && (
             <div style={{ marginTop: 10, padding: '8px 12px', background: 'rgba(0,242,254,0.06)',
               borderRadius: 'var(--r-sm)', border: '1px solid var(--b-main)' }}>
-              <p style={{ fontSize: '.75rem', color: 'var(--p4)', marginBottom: 4 }}>Link de convite (válido 72h):</p>
+              <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginBottom: 4 }}>Link de convite (válido 72h):</p>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <code style={{ fontSize: '.75rem', color: 'var(--co7)', flex: 1, wordBreak: 'break-all' }}>{inviteLink}</code>
+                <code style={{ fontSize: 'var(--fs-xs)', color: 'var(--co7)', flex: 1, wordBreak: 'break-all' }}>{inviteLink}</code>
                 <button className="btn btn-ghost btn-sm" onClick={() => { navigator.clipboard.writeText(inviteLink); }}>Copiar</button>
               </div>
             </div>
@@ -374,7 +374,7 @@ function LogoTab({ token, org, setOrg, addToast, role }) {
 
   return (
     <div style={{ maxWidth: 520 }}>
-      <p style={{ color: 'var(--p4)', fontSize: '.84rem', marginBottom: 20 }}>
+      <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-sm)', marginBottom: 20 }}>
         O logo aparece no cabeçalho dos PDFs gerados pela sua organização, substituindo a marca padrão JURIR.
         Formatos aceitos: PNG, JPG, WebP · Tamanho máximo: 2 MB.
       </p>
@@ -382,7 +382,7 @@ function LogoTab({ token, org, setOrg, addToast, role }) {
       {org.has_logo && !preview && (
         <div style={{ ...cardSt, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: 'var(--jade2)' }} />
-          <span style={{ fontSize: '.84rem', color: 'var(--p2)' }}>Logo atual configurado</span>
+          <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--p2)' }}>Logo atual configurado</span>
           {canManage && (
             <button className="btn btn-ghost btn-sm" onClick={handleRemove} disabled={removing}
               style={{ marginLeft: 'auto', color: 'var(--cr3)' }}>
@@ -405,7 +405,7 @@ function LogoTab({ token, org, setOrg, addToast, role }) {
               ? <img src={preview.dataUrl} alt="preview" style={{ maxHeight: 80, maxWidth: '100%', borderRadius: 6 }} />
               : <>
                   <Image size={28} style={{ color: 'var(--p5)', marginBottom: 8 }} />
-                  <p style={{ fontSize: '.82rem', color: 'var(--p4)' }}>Clique ou arraste o logo aqui</p>
+                  <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)' }}>Clique ou arraste o logo aqui</p>
                 </>
             }
           </div>
@@ -431,7 +431,7 @@ function LogoTab({ token, org, setOrg, addToast, role }) {
 function ScoreBadge({ score }) {
   if (!score) return <span style={{ color: 'var(--p5)' }}>—</span>;
   const color = score >= 70 ? 'var(--jade2)' : score >= 45 ? 'var(--co6)' : 'var(--cr3)';
-  return <span style={{ color, fontWeight: 600, fontFamily: 'var(--f-mono)', fontSize: '.8rem' }}>{score}</span>;
+  return <span style={{ color, fontWeight: 600, fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-sm)' }}>{score}</span>;
 }
 function PageWrap({ children }) {
   return <div style={{ maxWidth: 960, margin: '0 auto', padding: '100px 24px 60px' }}>{children}</div>;
@@ -453,8 +453,8 @@ const cardSt = {
 const inputSt = {
   width: '100%', padding: '10px 14px', boxSizing: 'border-box',
   background: 'var(--surface)', border: '1px solid var(--b-neutral)',
-  borderRadius: 'var(--r-md)', color: 'var(--p1)', fontSize: '.84rem',
+  borderRadius: 'var(--r-md)', color: 'var(--p1)', fontSize: 'var(--fs-sm)',
   outline: 'none',
 };
-const thSt = { padding: '8px 12px', textAlign: 'left', fontWeight: 500, fontSize: '.75rem' };
+const thSt = { padding: '8px 12px', textAlign: 'left', fontWeight: 500, fontSize: 'var(--fs-xs)' };
 const tdSt = { padding: '10px 12px', color: 'var(--p2)' };

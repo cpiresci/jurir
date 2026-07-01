@@ -160,7 +160,7 @@ export default function AnalysisPanel() {
             Descreva seu caso e{' '}
             <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>descubra suas chances</span>
           </h2>
-          <p style={{ color: 'var(--t3)', maxWidth: 520, margin: '0 auto', lineHeight: 1.7, fontSize: '.92rem' }}>
+          <p style={{ color: 'var(--t3)', maxWidth: 520, margin: '0 auto', lineHeight: 1.7, fontSize: 'var(--fs-base)' }}>
             Seja específico: partes envolvidas, fatos, datas, documentos e o que você precisa saber.
           </p>
         </div>
@@ -181,17 +181,17 @@ export default function AnalysisPanel() {
             flexWrap: 'wrap', gap: 10,
             background: 'var(--bg-card2)',
           }}>
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.12em' }}>
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.12em' }}>
               CASO JURÍDICO
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)' }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)' }}>
                 {charCount}/4000
               </span>
               <div className="mode-pill">
                 {LANGS.map(l => (
                   <button key={l.id} className={`mode-pill-btn${lang === l.id ? ' active' : ''}`}
-                    onClick={() => setLang(l.id)} style={{ padding: '5px 11px', fontSize: '.75rem' }}>
+                    onClick={() => setLang(l.id)} style={{ padding: '5px 11px', fontSize: 'var(--fs-xs)' }}>
                     {l.label}
                   </button>
                 ))}
@@ -212,7 +212,7 @@ export default function AnalysisPanel() {
 
             {/* Chips de exemplo */}
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', marginTop: 10, marginBottom: 18 }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.1em', alignSelf: 'center', flexShrink: 0 }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.1em', alignSelf: 'center', flexShrink: 0 }}>
                 EXEMPLOS
               </span>
               {EXAMPLES.map((ex, i) => (
@@ -223,7 +223,7 @@ export default function AnalysisPanel() {
                     border: '1px solid rgba(0,242,254,0.18)',
                     borderRadius: 'var(--r-sm)',
                     padding: '4px 10px',
-                    fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+                    fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
                     color: 'var(--co7)', cursor: 'pointer',
                     letterSpacing: '.04em',
                     transition: 'all .15s',
@@ -248,12 +248,12 @@ export default function AnalysisPanel() {
             {/* Status indicator transparente */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {isPremiumMode ? (
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--co7)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--co7)', boxShadow: '0 0 6px rgba(20,114,217,0.6)', display: 'inline-block', animation: 'pulse 2s ease-in-out infinite' }}/>
                   16 agentes · Juiz IA · JURIR Score
                 </span>
               ) : (
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--jade2)', display: 'inline-block' }}/>
                   Gratuito · sem cadastro
                 </span>
@@ -278,7 +278,7 @@ export default function AnalysisPanel() {
             marginTop: 16, padding: '12px 20px',
             background: 'rgba(20,114,217,0.05)', border: '1px solid var(--b-cobalt)',
             borderRadius: 'var(--r-md)',
-            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
             color: 'var(--co7)', display: 'flex', alignItems: 'center', gap: 8,
           }}>
             <Loader2 size={13} className="spin"/> {statusMessage}
@@ -337,7 +337,7 @@ function MarkdownVerdict({ text }) {
     // Títulos ## / ###
     if (line.startsWith('### ')) {
       elements.push(
-        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.78rem', fontWeight: 600, color: 'var(--co7)', letterSpacing: '.10em', textTransform: 'uppercase', marginTop: 20, marginBottom: 6 }}>
+        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', fontWeight: 600, color: 'var(--co7)', letterSpacing: '.10em', textTransform: 'uppercase', marginTop: 20, marginBottom: 6 }}>
           {line.slice(4)}
         </div>
       );
@@ -345,7 +345,7 @@ function MarkdownVerdict({ text }) {
     }
     if (line.startsWith('## ')) {
       elements.push(
-        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '.85rem', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>
+        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-base)', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>
           {line.slice(3)}
         </div>
       );
@@ -353,7 +353,7 @@ function MarkdownVerdict({ text }) {
     }
     if (line.startsWith('# ')) {
       elements.push(
-        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>
+        <div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-md)', fontWeight: 700, color: 'var(--t0)', marginTop: 22, marginBottom: 8, letterSpacing: '-.01em' }}>
           {line.slice(2)}
         </div>
       );
@@ -376,8 +376,8 @@ function MarkdownVerdict({ text }) {
       elements.push(
         <ul key={`ul-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
-              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: '.75rem' }}>◆</span>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-md)', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
+              <span style={{ color: 'var(--co7)', flexShrink: 0, marginTop: 2, fontSize: 'var(--fs-xs)' }}>◆</span>
               <span>{parseInline(item)}</span>
             </li>
           ))}
@@ -397,8 +397,8 @@ function MarkdownVerdict({ text }) {
       elements.push(
         <ol key={`ol-${i}`} style={{ margin: '8px 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: '1rem', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
-              <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
+            <li key={j} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-md)', color: 'var(--t1)', lineHeight: 1.7, letterSpacing: '.01em' }}>
+              <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--co7)', flexShrink: 0, marginTop: 4, minWidth: 18 }}>{j+1}.</span>
               <span>{parseInline(item)}</span>
             </li>
           ))}
@@ -409,7 +409,7 @@ function MarkdownVerdict({ text }) {
 
     // Parágrafo normal
     elements.push(
-      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: '1rem', fontWeight: 400, color: 'var(--t1)', lineHeight: 1.75, margin: '0 0 4px', letterSpacing: '.01em' }}>
+      <p key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-md)', fontWeight: 400, color: 'var(--t1)', lineHeight: 1.75, margin: '0 0 4px', letterSpacing: '.01em' }}>
         {parseInline(line)}
       </p>
     );
@@ -451,7 +451,7 @@ function FreeResult({ result }) {
           <div style={{
             background: 'rgba(0,242,254,0.06)', border: '1px solid var(--b-cobalt)',
             borderRadius: 'var(--r-md)', padding: '8px 14px',
-            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
             color: 'var(--co7)', letterSpacing: '.08em', flexShrink: 0,
           }}>
             ⚖️ {agentArea}
@@ -460,7 +460,7 @@ function FreeResult({ result }) {
             <div style={{
               background: `${rC}11`, border: `1px solid ${rC}33`,
               borderRadius: 'var(--r-md)', padding: '8px 14px',
-              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+              fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
               color: rC, letterSpacing: '.08em', flexShrink: 0,
             }}>
               RISCO {riskLevel}
@@ -468,7 +468,7 @@ function FreeResult({ result }) {
           )}
           {confidence && (
             <div style={{
-              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+              fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
               color: 'var(--t4)', letterSpacing: '.06em',
               padding: '8px 0', flexShrink: 0,
             }}>
@@ -493,19 +493,19 @@ function FreeResult({ result }) {
           {/* Número grande */}
           <div style={{ textAlign: 'center', flexShrink: 0, minWidth: 72 }}>
             <div style={{
-              fontFamily: 'var(--f-sans)', fontSize: '3.2rem', fontWeight: 700,
+              fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-6xl)', fontWeight: 700,
               color: scoreColor, lineHeight: 1, letterSpacing: '-.04em',
             }}>
               {score}
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.18em', marginTop: 3 }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.18em', marginTop: 3 }}>
               / 100
             </div>
           </div>
 
           {/* Barra + label */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.8rem', color: scoreColor, fontWeight: 600, marginBottom: 10, letterSpacing: '.01em' }}>
+            <div style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', color: scoreColor, fontWeight: 600, marginBottom: 10, letterSpacing: '.01em' }}>
               {scoreLabel}
             </div>
             <div style={{ background: 'var(--bg-card2)', borderRadius: 4, height: 5, overflow: 'hidden', marginBottom: 8 }}>
@@ -517,7 +517,7 @@ function FreeResult({ result }) {
                 transition: 'clip-path 1.2s cubic-bezier(.22,1,.36,1)',
               }}/>
             </div>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.07em', lineHeight: 1.5 }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.07em', lineHeight: 1.5 }}>
               Baseado na análise inicial · Score completo disponível no relatório premium
             </div>
           </div>
@@ -532,14 +532,14 @@ function FreeResult({ result }) {
         boxShadow: 'var(--shadow-cobalt)',
         textAlign: 'center',
       }}>
-        <div style={{ fontSize: '1.4rem', marginBottom: 10 }}>🔍</div>
+        <div style={{ fontSize: 'var(--fs-2xl)', marginBottom: 10 }}>🔍</div>
         <div style={{
-          fontFamily: 'var(--f-display)', fontSize: '1.3rem', fontWeight: 600,
+          fontFamily: 'var(--f-display)', fontSize: 'var(--fs-xl)', fontWeight: 600,
           color: 'var(--t0)', marginBottom: 10, letterSpacing: '-.01em',
         }}>
           Encontramos {lockCriticos} pontos críticos no seu caso
         </div>
-        <p style={{ color: 'var(--t3)', fontSize: '.88rem', lineHeight: 1.7, maxWidth: 460, margin: '0 auto 22px' }}>
+        <p style={{ color: 'var(--t3)', fontSize: 'var(--fs-base)', lineHeight: 1.7, maxWidth: 460, margin: '0 auto 22px' }}>
           {score
             ? <>Seu JURIR Score é <strong style={{ color: scoreColor }}>{score}/100</strong>. Os 15 especialistas restantes — incluindo o <em>Advogado do Diabo</em> e o <em>Juiz IA</em> — identificaram onde seu caso pode ser fortalecido ou onde há riscos que você ainda não viu.</>
             : <>Os 15 especialistas restantes identificaram pontos críticos e oportunidades específicas no seu caso que ainda estão bloqueados — incluindo o contraditório completo e o veredicto do Juiz IA.</>
@@ -561,7 +561,7 @@ function FreeResult({ result }) {
         >
           🔓 Ver Relatório Completo — R$ 19,90
         </button>
-        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', letterSpacing: '.08em', marginTop: 10 }}>
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.08em', marginTop: 10 }}>
           16 agentes · JURIR Score dimensional · PDF profissional · acesso imediato
         </div>
       </div>

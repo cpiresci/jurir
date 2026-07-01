@@ -50,7 +50,7 @@ export default function AceitarConvitePage() {
         {status === 'success' && (
           <>
             <CheckCircle size={48} style={{ color: 'var(--jade2)', marginBottom: 16 }} />
-            <h1 className="t-display" style={{ fontSize: '1.4rem', marginBottom: 8 }}>
+            <h1 className="t-display" style={{ fontSize: 'var(--fs-2xl)', marginBottom: 8 }}>
               Bem-vindo{orgName ? ` a ${orgName}` : ''}!
             </h1>
             <p style={{ color: 'var(--p4)', marginBottom: 24 }}>{message || 'Você agora faz parte da organização.'}</p>

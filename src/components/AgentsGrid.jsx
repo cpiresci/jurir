@@ -4,7 +4,7 @@ import { AGENT_AREAS } from '../lib/constants';
 import { useStore } from '../store';
 
 const STATUS_ICON = {
-  idle:    <Clock       size={12} style={{ color: 'var(--t5)' }}/>,
+  idle:    <Clock       size={12} style={{ color: 'var(--t3)' }}/>,
   running: <Loader2    size={12} className="spin" style={{ color: 'var(--co7)' }}/>,
   done:    <CheckCircle size={12} style={{ color: 'var(--jade2)' }}/>,
   error:   <XCircle    size={12} style={{ color: 'var(--cr3)' }}/>,
@@ -77,10 +77,10 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
 
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: analysis ? 10 : 0, position: 'relative' }}>
-        <span style={{ fontSize: '.85rem', flexShrink: 0 }}>{icon}</span>
+        <span style={{ fontSize: 'var(--fs-base)', flexShrink: 0 }}>{icon}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontSize: '.92rem', fontWeight: 700,
+            fontSize: 'var(--fs-base)', fontWeight: 700,
             color: status === 'done' ? (outOfScope ? 'var(--t3)' : 'var(--t0)') : 'var(--t2)',
             fontFamily: 'var(--f-sans)',
             letterSpacing: '.02em',
@@ -90,29 +90,29 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
             {area}
           </div>
           {s?.confidence > 0 && (
-            <div style={{ fontSize: '.75rem', color: 'var(--cy1)', fontFamily: 'var(--f-mono)', opacity: 0.85 }}>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--cy1)', fontFamily: 'var(--f-mono)', opacity: 0.85 }}>
               conf: {s.confidence}%
             </div>
           )}
           {status === 'done' && outOfScope && (
-            <div style={{ fontSize: '.75rem', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--t4)', fontFamily: 'var(--f-mono)' }}>
               ○ fora do escopo
             </div>
           )}
           {status === 'done' && !outOfScope && !s?.confidence && (
-            <div style={{ fontSize: '.75rem', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>
               ✓ analisado
             </div>
           )}
           {status === 'running' && (
-            <div style={{ fontSize: '.75rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)', opacity: 0.8 }}>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--co7)', fontFamily: 'var(--f-mono)', opacity: 0.8 }}>
               ● analisando…
             </div>
           )}
           {riskCfg && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
               <span style={{ width: 5, height: 5, borderRadius: '50%', background: riskCfg.color, display: 'inline-block', boxShadow: `0 0 4px ${riskCfg.color}88` }}/>
-              <span style={{ fontSize: '.75rem', color: riskCfg.color, fontFamily: 'var(--f-mono)', letterSpacing: '.06em' }}>
+              <span style={{ fontSize: 'var(--fs-xs)', color: riskCfg.color, fontFamily: 'var(--f-mono)', letterSpacing: '.06em' }}>
                 {s.riskLevel}
               </span>
             </div>
@@ -129,7 +129,7 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
       {analysis && (
         <div>
           <div style={{
-            fontSize: '1rem',
+            fontSize: 'var(--fs-md)',
             color: outOfScope ? 'var(--t3)' : 'var(--t1)',
             lineHeight: 1.75,
             fontFamily: 'var(--f-sans)',
@@ -143,7 +143,7 @@ function AgentCard({ id, area, icon, index, wasEverRunning }) {
           {needsExpand && (
             <button onClick={() => setExpanded(v => !v)} style={{
               marginTop: 6, background: 'none', border: 'none',
-              color: 'var(--co7)', fontSize: '.75rem', cursor: 'pointer',
+              color: 'var(--co7)', fontSize: 'var(--fs-xs)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: 3,
               fontFamily: 'var(--f-mono)', padding: 0,
             }}>
@@ -174,12 +174,12 @@ export default function AgentsGrid() {
       }}>
         <div>
           <div className="section-label" style={{ marginBottom: 8 }}>Conselho de Especialistas</div>
-          <h3 className="t-display" style={{ fontSize: '1.3rem', fontWeight: 400, color: 'var(--t0)' }}>
+          <h3 className="t-display" style={{ fontSize: 'var(--fs-xl)', fontWeight: 400, color: 'var(--t0)' }}>
             {completedAgents}/{total} agentes concluídos
           </h3>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.1em', marginBottom: 6 }}>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.1em', marginBottom: 6 }}>
             PROGRESSO
           </div>
           {/* Progress bar */}
@@ -195,7 +195,7 @@ export default function AgentsGrid() {
               boxShadow: progress > 0 ? '0 0 10px rgba(43,138,245,0.5)' : 'none',
             }}/>
           </div>
-          <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t5)', marginTop: 4 }}>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', marginTop: 4 }}>
             {Math.round(progress)}%
           </div>
         </div>
@@ -272,8 +272,8 @@ function SpecialCard({ title, icon, status, preview, accentColor }) {
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: preview ? 8 : 0, position: 'relative' }}>
-        <span style={{ fontSize: '.9rem' }}>{icon}</span>
-        <span style={{ fontSize: '.90rem', fontWeight: 600, color: 'var(--t1)' }}>{title}</span>
+        <span style={{ fontSize: 'var(--fs-base)' }}>{icon}</span>
+        <span style={{ fontSize: 'var(--fs-base)', fontWeight: 600, color: 'var(--t1)' }}>{title}</span>
         <div style={{ marginLeft: 'auto' }}>
           {status === 'running' && <Loader2 size={12} className="spin" style={{ color: accentColor }}/>}
           {status === 'done'    && <CheckCircle size={12} style={{ color: 'var(--jade2)' }}/>}
@@ -282,7 +282,7 @@ function SpecialCard({ title, icon, status, preview, accentColor }) {
       {displayText && (
         <div>
           <div style={{
-            fontSize: '1rem',
+            fontSize: 'var(--fs-md)',
             color: 'var(--t1)',
             lineHeight: 1.75,
             fontFamily: 'var(--f-sans)',
@@ -295,7 +295,7 @@ function SpecialCard({ title, icon, status, preview, accentColor }) {
           {needsExpand && (
             <button onClick={() => setExpanded(v => !v)} style={{
               marginTop: 6, background: 'none', border: 'none',
-              color: accentColor, fontSize: '.75rem', cursor: 'pointer',
+              color: accentColor, fontSize: 'var(--fs-xs)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: 3,
               fontFamily: 'var(--f-mono)', padding: 0,
             }}>

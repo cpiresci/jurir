@@ -83,10 +83,10 @@ function StatCounter({ value, unit, label }) {
         transition: 'opacity .7s ease, transform .7s ease',
       }}>
         {value}
-        <span style={{ fontSize: '44%', color: 'var(--co8)', marginLeft: 5 }}>{unit}</span>
+        <span style={{ fontSize: '.44em', color: 'var(--co8)', marginLeft: 5 }}>{unit}</span>
       </div>
       <div style={{
-        fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+        fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
         color: 'var(--t4)', letterSpacing: '.12em',
         marginTop: 8, textTransform: 'uppercase',
         opacity: visible ? 1 : 0,
@@ -108,7 +108,7 @@ function FooterLink({ href, children }) {
       onMouseLeave={() => setHov(false)}
       style={{
         display: 'flex', alignItems: 'center', gap: 10,
-        fontSize: '.82rem', fontFamily: 'var(--f-sans)',
+        fontSize: 'var(--fs-sm)', fontFamily: 'var(--f-sans)',
         color: hov ? 'var(--co7)' : 'var(--t3)',
         textDecoration: 'none',
         transition: 'color .2s',
@@ -151,7 +151,7 @@ function NavColumn({ col, mobile }) {
           flexShrink: 0,
         }}/>
         <span style={{
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
           letterSpacing: '.22em', color: 'var(--co7)',
           textTransform: 'uppercase', flex: 1, textAlign: 'left',
         }}>
@@ -159,7 +159,7 @@ function NavColumn({ col, mobile }) {
         </span>
         {mobile && (
           <span style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
             color: 'var(--t4)',
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform .2s',
@@ -281,13 +281,13 @@ export default function Footer() {
               <div>
                 <div style={{
                   fontFamily: 'var(--f-display)',
-                  fontSize: '1.65rem', fontWeight: 700,
+                  fontSize: 'var(--fs-3xl)', fontWeight: 700,
                   color: '#fff', letterSpacing: '-.01em', lineHeight: 1,
                 }}>
                   JUR<em style={{ fontStyle: 'italic', color: '#00f2fe' }}>IR</em>
                 </div>
                 <div style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+                  fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
                   letterSpacing: '.28em', color: 'var(--t4)',
                   marginTop: 5, textTransform: 'uppercase',
                 }}>
@@ -297,7 +297,7 @@ export default function Footer() {
             </div>
 
             <p style={{
-              fontSize: '.84rem', color: 'var(--t3)',
+              fontSize: 'var(--fs-sm)', color: 'var(--t3)',
               lineHeight: 1.80, fontFamily: 'var(--f-sans)',
               marginBottom: 20,
               maxWidth: mobile ? '100%' : 320,
@@ -308,7 +308,7 @@ export default function Footer() {
 
             <blockquote style={{
               fontFamily: 'var(--f-display)', fontStyle: 'italic',
-              fontSize: '.9rem', color: 'var(--t4)',
+              fontSize: 'var(--fs-base)', color: 'var(--t4)',
               borderLeft: '2px solid rgba(0,242,254,0.28)',
               paddingLeft: 14, lineHeight: 1.55, marginBottom: 22,
             }}>
@@ -332,7 +332,7 @@ export default function Footer() {
                 animation: 'pulse 2.5s ease-in-out infinite',
               }}/>
               <span style={{
-                fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+                fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
                 letterSpacing: '.16em', color: 'var(--co7)',
                 textTransform: 'uppercase',
               }}>
@@ -349,7 +349,7 @@ export default function Footer() {
               borderLeft: '2px solid rgba(0,242,254,0.22)',
             }}>
               <div style={{
-                fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+                fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
                 letterSpacing: '.15em', color: 'var(--co7)',
                 marginBottom: 7, textTransform: 'uppercase',
                 display: 'flex', alignItems: 'center', gap: 6,
@@ -357,7 +357,7 @@ export default function Footer() {
                 <span>⚖</span> Aviso Legal
               </div>
               <p style={{
-                fontSize: '.75rem', color: 'var(--t4)',
+                fontSize: 'var(--fs-xs)', color: 'var(--t4)',
                 lineHeight: 1.68, fontFamily: 'var(--f-sans)', margin: 0,
               }}>
                 Ferramenta de análise jurídica assistida por IA. Não substitui
@@ -398,7 +398,7 @@ export default function Footer() {
           padding: mobile ? '20px 0 28px' : '22px 0 30px',
         }}>
           <div style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
             letterSpacing: '.10em', color: 'var(--t4)',
             lineHeight: 1.6,
           }}>
@@ -412,8 +412,8 @@ export default function Footer() {
             flexWrap: 'wrap', gap: mobile ? 6 : 6,
           }}>
             <span style={{
-              fontFamily: 'var(--f-mono)', fontSize: '.75rem',
-              color: 'var(--t5)', letterSpacing: '.10em',
+              fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
+              color: 'var(--t3)', letterSpacing: '.10em',
               marginRight: 6, textTransform: 'uppercase',
             }}>
               Powered by
@@ -433,7 +433,7 @@ export default function Footer() {
                   flexShrink: 0,
                 }}/>
                 <span style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+                  fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
                   color: 'var(--t4)', letterSpacing: '.06em',
                 }}>
                   {p.name}

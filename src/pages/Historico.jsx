@@ -20,8 +20,8 @@ function DimBar({ label, value }) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.72rem', color: 'var(--p4)', textTransform: 'uppercase', letterSpacing: '.08em' }}>{display}</span>
-        <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.72rem', color, fontWeight: 600 }}>{value}</span>
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--p4)', textTransform: 'uppercase', letterSpacing: '.08em' }}>{display}</span>
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color, fontWeight: 600 }}>{value}</span>
       </div>
       <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 3, height: 4, overflow: 'hidden' }}>
         <div style={{ height: '100%', borderRadius: 3, background: color, width: `${Math.min(100, Math.max(0, value))}%`, transition: 'width .6s ease' }} />
@@ -81,7 +81,7 @@ export default function HistoricoPage() {
       <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>
         Histórico de Análises
       </h1>
-      <p style={{ color: 'var(--p4)', fontSize: '.88rem', marginBottom: 24 }}>
+      <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-base)', marginBottom: 24 }}>
         Todas as suas análises jurídicas anteriores.
       </p>
 
@@ -93,7 +93,7 @@ export default function HistoricoPage() {
           borderRadius: 'var(--r-md)', padding: '10px 16px',
         }}>
           <Archive size={15} style={{ color: 'var(--co7)' }} />
-          <span style={{ fontSize: '.82rem', color: 'var(--co7)', fontWeight: 600 }}>
+          <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--co7)', fontWeight: 600 }}>
             {checked.size} análises selecionadas
           </span>
           <button className="btn btn-cobalt btn-sm" onClick={handleZip} disabled={zipping}>
@@ -133,10 +133,10 @@ export default function HistoricoPage() {
                   </div>
                 )}
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '.88rem', color: 'var(--p1)', marginBottom: 4, fontWeight: 500 }}>
+                  <div style={{ fontSize: 'var(--fs-base)', color: 'var(--p1)', marginBottom: 4, fontWeight: 500 }}>
                     {a.prompt?.slice(0, 100) || `Análise #${a.id}`}{(a.prompt?.length || 0) > 100 ? '…' : ''}
                   </div>
-                  <div style={{ fontSize: '.75rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>
                     {a.created_at ? new Date(a.created_at).toLocaleString('pt-BR') : '—'}
                     {a.jurir_score != null && ` · Score: ${a.jurir_score}`}
                     {a.tribunal && ` · ${a.tribunal}`}
@@ -154,7 +154,7 @@ export default function HistoricoPage() {
         <div className="modal-overlay" onClick={() => setSelected(null)}>
           <div className="modal-box" style={{ maxWidth: 700, maxHeight: '85vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-              <h2 className="t-display" style={{ fontSize: '1.2rem', fontWeight: 700 }}>Análise #{selected.id}</h2>
+              <h2 className="t-display" style={{ fontSize: 'var(--fs-xl)', fontWeight: 700 }}>Análise #{selected.id}</h2>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn btn-ghost btn-sm" disabled={pdfLoading}
                   onClick={async () => {
@@ -168,7 +168,7 @@ export default function HistoricoPage() {
                 <button className="btn btn-ghost btn-sm" onClick={() => setSelected(null)}>✕</button>
               </div>
             </div>
-            <p style={{ fontSize: '.82rem', color: 'var(--p4)', marginBottom: 16, fontStyle: 'italic' }}>{selected.prompt}</p>
+            <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)', marginBottom: 16, fontStyle: 'italic' }}>{selected.prompt}</p>
 
             {/* Perfil do caso */}
             {selected.perfil && (
@@ -178,7 +178,7 @@ export default function HistoricoPage() {
                 borderRadius: 999, padding: '4px 12px',
               }}>
                 <Compass size={12} style={{ color: 'var(--co7)' }} />
-                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--co7)', letterSpacing: '.04em' }}>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--co7)', letterSpacing: '.04em' }}>
                   {selected.perfil}
                 </span>
               </div>
@@ -186,8 +186,8 @@ export default function HistoricoPage() {
 
             {selected.verdict && (
               <div>
-                <div style={{ fontSize: '.75rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VEREDICTO</div>
-                <p style={{ fontSize: '.88rem', color: 'var(--p2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{selected.verdict}</p>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VEREDICTO</div>
+                <p style={{ fontSize: 'var(--fs-base)', color: 'var(--p2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{selected.verdict}</p>
               </div>
             )}
 
@@ -195,7 +195,7 @@ export default function HistoricoPage() {
                  mandava dimensions/perfil mas esta tela nunca renderizava. */}
             {selected.dimensions && Object.keys(selected.dimensions).length > 0 && (
               <div style={{ marginTop: 22, borderTop: '1px solid var(--b-neutral)', paddingTop: 18 }}>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--p4)', letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 12 }}>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--p4)', letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 12 }}>
                   Dimensões do Score
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px,1fr))', gap: 12 }}>
@@ -209,10 +209,10 @@ export default function HistoricoPage() {
             {/* Análise estratégica do 16º agente (Estrategista) */}
             {selected.strategic_analysis && (
               <div style={{ marginTop: 22, borderTop: '1px solid var(--b-neutral)', paddingTop: 18 }}>
-                <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--au6)', letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 10 }}>
+                <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--au6)', letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 10 }}>
                   Estratégia Processual
                 </div>
-                <p style={{ fontSize: '.85rem', color: 'var(--p3)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+                <p style={{ fontSize: 'var(--fs-base)', color: 'var(--p3)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                   {selected.strategic_analysis}
                 </p>
               </div>

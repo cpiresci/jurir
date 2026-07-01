@@ -43,16 +43,16 @@ function PainCard({ p }) {
         e.currentTarget.style.borderColor = 'rgba(239,68,68,0.12)';
       }}
     >
-      <div style={{ fontSize: '1.1rem', flexShrink: 0, marginTop: 1 }}>{p.icon}</div>
+      <div style={{ fontSize: 'var(--fs-lg)', flexShrink: 0, marginTop: 1 }}>{p.icon}</div>
       <div>
         <div style={{
-          fontFamily: 'var(--f-sans)', fontSize: '.85rem', fontWeight: 600,
+          fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-base)', fontWeight: 600,
           color: 'var(--t0)', marginBottom: 5, lineHeight: 1.45,
         }}>
           {p.title}
         </div>
         <div style={{
-          fontFamily: 'var(--f-display)', fontSize: '.82rem', color: 'var(--t3)', lineHeight: 1.6,
+          fontFamily: 'var(--f-display)', fontSize: 'var(--fs-sm)', color: 'var(--t3)', lineHeight: 1.6,
         }}>
           {p.desc}
         </div>
@@ -85,7 +85,7 @@ export default function PainSection() {
               <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>processos são perdidos</span>
             </h2>
             <p style={{
-              fontFamily: 'var(--f-display)', fontSize: '.9rem', color: 'var(--t3)',
+              fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)', color: 'var(--t3)',
               lineHeight: 1.8, maxWidth: 480, marginBottom: 18,
             }}>
               A maioria das pessoas entra em batalhas judiciais no escuro — sem saber
@@ -93,7 +93,7 @@ export default function PainSection() {
               oposto vai usar contra você.
             </p>
             <p style={{
-              fontFamily: 'var(--f-display)', fontSize: '.9rem', color: 'var(--t3)',
+              fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)', color: 'var(--t3)',
               lineHeight: 1.8, maxWidth: 480,
             }}>
               O resultado? Processos que poderiam ser ganhos são perdidos por falta

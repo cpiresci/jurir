@@ -57,9 +57,9 @@ export default function CheckoutPage() {
   return (
     <div style={{ maxWidth: 1060, margin: '0 auto', padding: '100px 24px 60px' }}>
       <div style={{ textAlign: 'center', marginBottom: 52 }}>
-        <div style={{ fontSize: '.75rem', color: 'var(--co7)', fontFamily: 'var(--f-mono)', letterSpacing: '.15em', marginBottom: 10 }}>PLANOS & PREÇOS</div>
+        <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--co7)', fontFamily: 'var(--f-mono)', letterSpacing: '.15em', marginBottom: 10 }}>PLANOS & PREÇOS</div>
         <h1 className="t-display" style={{ fontSize: 'clamp(1.8rem,4vw,2.8rem)', fontWeight: 700, marginBottom: 14 }}>Escolha seu plano</h1>
-        <p style={{ color: 'var(--p4)', fontSize: '.95rem', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-md)', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
           De análises avulsas a integrações via API — o Jurir tem o plano certo para o seu caso.
         </p>
       </div>
@@ -78,7 +78,7 @@ export default function CheckoutPage() {
               {plan.badge && (
                 <div style={{
                   position: 'absolute', top: -11, left: '50%', transform: 'translateX(-50%)',
-                  background: plan.color, color: '#fff', fontSize: '.75rem', fontWeight: 700,
+                  background: plan.color, color: '#fff', fontSize: 'var(--fs-xs)', fontWeight: 700,
                   letterSpacing: '.12em', padding: '3px 10px', borderRadius: 20,
                   whiteSpace: 'nowrap', fontFamily: 'var(--f-mono)',
                 }}>{plan.badge}</div>
@@ -86,17 +86,17 @@ export default function CheckoutPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
                 <div style={{ color: plan.color }}>{plan.icon}</div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '.95rem', color: 'var(--p1)' }}>{plan.name}</div>
-                  <div style={{ fontSize: '.75rem', color: 'var(--p5)' }}>{plan.desc}</div>
+                  <div style={{ fontWeight: 700, fontSize: 'var(--fs-md)', color: 'var(--p1)' }}>{plan.name}</div>
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)' }}>{plan.desc}</div>
                 </div>
               </div>
               <div style={{ marginBottom: 20 }}>
-                <span className="t-display" style={{ fontSize: '1.9rem', fontWeight: 700, color: plan.color }}>{plan.price}</span>
-                <span style={{ fontSize: '.78rem', color: 'var(--p4)', marginLeft: 4 }}>{plan.period}</span>
+                <span className="t-display" style={{ fontSize: 'var(--fs-4xl)', fontWeight: 700, color: plan.color }}>{plan.price}</span>
+                <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginLeft: 4 }}>{plan.period}</span>
               </div>
               <ul style={{ listStyle: 'none', flex: 1, display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 24 }}>
                 {plan.features.map((f, i) => (
-                  <li key={i} style={{ display: 'flex', gap: 8, fontSize: '.8rem', color: 'var(--p2)', alignItems: 'flex-start' }}>
+                  <li key={i} style={{ display: 'flex', gap: 8, fontSize: 'var(--fs-sm)', color: 'var(--p2)', alignItems: 'flex-start' }}>
                     <Check size={12} style={{ color: plan.color, flexShrink: 0, marginTop: 3 }}/> {f}
                   </li>
                 ))}
@@ -107,7 +107,7 @@ export default function CheckoutPage() {
                 style={{
                   width: '100%', padding: '11px', borderRadius: 'var(--r-md)',
                   border: `1px solid ${plan.border}`, background: 'transparent',
-                  color: plan.color, fontWeight: 700, fontSize: '.84rem',
+                  color: plan.color, fontWeight: 700, fontSize: 'var(--fs-sm)',
                   cursor: loadingPlan ? 'not-allowed' : 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
                   transition: 'all .18s', opacity: loadingPlan && !isLoading ? 0.5 : 1,
@@ -124,7 +124,7 @@ export default function CheckoutPage() {
           );
         })}
       </div>
-      <p style={{ textAlign: 'center', fontSize: '.75rem', color: 'var(--p5)', marginTop: 28, lineHeight: 1.6 }}>
+      <p style={{ textAlign: 'center', fontSize: 'var(--fs-xs)', color: 'var(--p5)', marginTop: 28, lineHeight: 1.6 }}>
         Pagamento seguro via Stripe · Cancele a qualquer momento · Sem taxas ocultas
       </p>
     </div>

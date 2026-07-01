@@ -47,7 +47,7 @@ function InstanceTrendChart({ instancias }) {
 
   return (
     <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '20px 20px 12px' }}>
-      <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 10 }}>
+      <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 10 }}>
         TRAJETÓRIA DA PROBABILIDADE ENTRE INSTÂNCIAS
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
@@ -143,19 +143,19 @@ export default function SimuladorPage() {
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+          padding: '5px 14px', fontSize: 'var(--fs-xs)', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <TrendingUp size={11}/> SIMULADOR DE INSTÂNCIAS
         </div>
         <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>Simular Instâncias</h1>
-        <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>Estima probabilidades de êxito em cada instância judiciária.</p>
+        <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-base)' }}>Estima probabilidades de êxito em cada instância judiciária.</p>
       </div>
 
       <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 28, marginBottom: 24 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
           <div>
-            <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
-            {loadingA ? <div style={{ color: 'var(--p5)', fontSize: '.85rem' }}>Carregando…</div> : (
+            <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
+            {loadingA ? <div style={{ color: 'var(--p5)', fontSize: 'var(--fs-base)' }}>Carregando…</div> : (
               <select className="fg-input" value={analysisId} onChange={e => setAnalysisId(e.target.value)}>
                 <option value="">Selecione…</option>
                 {analyses.map(a => <option key={a.id} value={a.id}>#{a.id} · Score {a.jurir_score ?? '?'} · {a.prompt?.slice(0, 50) || 'Análise'}</option>)}
@@ -163,7 +163,7 @@ export default function SimuladorPage() {
             )}
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ÁREA DO DIREITO</label>
+            <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ÁREA DO DIREITO</label>
             <select className="fg-input" value={area} onChange={e => setArea(e.target.value)}>
               {AREAS.map(a => <option key={a} value={a}>{a.charAt(0).toUpperCase() + a.slice(1)}</option>)}
             </select>
@@ -188,12 +188,12 @@ export default function SimuladorPage() {
               const adm   = raw?.admissibilidade;
               return (
                 <div key={key} style={{ background: 'var(--surface)', border: `1px solid ${color}30`, borderRadius: 'var(--r-md)', padding: '18px 16px' }}>
-                  <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8 }}>{label}</div>
-                  <div style={{ fontFamily: 'var(--f-display)', fontSize: '2rem', fontWeight: 700, color, marginBottom: 10 }}>{pct.toFixed(0)}%</div>
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 8 }}>{label}</div>
+                  <div style={{ fontFamily: 'var(--f-display)', fontSize: 'var(--fs-4xl)', fontWeight: 700, color, marginBottom: 10 }}>{pct.toFixed(0)}%</div>
                   <div style={{ height: 6, background: 'var(--b-subtle)', borderRadius: 'var(--r-pill)', overflow: 'hidden', marginBottom: 8 }}>
                     <div style={{ height: '100%', width: `${Math.min(pct,100)}%`, background: color, borderRadius: 'var(--r-pill)', transition: 'width .8s ease' }}/>
                   </div>
-                  {dias && <div style={{ fontSize: '.75rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>~{dias}d{adm != null ? ` · adm ${adm.toFixed(0)}%` : ''}</div>}
+                  {dias && <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', fontFamily: 'var(--f-mono)' }}>~{dias}d{adm != null ? ` · adm ${adm.toFixed(0)}%` : ''}</div>}
                 </div>
               );
             })}
@@ -204,10 +204,10 @@ export default function SimuladorPage() {
           {(result.recomendacao || result.estrategia_recomendada) && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
-                <div style={{ fontSize: '.75rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em' }}>ESTRATÉGIA RECOMENDADA</div>
-                {result.melhor_instancia && <div style={{ fontSize: '.75rem', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>✓ MELHOR: {result.melhor_instancia}</div>}
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em' }}>ESTRATÉGIA RECOMENDADA</div>
+                {result.melhor_instancia && <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--jade2)', fontFamily: 'var(--f-mono)' }}>✓ MELHOR: {result.melhor_instancia}</div>}
               </div>
-              <p style={{ fontSize: '.88rem', color: 'var(--p2)', lineHeight: 1.7 }}>{result.recomendacao || result.estrategia_recomendada}</p>
+              <p style={{ fontSize: 'var(--fs-base)', color: 'var(--p2)', lineHeight: 1.7 }}>{result.recomendacao || result.estrategia_recomendada}</p>
             </div>
           )}
 
@@ -215,10 +215,10 @@ export default function SimuladorPage() {
                exibe detalhes das instâncias (obs + requisitos) quando disponíveis */}
           {result.instancias?.some(i => i.requisitos) && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
-              <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 12 }}>REQUISITOS DE ADMISSIBILIDADE</div>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 12 }}>REQUISITOS DE ADMISSIBILIDADE</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {result.instancias.filter(i => i.requisitos).map((i, idx) => (
-                  <div key={idx} style={{ fontSize: '.83rem', color: 'var(--p3)', display: 'flex', gap: 8 }}>
+                  <div key={idx} style={{ fontSize: 'var(--fs-sm)', color: 'var(--p3)', display: 'flex', gap: 8 }}>
                     <span style={{ color: 'var(--au6)', fontFamily: 'var(--f-mono)', flexShrink: 0 }}>{i.label.split(' ')[0]}</span>
                     <span>{i.requisitos}</span>
                   </div>

@@ -106,9 +106,9 @@ function LiveFeed({ visible, verdict, show }) {
   return (
     <div style={{ opacity: visible&&show?1:0, transition:'opacity .3s', display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
       <div style={{ width:8, height:8, borderRadius:'50%', background:v.color, boxShadow:`0 0 8px ${v.color}`, animation:'pulse 1.4s ease-in-out infinite', flexShrink:0 }}/>
-      <span style={{ fontFamily:'var(--f-mono)', fontSize:'.72rem', color:'var(--t2)', letterSpacing:'.06em', fontWeight:500 }}>{v.area}</span>
-      <span style={{ fontFamily:'var(--f-mono)', fontSize:'.76rem', color:v.color, fontWeight:700, letterSpacing:'.06em' }}>{v.result}</span>
-      <span style={{ fontFamily:'var(--f-mono)', fontSize:'.68rem', color:'var(--t3)', letterSpacing:'.06em' }}>{v.score}/100</span>
+      <span style={{ fontFamily:'var(--f-mono)', fontSize: 'var(--fs-xs)', color:'var(--t2)', letterSpacing:'.06em', fontWeight:500 }}>{v.area}</span>
+      <span style={{ fontFamily:'var(--f-mono)', fontSize: 'var(--fs-xs)', color:v.color, fontWeight:700, letterSpacing:'.06em' }}>{v.result}</span>
+      <span style={{ fontFamily:'var(--f-mono)', fontSize: 'var(--fs-2xs)', color:'var(--t3)', letterSpacing:'.06em' }}>{v.score}/100</span>
     </div>
   );
 }
@@ -196,7 +196,7 @@ export default function Hero() {
           position:'absolute', top:96, right:'7%',
           background:'var(--bg-card)', border:'1px solid var(--b-cobalt)',
           borderRadius:'var(--r-md)', padding:'10px 18px',
-          boxShadow:'var(--shadow-cobalt)', fontFamily:'var(--f-mono)', fontSize:'.67rem',
+          boxShadow:'var(--shadow-cobalt)', fontFamily:'var(--f-mono)', fontSize: 'var(--fs-2xs)',
           color:'var(--co7)', letterSpacing:'.09em',
           opacity:visible?1:0, transition:'opacity .7s .6s',
           alignItems:'center', gap:9, pointerEvents:'none',
@@ -217,8 +217,8 @@ export default function Hero() {
         }}>
           <ScoreRing size={110} score={verdict.score} visible={visible}/>
           <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.54rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.5rem',color:verdict.color,letterSpacing:'.1em',transition:'color .3s' }}>{scoreLabel(verdict.score)}</span>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize: 'var(--fs-4xs)',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize: 'var(--fs-4xs)',color:verdict.color,letterSpacing:'.1em',transition:'color .3s' }}>{scoreLabel(verdict.score)}</span>
           </div>
         </div>
 
@@ -232,7 +232,7 @@ export default function Hero() {
           pointerEvents:'none', minWidth:220,
           flexDirection:'column', gap:10,
         }}>
-          <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.18em',marginBottom:2 }}>TRIBUNAL AO VIVO</div>
+          <div style={{ fontFamily:'var(--f-mono)',fontSize: 'var(--fs-3xs)',color:'var(--t3)',letterSpacing:'.18em',marginBottom:2 }}>TRIBUNAL AO VIVO</div>
           <LiveFeed visible={visible} verdict={verdict} show={feedShow}/>
         </div>
 
@@ -305,9 +305,9 @@ export default function Hero() {
               <ScoreRing size={96} score={verdict.score} visible={visible}/>
             </div>
             <div style={{ textAlign:'left', flex:1 }}>
-              <div style={{ fontFamily:'var(--f-mono)',fontSize:'.66rem',color:'var(--co7)',fontWeight:700,letterSpacing:'.1em',marginBottom:3 }}>JURIR SCORE</div>
-              <div style={{ fontFamily:'var(--f-mono)',fontSize:'.6rem',color:verdict.color,letterSpacing:'.08em',marginBottom:14,transition:'color .3s' }}>{scoreLabel(verdict.score)}</div>
-              <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.14em',marginBottom:8 }}>TRIBUNAL AO VIVO</div>
+              <div style={{ fontFamily:'var(--f-mono)',fontSize: 'var(--fs-2xs)',color:'var(--co7)',fontWeight:700,letterSpacing:'.1em',marginBottom:3 }}>JURIR SCORE</div>
+              <div style={{ fontFamily:'var(--f-mono)',fontSize: 'var(--fs-3xs)',color:verdict.color,letterSpacing:'.08em',marginBottom:14,transition:'color .3s' }}>{scoreLabel(verdict.score)}</div>
+              <div style={{ fontFamily:'var(--f-mono)',fontSize: 'var(--fs-3xs)',color:'var(--t3)',letterSpacing:'.14em',marginBottom:8 }}>TRIBUNAL AO VIVO</div>
               <LiveFeed visible={visible} verdict={verdict} show={feedShow}/>
             </div>
           </div>
@@ -331,7 +331,7 @@ export default function Hero() {
                   position:'absolute',top:0,left:0,right:0,height:2,
                   background:`linear-gradient(90deg,transparent,${['var(--co7)','var(--jade2)','var(--am4)','var(--au6)'][i]},transparent)`,
                 }}/>
-                <div style={{ fontSize:'clamp(.8rem,.95rem,1.1rem)',marginBottom:8 }}>{s.icon}</div>
+                <div style={{ fontSize:'clamp(.8rem,2.2vw,1.1rem)',marginBottom:8 }}>{s.icon}</div>
                 <div style={{
                   fontFamily:'var(--f-display)',
                   fontSize:'clamp(1.5rem,3.8vw,2.5rem)',
@@ -380,7 +380,7 @@ export default function Hero() {
             display:'flex', flexDirection:'column', alignItems:'center', gap:8,
           }}>
             <div style={{ width:1, height:38, background:'linear-gradient(180deg,var(--co7),transparent)' }}/>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.54rem',color:'var(--t3)',letterSpacing:'.22em' }}>SCROLL</span>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize: 'var(--fs-4xs)',color:'var(--t3)',letterSpacing:'.22em' }}>SCROLL</span>
           </div>
         </div>
       </section>

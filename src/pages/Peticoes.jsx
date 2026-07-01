@@ -39,7 +39,7 @@ export default function PeticoesPage() {
 
   const F = (key, label, placeholder = '') => (
     <div>
-      <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>{label}</label>
+      <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 6, letterSpacing: '.06em' }}>{label}</label>
       <input className="fg-input" value={form[key]} placeholder={placeholder}
         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} />
     </div>
@@ -92,12 +92,12 @@ export default function PeticoesPage() {
         <div style={{ marginBottom: 24 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
             background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-            padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+            padding: '5px 14px', fontSize: 'var(--fs-xs)', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
             letterSpacing: '.1em', marginBottom: 16 }}>
             <Eye size={11}/> PRÉ-VISUALIZAÇÃO
           </div>
           <h1 className="t-display" style={{ fontSize: 'clamp(1.5rem,3.5vw,2rem)', fontWeight: 700, marginBottom: 6 }}>{preview.tipo}</h1>
-          <p style={{ color: 'var(--p4)', fontSize: '.85rem' }}>Confira o conteúdo antes de baixar o .docx.</p>
+          <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-base)' }}>Confira o conteúdo antes de baixar o .docx.</p>
         </div>
 
         <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 26, display: 'flex', flexDirection: 'column', gap: 22 }}>
@@ -105,18 +105,18 @@ export default function PeticoesPage() {
           {/* Cabeçalho / partes */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 6 }}>
                 <User size={11}/> AUTOR
               </div>
-              <p style={{ fontSize: '.85rem', color: 'var(--p2)' }}>{preview.autorNome || <em style={{ color: 'var(--p5)' }}>não informado</em>}</p>
-              {preview.autorQualif && <p style={{ fontSize: '.78rem', color: 'var(--p4)', marginTop: 2 }}>{preview.autorQualif}</p>}
+              <p style={{ fontSize: 'var(--fs-base)', color: 'var(--p2)' }}>{preview.autorNome || <em style={{ color: 'var(--p5)' }}>não informado</em>}</p>
+              {preview.autorQualif && <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginTop: 2 }}>{preview.autorQualif}</p>}
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 6 }}>
                 <User size={11}/> RÉU
               </div>
-              <p style={{ fontSize: '.85rem', color: 'var(--p2)' }}>{preview.reuNome || <em style={{ color: 'var(--p5)' }}>não informado</em>}</p>
-              {preview.reuQualif && <p style={{ fontSize: '.78rem', color: 'var(--p4)', marginTop: 2 }}>{preview.reuQualif}</p>}
+              <p style={{ fontSize: 'var(--fs-base)', color: 'var(--p2)' }}>{preview.reuNome || <em style={{ color: 'var(--p5)' }}>não informado</em>}</p>
+              {preview.reuQualif && <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginTop: 2 }}>{preview.reuQualif}</p>}
             </div>
           </div>
 
@@ -126,7 +126,7 @@ export default function PeticoesPage() {
               ['Cidade', preview.cidade], ['Valor da causa', preview.valorCausa],
             ].filter(([, v]) => v).map(([label, v]) => (
               <span key={label} style={{
-                fontSize: '.72rem', fontFamily: 'var(--f-mono)', color: 'var(--p3)',
+                fontSize: 'var(--fs-xs)', fontFamily: 'var(--f-mono)', color: 'var(--p3)',
                 background: 'var(--bg-card, rgba(255,255,255,0.03))', border: '1px solid var(--b-neutral)',
                 borderRadius: 999, padding: '4px 10px',
               }}>{label}: {v}</span>
@@ -137,17 +137,17 @@ export default function PeticoesPage() {
 
           {/* Fatos */}
           <div>
-            <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>DOS FATOS</div>
-            <p style={{ fontSize: '.85rem', color: 'var(--p3)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{preview.fatos}</p>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>DOS FATOS</div>
+            <p style={{ fontSize: 'var(--fs-base)', color: 'var(--p3)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{preview.fatos}</p>
           </div>
 
           {/* Fundamentos */}
           {preview.fundamentos?.length > 0 && (
             <div>
-              <div style={{ fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>FUNDAMENTOS JURÍDICOS</div>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>FUNDAMENTOS JURÍDICOS</div>
               <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {preview.fundamentos.map((f, i) => (
-                  <li key={i} style={{ fontSize: '.83rem', color: 'var(--p3)', lineHeight: 1.6 }}>{f}</li>
+                  <li key={i} style={{ fontSize: 'var(--fs-sm)', color: 'var(--p3)', lineHeight: 1.6 }}>{f}</li>
                 ))}
               </ul>
             </div>
@@ -156,12 +156,12 @@ export default function PeticoesPage() {
           {/* Pedidos */}
           {preview.pedidos?.length > 0 && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '.72rem', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--fs-xs)', color: 'var(--au6)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>
                 <Gavel size={11}/> DO PEDIDO
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {preview.pedidos.map((p, i) => (
-                  <p key={i} style={{ fontSize: '.83rem', color: 'var(--p3)', lineHeight: 1.6, margin: 0 }}>{p}</p>
+                  <p key={i} style={{ fontSize: 'var(--fs-sm)', color: 'var(--p3)', lineHeight: 1.6, margin: 0 }}>{p}</p>
                 ))}
               </div>
             </div>
@@ -170,12 +170,12 @@ export default function PeticoesPage() {
           {/* Teses dos especialistas */}
           {preview.agentTeses?.length > 0 && (
             <div>
-              <div style={{ fontSize: '.72rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>
                 TESES DOS ESPECIALISTAS USADAS (Score {Math.round(preview.jurirScore)}/100)
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {preview.agentTeses.map((t, i) => (
-                  <div key={i} style={{ fontSize: '.8rem', color: 'var(--p4)' }}>
+                  <div key={i} style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)' }}>
                     <strong style={{ color: 'var(--p2)' }}>{t.area}</strong> ({t.conf}%) — {t.tese?.slice(0, 140)}{t.tese?.length > 140 ? '…' : ''}
                   </div>
                 ))}
@@ -184,7 +184,7 @@ export default function PeticoesPage() {
           )}
 
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', paddingTop: 8, borderTop: '1px solid var(--b-neutral)' }}>
-            <span style={{ fontSize: '.75rem', color: 'var(--p5)', fontFamily: 'var(--f-mono)', marginRight: 'auto', alignSelf: 'center' }}>
+            <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', fontFamily: 'var(--f-mono)', marginRight: 'auto', alignSelf: 'center' }}>
               {preview.advogadoNome} · {preview.advogadoOab}
             </span>
             <button className="btn btn-crimson" onClick={run} disabled={loading}>
@@ -201,18 +201,18 @@ export default function PeticoesPage() {
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'var(--ridge)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-pill)',
-          padding: '5px 14px', fontSize: '.75rem', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
+          padding: '5px 14px', fontSize: 'var(--fs-xs)', color: 'var(--cr4)', fontFamily: 'var(--f-mono)',
           letterSpacing: '.1em', marginBottom: 16 }}>
           <Scroll size={11}/> GERADOR DE PETIÇÕES
         </div>
         <h1 className="t-display" style={{ fontSize: 'clamp(1.75rem,4vw,2.25rem)', fontWeight: 700, marginBottom: 8 }}>Gerar Petição</h1>
-        <p style={{ color: 'var(--p4)', fontSize: '.9rem' }}>Gera petição .docx a partir de uma análise existente.</p>
+        <p style={{ color: 'var(--p4)', fontSize: 'var(--fs-base)' }}>Gera petição .docx a partir de uma análise existente.</p>
       </div>
 
       <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 28 }}>
         <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
-          {loadingA ? <div style={{ color: 'var(--p5)', fontSize: '.85rem' }}>Carregando…</div> : (
+          <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>ANÁLISE BASE</label>
+          {loadingA ? <div style={{ color: 'var(--p5)', fontSize: 'var(--fs-base)' }}>Carregando…</div> : (
             <select className="fg-input" value={form.analysis_id} onChange={e => setForm(f => ({ ...f, analysis_id: e.target.value }))}>
               <option value="">Selecione uma análise…</option>
               {analyses.map(a => <option key={a.id} value={a.id}>#{a.id} — {a.prompt?.slice(0, 80) || 'Análise'}</option>)}
@@ -220,7 +220,7 @@ export default function PeticoesPage() {
           )}
         </div>
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'block', fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TIPO DE PETIÇÃO</label>
+          <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TIPO DE PETIÇÃO</label>
           <select className="fg-input" value={form.tipo} onChange={e => setForm(f => ({ ...f, tipo: e.target.value }))}>
             {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
           </select>

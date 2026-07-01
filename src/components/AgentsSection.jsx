@@ -36,7 +36,7 @@ export default function AgentsSection() {
           <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>Um único veredicto.</span>
         </h2>
         <p style={{
-          fontFamily: 'var(--f-display)', fontSize: '.9rem', color: 'var(--t3)',
+          fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)', color: 'var(--t3)',
           lineHeight: 1.75, maxWidth: 540, margin: '0 auto 48px',
         }}>
           Cada agente é treinado exclusivamente na sua área do direito brasileiro.
@@ -81,16 +81,16 @@ export default function AgentsSection() {
                 opacity: .4,
               }} />
 
-              <span style={{ fontSize: '1.05rem', flexShrink: 0 }}>{a.emoji}</span>
+              <span style={{ fontSize: 'var(--fs-md)', flexShrink: 0 }}>{a.emoji}</span>
               <div>
                 <div style={{
-                  fontFamily: 'var(--f-sans)', fontSize: '.77rem', fontWeight: 600,
+                  fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', fontWeight: 600,
                   color: 'var(--t1)', lineHeight: 1.3,
                 }}>
                   {a.name}
                 </div>
                 <div style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)',
+                  fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)',
                   letterSpacing: '.09em', marginTop: 3,
                 }}>
                   ESPECIALISTA {a.id}

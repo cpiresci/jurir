@@ -176,7 +176,7 @@ function FeatureCard({ f, onCta, index }) {
 
       {/* Label mono */}
       <div style={{
-        fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: f.accent,
+        fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: f.accent,
         letterSpacing: '.20em', textTransform: 'uppercase', marginBottom: 14,
         opacity: hovered ? 1 : 0.6,
         transition: 'opacity .2s',
@@ -186,7 +186,7 @@ function FeatureCard({ f, onCta, index }) {
 
       {/* Icon box */}
       <div style={{
-        fontSize: '1.4rem', marginBottom: 14,
+        fontSize: 'var(--fs-2xl)', marginBottom: 14,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         width: 46, height: 46, borderRadius: 'var(--r-md)',
         background: hovered ? `${f.accent}14` : 'rgba(255,255,255,0.04)',
@@ -199,7 +199,7 @@ function FeatureCard({ f, onCta, index }) {
 
       {/* Title */}
       <h3 style={{
-        fontFamily: 'var(--f-sans)', fontSize: '.86rem', fontWeight: 600,
+        fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-base)', fontWeight: 600,
         color: hovered ? '#fff' : 'rgba(255,255,255,0.88)',
         marginBottom: 8, letterSpacing: '.01em',
         transition: 'color .2s',
@@ -209,7 +209,7 @@ function FeatureCard({ f, onCta, index }) {
 
       {/* Desc */}
       <p style={{
-        fontFamily: 'var(--f-display)', fontSize: '.79rem',
+        fontFamily: 'var(--f-display)', fontSize: 'var(--fs-xs)',
         color: 'var(--t3)',
         lineHeight: 1.65, fontWeight: 400, flex: 1,
       }}>
@@ -225,7 +225,7 @@ function FeatureCard({ f, onCta, index }) {
           background: f.tagJade ? 'rgba(16,185,129,0.07)' : `${f.accent}0d`,
           border: f.tagJade ? '1px solid rgba(16,185,129,0.18)' : `1px solid ${f.accent}22`,
           borderRadius: 999,
-          fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+          fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
           color: f.tagJade ? 'var(--jade2)' : f.accent,
           letterSpacing: '.10em',
         }}>
@@ -240,7 +240,7 @@ function FeatureCard({ f, onCta, index }) {
           border: `1px solid ${hovered ? f.accent : 'rgba(255,255,255,0.10)'}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all .25s',
-          fontSize: '.75rem',
+          fontSize: 'var(--fs-xs)',
           color: hovered ? '#07070A' : 'rgba(255,255,255,0.35)',
           fontWeight: 700,
           flexShrink: 0,
@@ -370,7 +370,7 @@ export default function FeaturesSection() {
             <span className="accent-cobalt" style={{ fontStyle: 'italic' }}>seu caso precisa</span>
           </h2>
           <p style={{
-            fontFamily: 'var(--f-display)', fontSize: '.9rem', color: 'var(--t3)',
+            fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)', color: 'var(--t3)',
             lineHeight: 1.75, maxWidth: 520, margin: '0 auto',
           }}>
             O JURIR não é apenas uma análise. É um ecossistema jurídico completo,
@@ -390,11 +390,11 @@ export default function FeaturesSection() {
             ].map((s, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
                 <div style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '1.1rem', fontWeight: 600,
+                  fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-lg)', fontWeight: 600,
                   color: 'var(--co7)', letterSpacing: '.04em',
                 }}>{s.n}</div>
                 <div style={{
-                  fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+                  fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
                   color: 'var(--t3)', letterSpacing: '.14em',
                   textTransform: 'uppercase', marginTop: 2,
                 }}>{s.label}</div>
@@ -428,7 +428,7 @@ export default function FeaturesSection() {
         {/* Bottom CTA */}
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <p style={{
-            fontFamily: 'var(--f-mono)', fontSize: '.75rem',
+            fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
             color: 'var(--t4)', letterSpacing: '.18em',
             textTransform: 'uppercase', marginBottom: 18,
           }}>
@@ -437,7 +437,7 @@ export default function FeaturesSection() {
           <button
             onClick={() => openModal('register')}
             style={{
-              fontFamily: 'var(--f-sans)', fontSize: '.82rem', fontWeight: 600,
+              fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', fontWeight: 600,
               color: '#07070A',
               background: 'linear-gradient(135deg, #00f2fe, #4facfe)',
               border: 'none', borderRadius: 'var(--r-md)',

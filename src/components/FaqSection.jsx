@@ -44,7 +44,7 @@ function FaqItem({ item, open, onToggle }) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
         padding: '20px 24px',
       }}>
-        <div style={{ fontFamily: 'var(--f-sans)', fontSize: '.88rem', fontWeight: 600, color: 'var(--t1)' }}>
+        <div style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-base)', fontWeight: 600, color: 'var(--t1)' }}>
           {item.q}
         </div>
         <div style={{
@@ -63,7 +63,7 @@ function FaqItem({ item, open, onToggle }) {
         transition: 'max-height .45s cubic-bezier(.19,1,.22,1)',
       }}>
         <div style={{
-          padding: '16px 24px 22px', fontFamily: 'var(--f-display)', fontSize: '.9rem',
+          padding: '16px 24px 22px', fontFamily: 'var(--f-display)', fontSize: 'var(--fs-base)',
           color: 'var(--t3)', lineHeight: 1.8, borderTop: '1px solid rgba(255,255,255,0.05)',
         }}>
           {item.a}

@@ -42,7 +42,7 @@ export default function CtaFinal() {
           Descubra sua verdade jurídica.
         </h2>
         <p style={{
-          fontFamily: 'var(--f-display)', fontSize: '.98rem', color: 'var(--t3)',
+          fontFamily: 'var(--f-display)', fontSize: 'var(--fs-md)', color: 'var(--t3)',
           lineHeight: 1.8, marginBottom: 36,
         }}>
           Em menos de 3 minutos você vai saber o que nenhum amigo pode te dizer,
@@ -53,12 +53,12 @@ export default function CtaFinal() {
           <button
             className="btn btn-cobalt-ultra btn-lg"
             onClick={() => scrollTo('analise')}
-            style={{ fontSize: '.9rem', padding: '18px 44px' }}
+            style={{ fontSize: 'var(--fs-base)', padding: '18px 44px' }}
           >
             Analisar Meu Caso Agora — Grátis <ArrowRight size={15}/>
           </button>
         </div>
-        <div style={{ fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: 'var(--t4)', letterSpacing: '.1em' }}>
+        <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.1em' }}>
           Sem cadastro · Resultado em 3 minutos · 100% gratuito para começar
         </div>
       </div>

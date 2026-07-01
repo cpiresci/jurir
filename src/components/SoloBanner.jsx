@@ -30,7 +30,7 @@ export default function SoloBanner({ feature = 'esta funcionalidade' }) {
       </h2>
 
       {/* Description */}
-      <p style={{ color: 'var(--t3)', fontSize: '.95rem', lineHeight: 1.7, margin: 0, maxWidth: 480 }}>
+      <p style={{ color: 'var(--t3)', fontSize: 'var(--fs-md)', lineHeight: 1.7, margin: 0, maxWidth: 480 }}>
         <strong style={{ color: 'var(--p2)' }}>{feature}</strong> é exclusivo do plano{' '}
         <strong style={{ color: 'var(--cr3)' }}>Solo</strong> ou superior.
         Faça upgrade para desbloquear análises ilimitadas, todos os 16 agentes e acesso completo às ferramentas avançadas.
@@ -41,7 +41,7 @@ export default function SoloBanner({ feature = 'esta funcionalidade' }) {
         display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 24px',
         background: 'var(--bg-glass)', border: '1px solid var(--b-main)',
         borderRadius: 'var(--r-md)', padding: '16px 24px',
-        fontSize: '.82rem', color: 'var(--t3)', textAlign: 'left',
+        fontSize: 'var(--fs-sm)', color: 'var(--t3)', textAlign: 'left',
       }}>
         {[
           '✅ Análises ilimitadas',

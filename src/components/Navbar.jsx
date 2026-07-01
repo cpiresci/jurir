@@ -107,11 +107,11 @@ export default function Navbar() {
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,242,254,0.05)'; e.currentTarget.style.color = 'var(--co7)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--t2)'; }}
                 >
-                  <span style={{ fontSize: '.9rem' }}>{icon}</span>
+                  <span style={{ fontSize: 'var(--fs-base)' }}>{icon}</span>
                   <span style={{ flex: 1 }}>{label}</span>
                   {badge && !isSolo && (
                     <span style={{
-                      fontSize: '.75rem', fontFamily: 'var(--f-mono)', fontWeight: 700,
+                      fontSize: 'var(--fs-xs)', fontFamily: 'var(--f-mono)', fontWeight: 700,
                       color: 'var(--cr3)', background: 'rgba(220,40,40,.1)',
                       border: '1px solid rgba(220,40,40,.2)', borderRadius: 4,
                       padding: '1px 5px', letterSpacing: '.06em',
@@ -134,14 +134,14 @@ export default function Navbar() {
       <div className="nav-actions desktop-only">
         {/* Engine status */}
         <div title={engineStatus === 'online' ? 'Motor online' : 'Motor offline — cold start ~50s'}
-          style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'var(--f-mono)', fontSize: '.75rem', color: statusColor, letterSpacing: '.08em' }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: statusColor, letterSpacing: '.08em' }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusColor, boxShadow: engineStatus === 'online' ? `0 0 7px ${statusColor}` : 'none', animation: engineStatus === 'checking' ? 'pulse 1.4s ease-in-out infinite' : 'none', flexShrink: 0 }}/>
           {engineStatus === 'checking' ? 'MOTOR…' : engineStatus === 'online' ? 'ONLINE' : 'OFFLINE'}
         </div>
 
         {authToken ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: '.78rem', color: 'var(--t3)', fontFamily: 'var(--f-mono)' }}>
+            <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--t3)', fontFamily: 'var(--f-mono)' }}>
               {userData?.email?.split('@')[0]}
             </span>
             <Link to="/premium" className="btn btn-cobalt btn-sm">⚡ Premium</Link>
@@ -193,7 +193,7 @@ export default function Navbar() {
 
 const navLinkSt = (active = false) => ({
   fontFamily: 'var(--f-sans)', color: active ? 'var(--co7)' : 'var(--t2)',
-  fontSize: '.81rem', fontWeight: 500, letterSpacing: '.03em',
+  fontSize: 'var(--fs-sm)', fontWeight: 500, letterSpacing: '.03em',
   textDecoration: 'none', padding: '7px 13px',
   borderRadius: 'var(--r-sm)', background: 'none', border: 'none',
   display: 'flex', alignItems: 'center', gap: 4,
@@ -201,13 +201,13 @@ const navLinkSt = (active = false) => ({
 });
 const dropItemSt = {
   display: 'flex', alignItems: 'center', gap: 10,
-  padding: '9px 12px', color: 'var(--t2)', fontSize: '.81rem',
+  padding: '9px 12px', color: 'var(--t2)', fontSize: 'var(--fs-sm)',
   textDecoration: 'none', borderRadius: 'var(--r-sm)',
   transition: 'all .15s', fontFamily: 'var(--f-sans)',
   letterSpacing: '.02em',
 };
 const mobileLink = {
-  color: 'var(--t2)', fontSize: '.875rem', fontWeight: 500,
+  color: 'var(--t2)', fontSize: 'var(--fs-base)', fontWeight: 500,
   letterSpacing: '.02em', textDecoration: 'none', padding: '10px 4px',
   borderBottom: '1px solid var(--b-subtle)', display: 'block',
 };
