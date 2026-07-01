@@ -187,6 +187,12 @@ export async function analyzeDocument(file, token) {
 }
 
 // ── Gerador de Petições ───────────────────────────────────────────────
+// [wire-petition-preview] Retorna o conteúdo (JSON) sem gerar o .docx,
+// para o usuário revisar antes de decidir baixar.
+export async function previewPetition(body, token) {
+  return apiFetch('/api/petition/preview', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+
 export async function generatePetition(body, token) {
   const r = await fetch(`${API_BASE}/api/petition/generate`, {
     method: 'POST',

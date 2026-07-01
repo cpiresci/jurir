@@ -13,6 +13,82 @@ const INSTANCES = [
 
 const AREAS = ['civil','penal','trabalhista','consumidor','tributario','familia','empresarial','imobiliario','constitucional','previdenciario'];
 
+// ── Gráfico de tendência entre instâncias ──────────────────────────────
+// [wire-simulator-chart] Antes os números só apareciam em cards isolados
+// — não havia nada que mostrasse visualmente a TRAJETÓRIA da probabilidade
+// (e do tempo) conforme o caso sobe de instância. Um SVG simples, sem
+// dependência nova, resolve isso: linha de tendência + banda de intervalo
+// de confiança + eixo de tempo estimado acumulado.
+function InstanceTrendChart({ instancias }) {
+  if (!instancias?.length) return null;
+
+  const W = 640, H = 220, PAD_L = 36, PAD_R = 16, PAD_T = 16, PAD_B = 34;
+  const innerW = W - PAD_L - PAD_R;
+  const innerH = H - PAD_T - PAD_B;
+  const n = instancias.length;
+
+  const xAt = (i) => PAD_L + (n === 1 ? innerW / 2 : (innerW * i) / (n - 1));
+  const yAt = (pct) => PAD_T + innerH - (Math.max(0, Math.min(100, pct)) / 100) * innerH;
+
+  const linePts = instancias.map((it, i) => `${xAt(i)},${yAt(it.probabilidade_exito)}`).join(' ');
+
+  const bandTop = instancias.map((it, i) => `${xAt(i)},${yAt(it.intervalo_max)}`).join(' ');
+  const bandBottomRev = [...instancias].reverse().map((it, i) => {
+    const idx = n - 1 - i;
+    return `${xAt(idx)},${yAt(it.intervalo_min)}`;
+  }).join(' ');
+  const bandPath = `${bandTop} ${bandBottomRev}`;
+
+  // Tempo acumulado (dias) até cada instância — dá noção de "quanto tempo custa" subir de nível.
+  let acc = 0;
+  const cumDias = instancias.map(it => { acc += it.tempo_estimado_dias || 0; return acc; });
+
+  const gridLines = [0, 25, 50, 75, 100];
+
+  return (
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '20px 20px 12px' }}>
+      <div style={{ fontSize: '.75rem', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 10 }}>
+        TRAJETÓRIA DA PROBABILIDADE ENTRE INSTÂNCIAS
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
+        {/* grid horizontal */}
+        {gridLines.map(g => (
+          <g key={g}>
+            <line x1={PAD_L} x2={W - PAD_R} y1={yAt(g)} y2={yAt(g)} stroke="var(--b-subtle)" strokeWidth="1" />
+            <text x={PAD_L - 8} y={yAt(g) + 3} textAnchor="end" fontSize="9" fill="var(--p5)" fontFamily="var(--f-mono)">{g}%</text>
+          </g>
+        ))}
+
+        {/* banda de intervalo de confiança */}
+        <polygon points={bandPath} fill="var(--co7)" opacity="0.08" />
+
+        {/* linha de tendência */}
+        <polyline points={linePts} fill="none" stroke="var(--co7)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+
+        {/* pontos + labels */}
+        {instancias.map((it, i) => {
+          const x = xAt(i), y = yAt(it.probabilidade_exito);
+          const color = it.probabilidade_exito >= 65 ? 'var(--jade2)' : it.probabilidade_exito >= 40 ? 'var(--au6)' : 'var(--cr4)';
+          return (
+            <g key={it.instancia}>
+              <circle cx={x} cy={y} r="4.5" fill={color} stroke="var(--abyss, #050507)" strokeWidth="1.5" />
+              <text x={x} y={y - 12} textAnchor="middle" fontSize="10.5" fontWeight="700" fill={color} fontFamily="var(--f-mono)">
+                {it.probabilidade_exito.toFixed(0)}%
+              </text>
+              <text x={x} y={H - PAD_B + 16} textAnchor="middle" fontSize="9.5" fill="var(--p4)" fontFamily="var(--f-mono)">
+                {(it.label || '').split(' ').slice(0, 2).join(' ')}
+              </text>
+              <text x={x} y={H - PAD_B + 27} textAnchor="middle" fontSize="8.5" fill="var(--p5)" fontFamily="var(--f-mono)">
+                ~{cumDias[i]}d acum.
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 export default function SimuladorPage() {
   const { authToken, userData, openModal, addToast } = useStore();
   // Guard: exige plano Solo+
@@ -122,6 +198,8 @@ export default function SimuladorPage() {
               );
             })}
           </div>
+
+          {result.instancias?.length > 0 && <InstanceTrendChart instancias={result.instancias} />}
 
           {(result.recomendacao || result.estrategia_recomendada) && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 20 }}>
