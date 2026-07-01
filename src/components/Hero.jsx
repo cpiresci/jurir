@@ -93,18 +93,16 @@ const VERDICTS = [
   { area:'Empresarial', result:'CONTESTADO', score:45, color:'var(--cr3)'   },
 ];
 
-function LiveFeed({ visible }) {
-  const [idx, setIdx] = useState(0);
-  const [show, setShow] = useState(true);
-  useEffect(() => {
-    if (!visible) return;
-    const t = setInterval(() => {
-      setShow(false);
-      setTimeout(() => { setIdx(v => (v+1) % VERDICTS.length); setShow(true); }, 300);
-    }, 2800);
-    return () => clearInterval(t);
-  }, [visible]);
-  const v = VERDICTS[idx];
+function scoreLabel(score) {
+  return score >= 80 ? 'FORTEMENTE FAVORÁVEL'
+    : score >= 65 ? 'FAVORÁVEL'
+    : score >= 50 ? 'PARCIALMENTE FAVORÁVEL'
+    : score >= 35 ? 'RISCO MODERADO'
+    : 'ALTO RISCO';
+}
+
+function LiveFeed({ visible, verdict, show }) {
+  const v = verdict;
   return (
     <div style={{ opacity: visible&&show?1:0, transition:'opacity .3s', display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
       <div style={{ width:8, height:8, borderRadius:'50%', background:v.color, boxShadow:`0 0 8px ${v.color}`, animation:'pulse 1.4s ease-in-out infinite', flexShrink:0 }}/>
@@ -120,12 +118,23 @@ export default function Hero() {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
   const [visible, setVisible] = useState(false);
   const [activeArea, setActiveArea] = useState(0);
+  const [feedIdx, setFeedIdx] = useState(0);
+  const [feedShow, setFeedShow] = useState(true);
 
   useEffect(() => { const t = setTimeout(() => setVisible(true), 60); return () => clearTimeout(t); }, []);
   useEffect(() => {
     const i = setInterval(() => setActiveArea(v => (v+1) % AREAS.length), 2400);
     return () => clearInterval(i);
   }, []);
+  useEffect(() => {
+    if (!visible) return;
+    const t = setInterval(() => {
+      setFeedShow(false);
+      setTimeout(() => { setFeedIdx(v => (v+1) % VERDICTS.length); setFeedShow(true); }, 300);
+    }, 2800);
+    return () => clearInterval(t);
+  }, [visible]);
+  const verdict = VERDICTS[feedIdx];
 
   return (
     <>
@@ -206,10 +215,10 @@ export default function Hero() {
           opacity:visible?1:0, transition:'opacity .7s .8s',
           pointerEvents:'none', flexDirection:'column', alignItems:'center', gap:10,
         }}>
-          <ScoreRing size={110} score={87} visible={visible}/>
+          <ScoreRing size={110} score={verdict.score} visible={visible}/>
           <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:2 }}>
             <span style={{ fontFamily:'var(--f-mono)',fontSize:'.54rem',color:'var(--t3)',letterSpacing:'.16em',textTransform:'uppercase' }}>JURIR SCORE</span>
-            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.5rem',color:'var(--jade2)',letterSpacing:'.1em' }}>FORTEMENTE FAVORÁVEL</span>
+            <span style={{ fontFamily:'var(--f-mono)',fontSize:'.5rem',color:verdict.color,letterSpacing:'.1em',transition:'color .3s' }}>{scoreLabel(verdict.score)}</span>
           </div>
         </div>
 
@@ -224,7 +233,7 @@ export default function Hero() {
           flexDirection:'column', gap:10,
         }}>
           <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.18em',marginBottom:2 }}>TRIBUNAL AO VIVO</div>
-          <LiveFeed visible={visible}/>
+          <LiveFeed visible={visible} verdict={verdict} show={feedShow}/>
         </div>
 
         {/* ── MAIN ── */}
@@ -293,13 +302,13 @@ export default function Hero() {
             opacity:visible?1:0, transition:'opacity .7s .5s',
           }}>
             <div style={{ flexShrink:0 }}>
-              <ScoreRing size={96} score={87} visible={visible}/>
+              <ScoreRing size={96} score={verdict.score} visible={visible}/>
             </div>
             <div style={{ textAlign:'left', flex:1 }}>
               <div style={{ fontFamily:'var(--f-mono)',fontSize:'.66rem',color:'var(--co7)',fontWeight:700,letterSpacing:'.1em',marginBottom:3 }}>JURIR SCORE</div>
-              <div style={{ fontFamily:'var(--f-mono)',fontSize:'.6rem',color:'var(--jade2)',letterSpacing:'.08em',marginBottom:14 }}>FORTEMENTE FAVORÁVEL</div>
+              <div style={{ fontFamily:'var(--f-mono)',fontSize:'.6rem',color:verdict.color,letterSpacing:'.08em',marginBottom:14,transition:'color .3s' }}>{scoreLabel(verdict.score)}</div>
               <div style={{ fontFamily:'var(--f-mono)',fontSize:'.58rem',color:'var(--t3)',letterSpacing:'.14em',marginBottom:8 }}>TRIBUNAL AO VIVO</div>
-              <LiveFeed visible={visible}/>
+              <LiveFeed visible={visible} verdict={verdict} show={feedShow}/>
             </div>
           </div>
 
