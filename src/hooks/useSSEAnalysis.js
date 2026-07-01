@@ -130,6 +130,16 @@ export function useSSEAnalysis() {
             });
             setDevil(devilText || '⚔️ Contraditório processado.');
 
+          // [wire-strategic-agent-sse] backend já emitia esses dois eventos
+          // (swarmEngine.js) sem nenhum branch aqui — o passo do Estrategista
+          // ficava invisível durante o streaming ao vivo, só aparecendo depois
+          // no relatório salvo.
+          } else if (t === 'strategic_start') {
+            setStatusMessage(ev.message || '🎯 Estrategista Sênior formulando plano processual…');
+
+          } else if (t === 'strategic_done') {
+            setStatusMessage(null);
+
           } else if (t === 'judge_thinking') {
             setStatusMessage(null);
             // [FIX] Garante que running=true enquanto juiz delibera
