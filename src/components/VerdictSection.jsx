@@ -157,27 +157,46 @@ function CitationChips({ citations }) {
         </span>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-        {citations.map((c) => (
-          <a
-            key={c.id}
-            href={c.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={c.texto}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              background: 'rgba(0,242,254,0.05)', border: '1px solid rgba(0,242,254,0.18)',
-              borderRadius: 999, padding: '5px 12px', textDecoration: 'none',
-              fontFamily: 'var(--f-mono)', fontSize: '.74rem', color: 'var(--co7)',
-              letterSpacing: '.02em', transition: 'background .15s ease, border-color .15s ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,242,254,0.10)'; e.currentTarget.style.borderColor = 'rgba(0,242,254,0.32)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,242,254,0.05)'; e.currentTarget.style.borderColor = 'rgba(0,242,254,0.18)'; }}
-          >
-            <span>{c.diploma} {c.artigo}</span>
-            <ExternalLink size={10} style={{ flexShrink: 0, opacity: .7 }} />
-          </a>
-        ))}
+        {citations.map((c) => {
+          // [wire-citation-validation] c.verified só existe depois do evento
+          // 'citations_validated' (pós-veredito). undefined = ainda não
+          // validado (ex. job interrompido antes do veredito) — trata como
+          // neutro, igual ao comportamento anterior.
+          const unverified = c.verified === false;
+          const color = unverified ? 'var(--t4)' : 'var(--co7)';
+          const bg    = unverified ? 'rgba(255,255,255,0.03)' : 'rgba(0,242,254,0.05)';
+          const border = unverified ? 'rgba(255,255,255,0.10)' : 'rgba(0,242,254,0.18)';
+          const bgHover    = unverified ? 'rgba(255,255,255,0.06)' : 'rgba(0,242,254,0.10)';
+          const borderHover = unverified ? 'rgba(255,255,255,0.18)' : 'rgba(0,242,254,0.32)';
+          const tooltip = unverified
+            ? `${c.texto}\n\n⚠ Recuperado como contexto, mas não identificado no texto do veredito.`
+            : c.verified
+              ? `${c.texto}\n\n✓ Confirmado no texto do veredito.`
+              : c.texto;
+          return (
+            <a
+              key={c.id}
+              href={c.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={tooltip}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                background: bg, border: `1px solid ${border}`,
+                borderRadius: 999, padding: '5px 12px', textDecoration: 'none',
+                fontFamily: 'var(--f-mono)', fontSize: '.74rem', color,
+                letterSpacing: '.02em', opacity: unverified ? 0.62 : 1,
+                transition: 'background .15s ease, border-color .15s ease, opacity .15s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = bgHover; e.currentTarget.style.borderColor = borderHover; }}
+              onMouseLeave={e => { e.currentTarget.style.background = bg; e.currentTarget.style.borderColor = border; }}
+            >
+              {c.verified === true && <CheckCircle2 size={10} style={{ flexShrink: 0, color: 'var(--ok, #2ecc71)' }} />}
+              <span>{c.diploma} {c.artigo}</span>
+              <ExternalLink size={10} style={{ flexShrink: 0, opacity: .7 }} />
+            </a>
+          );
+        })}
       </div>
     </div>
   );

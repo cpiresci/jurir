@@ -154,6 +154,12 @@ export function useSSEAnalysis() {
           } else if (t === 'citations') {
             setCitations(ev.citations || []);
 
+          // [wire-citation-validation] Depois do veredito, o backend reenvia
+          // as mesmas citações com o campo `verified` preenchido — reaproveita
+          // setCitations() pra atualizar o array já anotado.
+          } else if (t === 'citations_validated') {
+            setCitations(ev.citations || []);
+
           // [FIX CRÍTICO] Backend emite 'saved' APÓS o verdict com o analysis_id real
           } else if (t === 'saved') {
             setStatusMessage(null);
