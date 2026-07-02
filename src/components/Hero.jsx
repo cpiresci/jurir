@@ -41,10 +41,18 @@ function ScoreRing({ size = 120, score = 87, visible }) {
   const R = (size / 2) - 10;
   const C = 2 * Math.PI * R;
   const [animScore, setAnimScore] = useState(0);
+  const firstRun = useRef(true);
   useEffect(() => {
     if (!visible) return;
+    // Primeira aparição: contagem cheia e mais lenta (efeito de reveal).
+    // Trocas seguintes do card ao vivo (a cada 2.8s): reseta a 0 e reconta
+    // de novo, mas bem mais rápido — sobra ~1.7s com o anel completo e
+    // colorido visível antes do próximo reset, em vez de quase colar
+    // (2.6s de contagem numa janela de 2.8s deixava só 200ms de anel cheio).
+    const dur = firstRun.current ? 2600 : 1100;
+    firstRun.current = false;
+    setAnimScore(0);
     let start = null;
-    const dur = 2600;
     const run = (ts) => {
       if (!start) start = ts;
       const t = Math.min((ts - start) / dur, 1);
