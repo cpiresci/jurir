@@ -287,25 +287,35 @@ function SystemTab({ api }) {
   async function resetCB(name) { try { await api(`/api/admin/llm/${name}/reset`, { method: "POST" }); load(); } catch(e) { alert(e.message); } }
   // [rag-reindex-button] Antes só dava pra reindexar via curl manual com
   // token — agora tem botão direto no painel, sem precisar sair do navegador.
+  // [fix-reindex-async] A rota agora responde na hora (202) e roda em
+  // background — pode levar mais de 1h se o provider ativo for Voyage sem
+  // cartão (pacing de 3 RPM). Por isso faz polling do status a cada 15s
+  // enquanto rag.reindexing estiver true, em vez de esperar uma resposta
+  // final na mesma requisição.
   async function runReindex() {
     setReindexing(true); setReindexMsg(null);
     try {
       const r = await api("/api/admin/rag/reindex", { method: "POST" });
-      setReindexMsg(r.ok
-        ? `✓ Reindexado: ${r.total_chunks} chunks (${r.extra_chunks} da ingestão)`
-        : `✗ Falhou: ${r.error || "erro desconhecido"}`);
+      setReindexMsg(r.started ? `⏳ ${r.message}` : (r.error ? `✗ Falhou: ${r.error}` : "⏳ Reindex iniciado."));
       load();
     } catch (e) {
       setReindexMsg(`✗ Falhou: ${e.message}`);
-    } finally {
       setReindexing(false);
     }
   }
+  // Enquanto o backend reportar reindexing:true no rag_corpus, continua
+  // atualizando sozinho a cada 15s pra refletir progresso/conclusão sem
+  // precisar de clique manual em "Atualizar".
+  useEffect(() => {
+    if (!rag?.rag_corpus?.reindexing) { if (reindexing && rag) setReindexing(false); return; }
+    const id = setInterval(load, 15000);
+    return () => clearInterval(id);
+  }, [rag?.rag_corpus?.reindexing, load]);
   const providers = llm ? Object.entries(llm) : [];
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 16 }}>
-        <Btn small variant="secondary" onClick={runReindex} disabled={reindexing}>{reindexing ? "Reindexando…" : "⟲ Reindexar RAG"}</Btn>
+        <Btn small variant="secondary" onClick={runReindex} disabled={reindexing || rag?.rag_corpus?.reindexing}>{(reindexing || rag?.rag_corpus?.reindexing) ? "Reindexando…" : "⟲ Reindexar RAG"}</Btn>
         <Btn small variant="secondary" onClick={load}>↺ Atualizar</Btn>
       </div>
       {reindexMsg && (
@@ -327,7 +337,7 @@ function SystemTab({ api }) {
                 {rag.embedding.provider} · dim {rag.embedding.dim}
               </Badge>
             </div>
-            {rag.rag_corpus && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Corpus: {rag.rag_corpus.total_chunks} trechos · índice {rag.rag_corpus.index_built ? "construído" : "não construído"} ({rag.rag_corpus.engine || "in-memory"})</div>}
+            {rag.rag_corpus && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Corpus: {rag.rag_corpus.total_chunks} trechos · índice {rag.rag_corpus.reindexing ? "reindexando…" : (rag.rag_corpus.index_built ? "construído" : "não construído")} ({rag.rag_corpus.engine || "in-memory"})</div>}
           </div>
         )}
       </div>
