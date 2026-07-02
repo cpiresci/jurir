@@ -13,6 +13,7 @@ import MonitoramentoPage from './pages/Monitoramento';
 import VerificarPage from './pages/Verificar';
 import CheckoutPage from './pages/Checkout';
 import PrivacidadePage from './pages/PrivacidadePage';
+import TermosPage from './pages/TermosPage';
 import AdminPage from './pages/Admin';
 import EscritorioPage  from './pages/Escritorio';
 import ApiPanelPage    from './pages/ApiPanel';
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/verificar"     element={<VerificarPage />} />
             <Route path="/premium"       element={<CheckoutPage />} />
             <Route path="/privacidade"   element={<PrivacidadePage />} />
+            <Route path="/termos"        element={<TermosPage />} />
             <Route path="/admin"         element={<AdminPage />} />
             <Route path="/escritorio"    element={<EscritorioPage />} />
             <Route path="/api-panel"     element={<ApiPanelPage />} />

@@ -29,6 +29,7 @@ const NAV_COLS = [
       { label: 'Blog Jurídico',           type: 'route',  to: '/blog' },
       { label: 'Indique e Ganhe',         type: 'route',  to: '/indique' },
       { label: 'Política de Privacidade', type: 'route',  to: '/privacidade' },
+      { label: 'Termos de Uso',           type: 'route',  to: '/termos' },
       { label: 'Aviso Legal',             type: 'scroll', target: 'aviso-legal' },
     ],
   },
