@@ -213,6 +213,7 @@ function DashboardTab({ token }) {
 function MembersTab({ token, org, role, addToast }) {
   const [members, setMembers] = useState([]);
   const [max,     setMax]     = useState(5);
+  const [seats,   setSeats]   = useState(null); // [Frente 5] { included, used, extra, extra_price_configured }
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviting,    setInviting]    = useState(false);
@@ -221,7 +222,7 @@ function MembersTab({ token, org, role, addToast }) {
   const reload = () => {
     setLoading(true);
     getOrgMembers(token)
-      .then(d => { setMembers(d.members); setMax(d.max); })
+      .then(d => { setMembers(d.members); setMax(d.max); setSeats(d.seats ?? null); })
       .catch(() => {})
       .finally(() => setLoading(false));
   };
@@ -267,6 +268,14 @@ function MembersTab({ token, org, role, addToast }) {
           <div style={{ height: '100%', width: `${(members.length / max) * 100}%`, background: 'var(--co7)', borderRadius: 4 }} />
         </div>
       </div>
+
+      {/* [Frente 5] assentos extras cobrados além dos inclusos no plano */}
+      {seats && seats.extra > 0 && (
+        <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', marginTop: -8, marginBottom: 16 }}>
+          {seats.included} assentos inclusos no plano + {seats.extra} extra{seats.extra > 1 ? 's' : ''}
+          {seats.extra_price_configured ? ' (cobrados na sua assinatura)' : ' (cobrança ainda não configurada)'}
+        </p>
+      )}
 
       {/* Lista */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 24 }}>
