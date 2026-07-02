@@ -3,6 +3,7 @@
  * Tabs: Dashboard | Membros | Logo PDF
  */
 import { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Users, LayoutDashboard, Image, Download, Trash2, UserPlus, Building2 } from 'lucide-react';
 import { useStore } from '../store';
 import {
@@ -452,7 +453,12 @@ function Unauthenticated() {
   return <PageWrap><div style={{ textAlign: 'center', paddingTop: 40 }}><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Faça login para acessar o Escritório.</p><button className="btn btn-cobalt" onClick={() => openModal('login')}>Entrar</button></div></PageWrap>;
 }
 function NeedPlan() {
-  return <PageWrap><div style={{ textAlign: 'center', paddingTop: 40 }}><Building2 size={40} style={{ color: 'var(--p5)', marginBottom: 12 }} /><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Esta área requer o <strong>Plano Escritório</strong>.</p><a href="/#precos" className="btn btn-cobalt">Ver Planos</a></div></PageWrap>;
+  const navigate = useNavigate();
+  const goToPrecos = () => {
+    navigate('/');
+    setTimeout(() => document.getElementById('precos')?.scrollIntoView({ behavior: 'smooth' }), 250);
+  };
+  return <PageWrap><div style={{ textAlign: 'center', paddingTop: 40 }}><Building2 size={40} style={{ color: 'var(--p5)', marginBottom: 12 }} /><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Esta área requer o <strong>Plano Escritório</strong>.</p><button onClick={goToPrecos} className="btn btn-cobalt">Ver Planos</button></div></PageWrap>;
 }
 
 const cardSt = {
