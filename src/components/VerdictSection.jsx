@@ -358,6 +358,20 @@ export default function VerdictSection() {
               <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)' }}>Análise concluída</span>
             </div>
           </div>
+
+          {/* Aviso legal — reforço específico no rodapé do veredito */}
+          <div style={{
+            marginTop: 14, padding: '10px 14px',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid var(--b-subtle)',
+            borderRadius: 'var(--r-md)',
+            display: 'flex', alignItems: 'flex-start', gap: 8,
+          }}>
+            <AlertTriangle size={12} style={{ color: 'var(--t4)', flexShrink: 0, marginTop: 2 }} />
+            <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', lineHeight: 1.6 }}>
+              Este veredito foi gerado por IA e tem caráter informativo. Não substitui a análise de um advogado habilitado pela OAB e não constitui aconselhamento jurídico vinculante.
+            </span>
+          </div>
         </div>
       )}
     </div>
