@@ -277,6 +277,7 @@ function OabTab({ api }) {
 
 function SystemTab({ api }) {
   const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [rag, setRag] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
+  const [reindexing, setReindexing] = useState(false); const [reindexMsg, setReindexMsg] = useState(null);
   const load = useCallback(() => {
     setLoading(true);
     Promise.all([api("/api/health").catch(()=>null), api("/api/admin/llm/status").catch(()=>null), api("/api/admin/rag/status").catch(()=>null), api("/api/admin/logs?limit=50").catch(()=>[])])
@@ -284,10 +285,34 @@ function SystemTab({ api }) {
   }, [api]);
   useEffect(() => { load(); }, [load]);
   async function resetCB(name) { try { await api(`/api/admin/llm/${name}/reset`, { method: "POST" }); load(); } catch(e) { alert(e.message); } }
+  // [rag-reindex-button] Antes só dava pra reindexar via curl manual com
+  // token — agora tem botão direto no painel, sem precisar sair do navegador.
+  async function runReindex() {
+    setReindexing(true); setReindexMsg(null);
+    try {
+      const r = await api("/api/admin/rag/reindex", { method: "POST" });
+      setReindexMsg(r.ok
+        ? `✓ Reindexado: ${r.total_chunks} chunks (${r.extra_chunks} da ingestão)`
+        : `✗ Falhou: ${r.error || "erro desconhecido"}`);
+      load();
+    } catch (e) {
+      setReindexMsg(`✗ Falhou: ${e.message}`);
+    } finally {
+      setReindexing(false);
+    }
+  }
   const providers = llm ? Object.entries(llm) : [];
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}><Btn small variant="secondary" onClick={load}>↺ Atualizar</Btn></div>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 16 }}>
+        <Btn small variant="secondary" onClick={runReindex} disabled={reindexing}>{reindexing ? "Reindexando…" : "⟲ Reindexar RAG"}</Btn>
+        <Btn small variant="secondary" onClick={load}>↺ Atualizar</Btn>
+      </div>
+      {reindexMsg && (
+        <div style={{ background: reindexMsg.startsWith("✓") ? T.successLight : T.dangerLight, border: `1px solid ${reindexMsg.startsWith("✓") ? T.success : T.danger}`, borderRadius: 8, padding: "10px 16px", marginBottom: 16, fontSize: 13, color: reindexMsg.startsWith("✓") ? T.success : T.danger }}>
+          {reindexMsg}
+        </div>
+      )}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
         <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `4px solid ${health?.status==="ok"?T.success:T.danger}` }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.textMuted }}>Backend</div>
@@ -302,7 +327,7 @@ function SystemTab({ api }) {
                 {rag.embedding.provider} · dim {rag.embedding.dim}
               </Badge>
             </div>
-            {rag.rag_corpus && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Corpus: {rag.rag_corpus.total_chunks} trechos · Qdrant {rag.rag_corpus.qdrant_ready ? "conectado" : "indisponível"}</div>}
+            {rag.rag_corpus && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Corpus: {rag.rag_corpus.total_chunks} trechos · índice {rag.rag_corpus.index_built ? "construído" : "não construído"} ({rag.rag_corpus.engine || "in-memory"})</div>}
           </div>
         )}
       </div>
