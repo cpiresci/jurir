@@ -26,6 +26,8 @@ const NAV_COLS = [
     heading: 'Plataforma',
     links: [
       { label: 'Planos e Preços',         type: 'scroll', target: 'precos' },
+      { label: 'Blog Jurídico',           type: 'route',  to: '/blog' },
+      { label: 'Indique e Ganhe',         type: 'route',  to: '/indique' },
       { label: 'Política de Privacidade', type: 'route',  to: '/privacidade' },
       { label: 'Aviso Legal',             type: 'scroll', target: 'aviso-legal' },
     ],
