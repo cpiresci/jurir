@@ -5,7 +5,7 @@ export const API_BASE = 'https://jurir-app-y4gz.onrender.com';
 // Console → Credentials → OAuth Client ID → "Web application"). Mesmo
 // valor configurado no backend (GOOGLE_CLIENT_ID no Render). Preencher
 // antes de deploy — com vazio o botão de login Google fica escondido.
-export const GOOGLE_CLIENT_ID = '';
+export const GOOGLE_CLIENT_ID = '756753365440-9hbqhbr2cgdjjqdelib7etca5eajkt32.apps.googleusercontent.com';
 
 export const AGENT_AREAS = [
   { id: 'civil',          area: 'Direito Civil',            icon: '⚖️' },
