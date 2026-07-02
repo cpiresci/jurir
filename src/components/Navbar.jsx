@@ -82,7 +82,7 @@ export default function Navbar() {
           <rect width="36" height="36" rx="8" fill="rgba(0,242,254,0.06)" stroke="rgba(0,242,254,0.15)" strokeWidth="1"/>
           <line x1="7" y1="17" x2="29" y2="17" stroke="var(--co7)" strokeWidth="1.3" strokeLinecap="round"/>
           <line x1="18" y1="9" x2="18" y2="27" stroke="var(--co7)" strokeWidth="1.3" strokeLinecap="round"/>
-          <path d="M7 17 Q9 22 13 22 Q17 22 18 17" stroke="var(--co7)" strokeWidth="1" fill="rgba(0,242,254,0.06)" strokeLinecap="round"/>
+          <path d="M7 17 Q9 21 13 21 Q17 21 18 17" stroke="var(--co7)" strokeWidth="1" fill="rgba(0,242,254,0.06)" strokeLinecap="round"/>
           <path d="M18 17 Q19 21 23 21 Q27 21 29 17" stroke="var(--co6)" strokeWidth="1" fill="rgba(0,242,254,0.04)" strokeLinecap="round"/>
           <circle cx="18" cy="9" r="2" fill="var(--co7)"/>
         </svg>
