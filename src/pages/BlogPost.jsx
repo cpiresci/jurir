@@ -14,10 +14,38 @@ function loadMarkdown(slug) {
   return entry ? entry[1] : null;
 }
 
+// [bloco10-blog] title/meta description por post — sem lib nova (react-helmet
+// etc). Cada post troca o <title> e a meta description ao montar, e devolve
+// pro padrão do site ao desmontar. Importa pra SEO (Google indexando cada
+// post com seu próprio título) e pra preview ao compartilhar (WhatsApp etc).
+const DEFAULT_TITLE = 'JURIR — Inteligência Jurídica Quântica';
+const DEFAULT_DESCRIPTION = 'JURIR — Inteligência Jurídica Quântica. 16 agentes de IA especializados analisam seu caso em paralelo.';
+
+function useDocumentMeta(meta) {
+  useEffect(() => {
+    if (!meta) return;
+    const prevTitle = document.title;
+    let metaTag = document.querySelector('meta[name="description"]');
+    const prevDescription = metaTag ? metaTag.getAttribute('content') : null;
+    if (!metaTag) {
+      metaTag = document.createElement('meta');
+      metaTag.setAttribute('name', 'description');
+      document.head.appendChild(metaTag);
+    }
+    document.title = `${meta.title} · JURIR Blog`;
+    metaTag.setAttribute('content', meta.excerpt);
+    return () => {
+      document.title = prevTitle || DEFAULT_TITLE;
+      metaTag.setAttribute('content', prevDescription || DEFAULT_DESCRIPTION);
+    };
+  }, [meta]);
+}
+
 export default function BlogPostPage() {
   const { slug } = useParams();
   const [content, setContent] = useState(null);
   const meta = POSTS.find(p => p.slug === slug);
+  useDocumentMeta(meta);
 
   useEffect(() => {
     setContent(loadMarkdown(slug));

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, ArrowRight } from 'lucide-react';
 import { POSTS } from '../lib/blogPosts';
@@ -6,6 +7,12 @@ import { POSTS } from '../lib/blogPosts';
 // vivem em content/blog/*.md e o manifesto (título/resumo/data) em
 // src/lib/blogPosts.js, pra listar sem precisar buscar todo markdown.
 export default function BlogPage() {
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = 'Blog Jurídico · JURIR';
+    return () => { document.title = prevTitle; };
+  }, []);
+
   return (
     <div style={{ maxWidth: 780, margin: '0 auto', padding: '100px 24px 60px' }}>
       <div style={{ marginBottom: 40 }}>
