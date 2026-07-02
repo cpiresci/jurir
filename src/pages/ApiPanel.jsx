@@ -2,6 +2,7 @@
  * ApiPanel.jsx — Gerenciamento de API Keys e Webhooks (Plano API)
  */
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Key, Webhook, Plus, Trash2, Copy, CheckCircle, Zap } from 'lucide-react';
 import { useStore } from '../store';
 import { listApiKeys, createApiKey, revokeApiKey, listWebhooks, createWebhook, deleteWebhook, testWebhook } from '../lib/api';
@@ -283,7 +284,14 @@ function PageWrap({ children }) { return <div style={{ maxWidth: '100%', margin:
 function Loading() { return <div style={{ color: 'var(--p4)', padding: 40, textAlign: 'center' }}>Carregando…</div>; }
 function Empty({ text }) { return <div style={{ color: 'var(--p4)', padding: 40, textAlign: 'center' }}>{text}</div>; }
 function Unauth() { const { openModal } = useStore(); return <div style={{ textAlign: 'center', paddingTop: 40 }}><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Faça login para acessar o Painel API.</p><button className="btn btn-cobalt" onClick={() => openModal('login')}>Entrar</button></div>; }
-function NeedPlan() { return <div style={{ textAlign: 'center', paddingTop: 40 }}><Zap size={40} style={{ color: 'var(--p5)', marginBottom: 12 }} /><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Esta área requer o <strong>Plano API</strong>.</p><a href="/#precos" className="btn btn-cobalt">Ver Planos</a></div>; }
+function NeedPlan() {
+  const navigate = useNavigate();
+  const goToPrecos = () => {
+    navigate('/');
+    setTimeout(() => document.getElementById('precos')?.scrollIntoView({ behavior: 'smooth' }), 250);
+  };
+  return <div style={{ textAlign: 'center', paddingTop: 40 }}><Zap size={40} style={{ color: 'var(--p5)', marginBottom: 12 }} /><p style={{ color: 'var(--p4)', marginBottom: 16 }}>Esta área requer o <strong>Plano API</strong>.</p><button onClick={goToPrecos} className="btn btn-cobalt">Ver Planos</button></div>;
+}
 
 const cardSt  = { background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '14px 16px' };
 const inputSt = { width: '100%', padding: '10px 14px', boxSizing: 'border-box', background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', color: 'var(--p1)', fontSize: 'var(--fs-sm)', outline: 'none' };

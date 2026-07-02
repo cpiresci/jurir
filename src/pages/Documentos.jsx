@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SoloBanner from '../components/SoloBanner';
 import { Upload, FileText, Loader2, AlertTriangle, ChevronRight, Zap } from 'lucide-react';
 import { useStore } from '../store';
@@ -6,6 +7,7 @@ import { analyzeDocument } from '../lib/api';
 
 export default function DocumentosPage() {
   const { authToken, userData, openModal, addToast } = useStore();
+  const navigate = useNavigate();
   // Guard: exige plano Solo+
   if (authToken && userData && !userData.is_unlimited) {
     return <SoloBanner feature="Upload de Documentos" />;
@@ -42,8 +44,9 @@ export default function DocumentosPage() {
   const useAsPrompt = () => {
     if (!result?.enriched_prompt) return;
     sessionStorage.setItem('jurir_doc_prompt', result.enriched_prompt);
-    window.location.href = '/#analise';
     addToast('Prompt enriquecido carregado! Selecione o modo Premium.', 'success');
+    navigate('/');
+    setTimeout(() => document.getElementById('analise')?.scrollIntoView({ behavior: 'smooth' }), 250);
   };
 
   return (
