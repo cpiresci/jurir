@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  [sitemap-hashrouter] O app usa HashRouter (jurir.com/#/rota), por isso as
+  URLs abaixo incluem o fragmento #. Isso ajuda descoberta mas não é o ideal
+  — o caminho definitivo pra SEO de URL por post seria migrar pra BrowserRouter
+  com prerender/SSG das páginas de blog, que é um projeto maior e mais
+  arriscado (o fluxo de reset de senha depende do parsing de hash hoje).
+  Atualizar manualmente ao adicionar posts novos em src/lib/blogPosts.js.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://jurir.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://jurir.com/#/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jurir.com/#/blog/quanto-tempo-demora-processo-trabalhista</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jurir.com/#/blog/como-funciona-garantia-legal-produto-com-defeito</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jurir.com/#/blog/imposto-de-renda-aluguel-declarar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jurir.com/#/blog/despejo-por-falta-de-pagamento-prazo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jurir.com/#/blog/pensao-alimenticia-como-e-calculada</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jurir.com/#/blog/empresa-vazou-meus-dados-o-que-fazer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
