@@ -285,6 +285,7 @@ function OabTab({ api }) {
 function SystemTab({ api }) {
   const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [rag, setRag] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
   const [reindexing, setReindexing] = useState(false); const [reindexMsg, setReindexMsg] = useState(null);
+  const [testQuery, setTestQuery] = useState(""); const [testArea, setTestArea] = useState(""); const [testResult, setTestResult] = useState(null); const [testLoading, setTestLoading] = useState(false);
   const load = useCallback(() => {
     setLoading(true);
     Promise.all([api("/api/health").catch(()=>null), api("/api/admin/llm/status").catch(()=>null), api("/api/admin/rag/status").catch(()=>null), api("/api/admin/logs?limit=50").catch(()=>[])])
@@ -292,6 +293,22 @@ function SystemTab({ api }) {
   }, [api]);
   useEffect(() => { load(); }, [load]);
   async function resetCB(name) { try { await api(`/api/admin/llm/${name}/reset`, { method: "POST" }); load(); } catch(e) { alert(e.message); } }
+  // [rag-test-search] Testa a busca de verdade contra o índice em memória —
+  // "terminou de indexar" não é o mesmo que "indexou certo". Pergunta uma
+  // coisa da área X, os artigos retornados batem com o esperado?
+  async function runTestSearch() {
+    if (!testQuery.trim()) return;
+    setTestLoading(true); setTestResult(null);
+    try {
+      const qs = new URLSearchParams({ q: testQuery, ...(testArea.trim() ? { area: testArea.trim() } : {}) });
+      const r = await api(`/api/admin/rag/test-search?${qs.toString()}`);
+      setTestResult(r);
+    } catch (e) {
+      setTestResult({ error: e.message });
+    } finally {
+      setTestLoading(false);
+    }
+  }
   // [rag-reindex-button] Antes só dava pra reindexar via curl manual com
   // token — agora tem botão direto no painel, sem precisar sair do navegador.
   // [fix-reindex-async] A rota agora responde na hora (202) e roda em
@@ -378,6 +395,34 @@ function SystemTab({ api }) {
           </div>
         </div>
       )}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted, marginBottom: 12 }}>Testar busca RAG</div>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px" }}>
+          <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 12 }}>
+            Confirma se o índice está retornando resultados corretos (não só se terminou de construir). Ex: busca "prazo prescricional trabalhista" — o topo deve trazer CLT, não Código Civil.
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+            <input value={testQuery} onChange={e => setTestQuery(e.target.value)} onKeyDown={e => e.key === "Enter" && runTestSearch()} placeholder="ex: prazo prescricional trabalhista" style={{ flex: "1 1 240px", padding: "8px 12px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 }} />
+            <input value={testArea} onChange={e => setTestArea(e.target.value)} placeholder="área (opcional)" style={{ width: 160, padding: "8px 12px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 }} />
+            <Btn small variant="secondary" onClick={runTestSearch} disabled={testLoading || !testQuery.trim()}>{testLoading ? "Buscando…" : "Buscar"}</Btn>
+          </div>
+          {testResult?.error && <div style={{ color: T.danger, fontSize: 13 }}>✗ {testResult.error}</div>}
+          {testResult && !testResult.error && (
+            <div>
+              <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 8 }}>
+                {testResult.count} resultado(s) em {testResult.took_ms}ms · tier {testResult.embedding_tier || "—"}
+                {testResult.aviso && <span style={{ color: T.warning }}> · ⚠ {testResult.aviso}</span>}
+              </div>
+              {testResult.results?.map(r => (
+                <div key={r.rank} style={{ borderTop: `1px solid ${T.border}`, padding: "8px 0", fontSize: 13 }}>
+                  <div style={{ fontWeight: 700 }}>#{r.rank} — {r.diploma}{r.artigo ? `, ${r.artigo}` : ""} <span style={{ fontWeight: 400, color: T.textMuted }}>({r.area})</span></div>
+                  <div style={{ color: T.textMuted, marginTop: 2 }}>{r.preview}…</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
       <div style={{ background: "#0F0F0F", borderRadius: 8, padding: 16, maxHeight: 300, overflowY: "auto", fontFamily: "monospace", fontSize: 12, lineHeight: 1.6 }}>
         {logs.length===0 ? <span style={{ color: "#666" }}>Sem logs.</span> : logs.map((log,i) => (
           <div key={i} style={{ color: log.level==="error"?"#FF6B6B":log.level==="warn"?"#FFD93D":"#8BE078", marginBottom: 2 }}>
