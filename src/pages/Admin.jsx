@@ -18,7 +18,14 @@ function useApi(token) {
       headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       ...opts,
     });
-    if (!res.ok) throw new Error(`${res.status}`);
+    if (!res.ok) {
+      // [fix-api-error-detail] Antes só propagava o status HTTP (ex: "409"),
+      // escondendo a mensagem real do backend (ex: "Reindex já em andamento").
+      // Tenta ler o corpo JSON de erro (detail/error) antes de desistir.
+      let msg = `${res.status}`;
+      try { const errBody = await res.json(); msg = errBody.detail || errBody.error || msg; } catch (_) {}
+      throw new Error(msg);
+    }
     return res.json();
   }, [token]);
 }
@@ -312,6 +319,14 @@ function SystemTab({ api }) {
     return () => clearInterval(id);
   }, [rag?.rag_corpus?.reindexing, load]);
   const providers = llm ? Object.entries(llm) : [];
+  // [fix-rag-badge-real-tier] rag.embedding.provider vem da cascata GLOBAL
+  // (embeddingProvider.js, compartilhada com memoryEngine.js) — não reflete
+  // o pin específico do RAG (RAG_EMBEDDING_PROVIDER, default voyage). O
+  // provider/dim reais do RAG ficam em rag.rag_corpus.embedding_tier/_dim.
+  // Fallback pro campo antigo mantém compatibilidade com backend não atualizado.
+  const ragTier = rag?.rag_corpus?.embedding_tier || rag?.embedding?.provider;
+  const ragDim = rag?.rag_corpus?.embedding_dim ?? rag?.embedding?.dim;
+  const ragDegraded = ragTier === "tfidf";
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 16 }}>
@@ -329,12 +344,12 @@ function SystemTab({ api }) {
           <div style={{ marginTop: 8 }}><Badge color={health?.status==="ok"?T.success:T.danger} bg={health?.status==="ok"?T.successLight:T.dangerLight}>{health?.status||(loading?"…":"offline")}</Badge></div>
           {health?.uptime && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Uptime: {health.uptime}</div>}
         </div>
-        {rag?.embedding && (
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `4px solid ${rag.embedding.degraded ? T.danger : (rag.embedding.provider === "voyage" ? T.warning : T.success)}` }}>
+        {ragTier && (
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `4px solid ${ragDegraded ? T.danger : (ragTier === "voyage" ? T.warning : T.success)}` }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.textMuted }}>Embedding RAG</div>
             <div style={{ marginTop: 8 }}>
-              <Badge color={rag.embedding.degraded ? T.danger : (rag.embedding.provider === "voyage" ? T.warning : T.success)} bg={rag.embedding.degraded ? T.dangerLight : (rag.embedding.provider === "voyage" ? T.warningLight : T.successLight)}>
-                {rag.embedding.provider} · dim {rag.embedding.dim}
+              <Badge color={ragDegraded ? T.danger : (ragTier === "voyage" ? T.warning : T.success)} bg={ragDegraded ? T.dangerLight : (ragTier === "voyage" ? T.warningLight : T.successLight)}>
+                {ragTier} · dim {ragDim}
               </Badge>
             </div>
             {rag.rag_corpus && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Corpus: {rag.rag_corpus.total_chunks} trechos · índice {rag.rag_corpus.reindexing ? "reindexando…" : (rag.rag_corpus.index_built ? "construído" : "não construído")} ({rag.rag_corpus.engine || "in-memory"})</div>}
