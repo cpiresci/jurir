@@ -11,7 +11,7 @@ export function useSSEAnalysis() {
       authToken, resetAnalysis, setRunning, setAgentState,
       incrementCompleted, setVerdict, setDevil, setScore,
       setVeto, setAnalysisId, addToast, setStatusMessage,
-      setDevilState, setJudgeState, setCitations,
+      setDevilState, setJudgeState, setCitations, setCaselawWarnings,
     } = useStore.getState();
 
     if (!authToken) {
@@ -171,6 +171,12 @@ export function useSSEAnalysis() {
           // setCitations() pra atualizar o array já anotado.
           } else if (t === 'citations_validated') {
             setCitations(ev.citations || []);
+
+          // [wire-caselaw-conflict-sse] Alerta de jurisprudência com o mesmo
+          // número de processo citado com anos/teses diferentes entre
+          // pareceres — sinal forte de alucinação. Vazio na maioria dos casos.
+          } else if (t === 'caselaw_warnings') {
+            setCaselawWarnings(ev.warnings || []);
 
           // [FIX CRÍTICO] Backend emite 'saved' APÓS o verdict com o analysis_id real
           } else if (t === 'saved') {
