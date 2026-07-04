@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Clock, ChevronRight, FileText, Download, CheckSquare, Square, Archive, Compass } from 'lucide-react';
+import { Clock, ChevronRight, FileText, Download, CheckSquare, Square, Archive, Compass, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store';
 import { getAnalyses, getAnalysis, downloadPdf, downloadZip } from '../lib/api';
 
@@ -188,6 +188,22 @@ export default function HistoricoPage() {
               <div>
                 <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VEREDICTO</div>
                 <p style={{ fontSize: 'var(--fs-base)', color: 'var(--p2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{selected.verdict}</p>
+              </div>
+            )}
+
+            {/* [wire-caselaw-conflict-history] Calculado e salvo desde a v4,
+                 nunca exposto — mesmo número de processo citado com anos
+                 diferentes entre pareceres, sinal de provável alucinação. */}
+            {selected.caselaw_warnings && selected.caselaw_warnings.length > 0 && (
+              <div style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 4,
+                background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.25)',
+                borderRadius: 'var(--r-md)', padding: '13px 18px',
+              }}>
+                <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
+                <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: '#f59e0b', lineHeight: 1.6 }}>
+                  Jurisprudência conflitante: {selected.caselaw_warnings.map(w => `${w.citation} (anos: ${w.anosEncontrados.join(', ')})`).join(' · ')} — confirme na fonte oficial.
+                </span>
               </div>
             )}
 

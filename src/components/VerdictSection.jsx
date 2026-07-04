@@ -202,18 +202,41 @@ function CitationChips({ citations }) {
   );
 }
 
+// ── Alerta de jurisprudência conflitante (mesmo processo, anos diferentes) ────
+function CaselawWarningBanner({ warnings }) {
+  if (!warnings || !warnings.length) return null;
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'flex-start', gap: 10,
+      background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.25)',
+      borderRadius: 'var(--r-md)', padding: '13px 18px',
+    }}>
+      <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', color: '#f59e0b', lineHeight: 1.5, fontWeight: 600 }}>
+          Jurisprudência conflitante detectada
+        </span>
+        <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', lineHeight: 1.6 }}>
+          {warnings.map(w => `${w.citation} (anos: ${w.anosEncontrados.join(', ')})`).join(' · ')} — mesmo número citado com dados diferentes entre pareceres. Confirme na fonte oficial antes de usar.
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function VerdictSection() {
   const {
     verdictText, devilText, jurirScore, scoreDims,
     vetoActive, analysisId, authToken, addToast, running,
-    citations,
+    citations, caselawWarnings,
   } = useStore(s => ({
     verdictText: s.verdictText, devilText: s.devilText,
     jurirScore:  s.jurirScore,  scoreDims: s.scoreDims,
     vetoActive:  s.vetoActive,  analysisId: s.analysisId,
     authToken:   s.authToken,   addToast:  s.addToast,
     running:     s.running,     citations: s.citations,
+    caselawWarnings: s.caselawWarnings,
   }));
 
   const judgeState = useStore(s => s.judgeState);
@@ -243,6 +266,9 @@ export default function VerdictSection() {
           </span>
         </div>
       )}
+
+      {/* Jurisprudência conflitante */}
+      <CaselawWarningBanner warnings={caselawWarnings} />
 
       {/* Advogado do Diabo */}
       {devilText && (

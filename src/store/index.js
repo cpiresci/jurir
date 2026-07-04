@@ -51,6 +51,10 @@ export const useStore = create((set, get) => ({
   deltaResult:     null,
   // [wire-citation-chips] Citações estruturadas (id, diploma, artigo, texto, url)
   citations:       [],
+  // [wire-caselaw-conflict-sse] Alertas de jurisprudência citada com o mesmo
+  // número de processo e anos/teses diferentes entre pareceres — sinal de
+  // provável alucinação. Vazio na maioria dos casos.
+  caselawWarnings: [],
   // [FIX] Mensagem de status para cooldown/recovery — evita 0/16 parado sem feedback
   statusMessage:   null,
 
@@ -67,7 +71,7 @@ export const useStore = create((set, get) => ({
     verdictText: '', devilText: '', jurirScore: null,
     scoreDims: null, vetoActive: false, running: false,
     freeResult: null, deltaResult: null, statusMessage: null,
-    citations: [],
+    citations: [], caselawWarnings: [],
     devilState: { status: 'idle', analysis: '', confidence: 0 },
     judgeState: { status: 'idle', verdict: '' },
   }),
@@ -92,6 +96,7 @@ export const useStore = create((set, get) => ({
   setDeltaResult:     (r)             => set({ deltaResult: r }),
   setAnalysisId:      (id)            => set({ analysisId: id }),
   setCitations:       (list)          => set({ citations: Array.isArray(list) ? list : [] }),
+  setCaselawWarnings: (list)          => set({ caselawWarnings: Array.isArray(list) ? list : [] }),
 
   // ── Delta ──
   deltaLoading: false,
