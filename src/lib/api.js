@@ -178,9 +178,18 @@ export async function downloadPdf(analysisId, token) {
   const blob = await r.blob();
   if (blob.size === 0) throw new Error('PDF vazio — tente novamente.');
   const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = `jurir-analise-${analysisId}.pdf`; a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  // [fix-pdf-mobile-redirect] <a download> sobre blob: não é confiável em
+  // navegadores/webviews mobile (iOS Safari em especial ignora o atributo
+  // download em blob: e não faz nada visível). window.open é a estratégia
+  // primária: se o navegador sabe baixar, baixa; senão, ao menos abre o
+  // PDF pra visualização. Fallback pro <a download> só se o popup for
+  // bloqueado (comum em desktop com bloqueador ativo).
+  const opened = window.open(url, '_blank');
+  if (!opened) {
+    const a = document.createElement('a');
+    a.href = url; a.download = `jurir-analise-${analysisId}.pdf`; a.click();
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
 // ── Delta Analysis ────────────────────────────────────────────────────

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1A3A6B</color>
-    <color name="colorPrimaryDark">#0D2347</color>
-    <color name="colorAccent">#2563EB</color>
-    <color name="splashBackground">#F8F5F0</color>
+    <!-- [fix-stale-android-theme] Cores antigas (navy blue) substituídas
+         pelas cores reais do site (ver src/index.css: cor void e gold). -->
+    <color name="colorPrimary">#050507</color>
+    <color name="colorPrimaryDark">#050507</color>
+    <color name="colorAccent">#F59E0B</color>
+    <color name="splashBackground">#0a0a0f</color>
 </resources>
