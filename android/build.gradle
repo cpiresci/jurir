@@ -19,8 +19,13 @@ subprojects {
                 }
             }
         }
-    }
-    tasks.matching { it.name.contains("KotlinCompile") }.configureEach {
-        kotlinOptions.jvmTarget = "17"
+        // O nome real da task é "compileReleaseKotlin"/"compileDebugKotlin" etc,
+        // NÃO "KotlinCompile" (esse é o nome da classe). O filtro antigo nunca
+        // casava com nada, então o JVM target do Kotlin nunca era sobrescrito.
+        // Também precisa rodar dentro do afterEvaluate para sobrescrever o
+        // jvmTarget que módulos como capacitor-filesystem já definem sozinhos.
+        project.tasks.matching { it.name.contains("Kotlin") && it.hasProperty('kotlinOptions') }.configureEach {
+            kotlinOptions.jvmTarget = "17"
+        }
     }
 }
