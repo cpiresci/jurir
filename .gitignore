@@ -29,3 +29,6 @@ keystore_*.txt
 *.keystore.b64
 *.b64
 keystore_novo*
+upload_certificate.pem
+*.jks
+*.keystore
