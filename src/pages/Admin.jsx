@@ -282,7 +282,7 @@ function OabTab({ api }) {
   );
 }
 
-function SystemTab({ api }) {
+function SystemTab({ api, token }) {
   const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [rag, setRag] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
   const [reindexing, setReindexing] = useState(false); const [reindexMsg, setReindexMsg] = useState(null);
   const [testQuery, setTestQuery] = useState(""); const [testArea, setTestArea] = useState(""); const [testResult, setTestResult] = useState(null); const [testLoading, setTestLoading] = useState(false);
@@ -349,6 +349,11 @@ function SystemTab({ api }) {
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 16 }}>
         <Btn small variant="secondary" onClick={runReindex} disabled={reindexing || rag?.rag_corpus?.reindexing}>{(reindexing || rag?.rag_corpus?.reindexing) ? "Reindexando…" : "⟲ Reindexar RAG"}</Btn>
         <Btn small variant="secondary" onClick={load}>↺ Atualizar</Btn>
+        {/* [admin-bin-download-button] Sem DevTools no celular pra pegar o
+            token manualmente — o token já está em memória aqui (state
+            `token`, o JWT normal de login admin), então o botão só monta
+            a URL da rota que aceita ?token=... e deixa o navegador baixar. */}
+        <Btn small variant="secondary" onClick={() => { window.location.href = `${API}/api/admin/rag/vectors-cache-download?token=${encodeURIComponent(token)}`; }}>⬇ Baixar cache .bin</Btn>
       </div>
       {reindexMsg && (
         <div style={{ background: reindexMsg.startsWith("✓") ? T.successLight : T.dangerLight, border: `1px solid ${reindexMsg.startsWith("✓") ? T.success : T.danger}`, borderRadius: 8, padding: "10px 16px", marginBottom: 16, fontSize: 13, color: reindexMsg.startsWith("✓") ? T.success : T.danger }}>
@@ -449,7 +454,7 @@ export default function AdminPage() {
 
   if (!token) return <Login onLogin={handleLogin} />;
 
-  const CONTENT = { dashboard: <DashboardTab api={api} />, users: <UsersTab api={api} />, analyses: <AnalysesTab api={api} />, financial: <FinancialTab api={api} />, oab: <OabTab api={api} />, system: <SystemTab api={api} /> };
+  const CONTENT = { dashboard: <DashboardTab api={api} />, users: <UsersTab api={api} />, analyses: <AnalysesTab api={api} />, financial: <FinancialTab api={api} />, oab: <OabTab api={api} />, system: <SystemTab api={api} token={token} /> };
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", background: T.bg }}>
