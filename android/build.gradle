@@ -20,4 +20,7 @@ subprojects {
             }
         }
     }
+    tasks.matching { it.name.contains("KotlinCompile") }.configureEach {
+        kotlinOptions.jvmTarget = "17"
+    }
 }
