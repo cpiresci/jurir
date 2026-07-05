@@ -39,7 +39,7 @@ const STATS = [
   { value: '16',    unit: 'agentes', label: 'especializados em paralelo' },
   { value: '100%',  unit: 'swarm',   label: 'contraditório garantido' },
   { value: '<3',    unit: 'min',     label: 'tempo médio de análise' },
-  { value: 'v11.0', unit: 'motor',   label: 'jurídico quântico' },
+  { value: 'v11.0', unit: 'motor',   label: 'jurídico por IA' },
 ];
 
 // [fix-footer-vendor-leak] Antes exibia os provedores de IA reais por trás do
