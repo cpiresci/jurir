@@ -25,3 +25,5 @@ keystore_*.txt
 # Backups
 *.bak
 *.backup
+*.keystore
+*.keystore.b64
