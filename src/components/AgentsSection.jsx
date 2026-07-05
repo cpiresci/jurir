@@ -25,7 +25,7 @@ export default function AgentsSection() {
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
 
-        <div className="section-label" style={{ marginBottom: 18 }}>O Conselho Jurídico Quântico</div>
+        <div className="section-label" style={{ marginBottom: 18 }}>O Conselho Jurídico por IA</div>
         <h2 className="t-display" style={{
           fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 300,
           color: 'var(--t0)', marginBottom: 14,

@@ -114,7 +114,7 @@ export default function ProcessSection() {
     }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', textAlign: 'center' }}>
 
-        <div className="section-label" style={{ marginBottom: 18 }}>Processo de Análise Quântica</div>
+        <div className="section-label" style={{ marginBottom: 18 }}>Processo de Análise por IA</div>
         <h2 className="t-display" style={{
           fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 300,
           color: 'var(--t0)', marginBottom: 14,

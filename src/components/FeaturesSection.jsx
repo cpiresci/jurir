@@ -7,7 +7,7 @@ const FEATURES = [
     id: 'analise',
     emoji: '⚛️',
     label: 'Core',
-    title: 'Análise Jurídica Quântica',
+    title: 'Análise Jurídica por IA',
     desc: '16 agentes IA em paralelo analisam seu caso simultaneamente, com contraditório real via Advogado do Diabo e veredicto do Juiz IA Quantum.',
     tag: 'GRATUITO · PREMIUM',
     tagJade: false,
