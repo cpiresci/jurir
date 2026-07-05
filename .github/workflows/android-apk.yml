@@ -20,7 +20,7 @@ on:
         options: [internal, alpha, beta, production]
 
 env:
-  JAVA_VERSION: '17'
+  JAVA_VERSION: '21'  # [fix-java21-align] alinhado com capacitor.build.gradle
   NODE_VERSION: '22'
 
 jobs:
@@ -137,7 +137,12 @@ jobs:
     name: Deploy Play Store
     runs-on: ubuntu-latest
     needs: build-android
-    if: github.ref == 'refs/heads/main'
+    # [fix-autodeploy-playstore] Antes rodava em QUALQUER push no main que
+    # tocasse src/**, public/**, capacitor.config.json, package.json ou
+    # android/** — ou seja, publicava na Play Store sozinho, sem decisão
+    # manual. Agora só roda quando disparado manualmente via
+    # workflow_dispatch (o mesmo evento que já tem o input release_track).
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/download-artifact@v4
         with:

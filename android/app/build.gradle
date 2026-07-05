@@ -35,8 +35,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        // [fix-java21-align] Alinhado com capacitor.build.gradle (auto-gerado
+        // pelo "cap sync", exige 21). Antes ficava em 17 aqui mas 21 lá —
+        // o apply from: capacitor.build.gradle no fim deste arquivo sobrescrevia
+        // silenciosamente pra 21 de qualquer forma, então o valor efetivo já
+        // era 21; isso só torna explícito o que já acontecia na prática, e
+        // evita depender do JDK 17 que o CI instalava (incompatível).
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 }
 

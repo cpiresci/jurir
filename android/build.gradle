@@ -14,8 +14,11 @@ subprojects {
         if (project.hasProperty('android')) {
             project.android {
                 compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_17
-                    targetCompatibility JavaVersion.VERSION_17
+                    // [fix-java21-align] mesmo motivo do app/build.gradle: alinhar
+                    // os módulos do Capacitor (capacitor-filesystem, share, etc.)
+                    // com os 21 que o capacitor.build.gradle já força no app.
+                    sourceCompatibility JavaVersion.VERSION_21
+                    targetCompatibility JavaVersion.VERSION_21
                 }
             }
         }
@@ -25,7 +28,7 @@ subprojects {
         // Também precisa rodar dentro do afterEvaluate para sobrescrever o
         // jvmTarget que módulos como capacitor-filesystem já definem sozinhos.
         project.tasks.matching { it.name.contains("Kotlin") && it.hasProperty('kotlinOptions') }.configureEach {
-            kotlinOptions.jvmTarget = "17"
+            kotlinOptions.jvmTarget = "21"  // [fix-java21-align]
         }
     }
 }
