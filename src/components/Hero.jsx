@@ -250,7 +250,7 @@ export default function Hero() {
           {/* Badge */}
           <div className="hero-badge fade-up" style={{ marginBottom:'clamp(14px,2.5vw,20px)', opacity:visible?1:0 }}>
             <Zap size={9} style={{ color:'var(--co7)' }}/>
-            <span style={{ color:'var(--t2)' }}>Análise Jurídica por IA</span>
+            <span style={{ color:'var(--t2)' }}>Inteligência Jurídica por IA</span>
             <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
             <span style={{ color:'var(--co7)',fontWeight:600 }}>16 Agentes Especializados</span>
             <span style={{ width:3,height:3,borderRadius:'50%',background:'var(--t4)',flexShrink:0 }}/>
