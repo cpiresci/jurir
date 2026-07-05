@@ -27,3 +27,5 @@ keystore_*.txt
 *.backup
 *.keystore
 *.keystore.b64
+*.b64
+keystore_novo*
