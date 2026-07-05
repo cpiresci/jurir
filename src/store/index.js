@@ -55,6 +55,10 @@ export const useStore = create((set, get) => ({
   // número de processo e anos/teses diferentes entre pareceres — sinal de
   // provável alucinação. Vazio na maioria dos casos.
   caselawWarnings: [],
+  // [citation-audit-v1] Artigo citado no texto (veredito/Advogado do Diabo)
+  // que não bateu contra o corpus real de legislação — sinal de artigo
+  // inventado. Vazio na maioria dos casos.
+  citationAudit: { scanned: 0, unsourced: [] },
   // [FIX] Mensagem de status para cooldown/recovery — evita 0/16 parado sem feedback
   statusMessage:   null,
 
@@ -72,6 +76,7 @@ export const useStore = create((set, get) => ({
     scoreDims: null, vetoActive: false, running: false,
     freeResult: null, deltaResult: null, statusMessage: null,
     citations: [], caselawWarnings: [],
+    citationAudit: { scanned: 0, unsourced: [] },
     devilState: { status: 'idle', analysis: '', confidence: 0 },
     judgeState: { status: 'idle', verdict: '' },
   }),
@@ -97,6 +102,7 @@ export const useStore = create((set, get) => ({
   setAnalysisId:      (id)            => set({ analysisId: id }),
   setCitations:       (list)          => set({ citations: Array.isArray(list) ? list : [] }),
   setCaselawWarnings: (list)          => set({ caselawWarnings: Array.isArray(list) ? list : [] }),
+  setCitationAudit:   (audit)         => set({ citationAudit: audit && Array.isArray(audit.unsourced) ? audit : { scanned: 0, unsourced: [] } }),
 
   // ── Delta ──
   deltaLoading: false,

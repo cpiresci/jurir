@@ -224,12 +224,35 @@ function CaselawWarningBanner({ warnings }) {
   );
 }
 
+// ── Alerta de artigo citado que não bate com o corpus de legislação ──────────
+function CitationAuditBanner({ audit }) {
+  const unsourced = audit?.unsourced;
+  if (!unsourced || !unsourced.length) return null;
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'flex-start', gap: 10,
+      background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.25)',
+      borderRadius: 'var(--r-md)', padding: '13px 18px',
+    }}>
+      <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', color: '#f59e0b', lineHeight: 1.5, fontWeight: 600 }}>
+          Citação não localizada na base de legislação
+        </span>
+        <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', lineHeight: 1.6 }}>
+          {unsourced.map(c => `${c.diploma}, ${c.artigo}`).join(' · ')} — dispositivo citado na análise não foi encontrado no corpus de legislação. Confirme na fonte oficial antes de usar.
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function VerdictSection() {
   const {
     verdictText, devilText, jurirScore, scoreDims,
     vetoActive, analysisId, authToken, addToast, running,
-    citations, caselawWarnings,
+    citations, caselawWarnings, citationAudit,
   } = useStore(s => ({
     verdictText: s.verdictText, devilText: s.devilText,
     jurirScore:  s.jurirScore,  scoreDims: s.scoreDims,
@@ -237,6 +260,7 @@ export default function VerdictSection() {
     authToken:   s.authToken,   addToast:  s.addToast,
     running:     s.running,     citations: s.citations,
     caselawWarnings: s.caselawWarnings,
+    citationAudit:   s.citationAudit,
   }));
 
   const judgeState = useStore(s => s.judgeState);
@@ -269,6 +293,9 @@ export default function VerdictSection() {
 
       {/* Jurisprudência conflitante */}
       <CaselawWarningBanner warnings={caselawWarnings} />
+
+      {/* Citação de artigo que não bate com o corpus */}
+      <CitationAuditBanner audit={citationAudit} />
 
       {/* Advogado do Diabo */}
       {devilText && (

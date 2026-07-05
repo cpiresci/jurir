@@ -12,6 +12,7 @@ export function useSSEAnalysis() {
       incrementCompleted, setVerdict, setDevil, setScore,
       setVeto, setAnalysisId, addToast, setStatusMessage,
       setDevilState, setJudgeState, setCitations, setCaselawWarnings,
+      setCitationAudit,
     } = useStore.getState();
 
     if (!authToken) {
@@ -177,6 +178,12 @@ export function useSSEAnalysis() {
           // pareceres — sinal forte de alucinação. Vazio na maioria dos casos.
           } else if (t === 'caselaw_warnings') {
             setCaselawWarnings(ev.warnings || []);
+
+          // [citation-audit-v1] Artigo citado no texto que não bateu contra
+          // o corpus real de legislação — mesmo padrão do caselaw_warnings
+          // acima, só que pra dispositivo legal em vez de jurisprudência.
+          } else if (t === 'citation_audit_warnings') {
+            setCitationAudit(ev.citation_audit || { scanned: 0, unsourced: [] });
 
           // [FIX CRÍTICO] Backend emite 'saved' APÓS o verdict com o analysis_id real
           } else if (t === 'saved') {
