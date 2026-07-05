@@ -12,11 +12,15 @@ android {
     }
     signingConfigs {
         release {
-            if (System.getenv('RELEASE_STORE_FILE')) {
-                storeFile file(System.getenv('RELEASE_STORE_FILE'))
-                storePassword System.getenv('RELEASE_STORE_PASSWORD')
-                keyAlias System.getenv('RELEASE_KEY_ALIAS')
-                keyPassword System.getenv('RELEASE_KEY_PASSWORD')
+            // Lê as MESMAS env vars que o workflow android-apk.yml exporta
+            // (STORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD), em vez de
+            // RELEASE_STORE_FILE/RELEASE_STORE_PASSWORD/... que nunca eram setadas.
+            // storeFile é relativo a android/app/, onde o CI decodifica o .jks.
+            if (System.getenv('STORE_PASSWORD')) {
+                storeFile file(System.getenv('KEYSTORE_FILE') ?: 'jurir-release-key.jks')
+                storePassword System.getenv('STORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
             }
         }
     }
