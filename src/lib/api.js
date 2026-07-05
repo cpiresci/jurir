@@ -1,5 +1,73 @@
 import { API_BASE } from './constants';
 
+// [fix-pdf-native-open] window.open(blob:...) não funciona de forma confiável
+// dentro do WebView do Capacitor Android: ele retorna um objeto "truthy" mesmo
+// quando não abre nada visível (WebView não suporta múltiplas janelas por
+// padrão), então o fallback <a download> nunca era acionado — resultado:
+// "parece que baixou mas não abre nada". Solução: no app nativo, gravar o
+// blob em disco via @capacitor/filesystem e abrir com o menu de
+// compartilhamento/visualização nativo via @capacitor/share. No navegador
+// (web), mantém a estratégia antiga que já funciona bem.
+function isNativeApp() {
+  return typeof window !== 'undefined' && !!window.Capacitor?.isNativePlatform?.();
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // reader.result = "data:<mime>;base64,<DADOS>" — Filesystem.writeFile
+      // espera só a parte depois da vírgula.
+      const base64 = String(reader.result).split(',')[1] ?? '';
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function openBlobNative(blob, filename) {
+  const { Filesystem, Directory } = await import('@capacitor/filesystem');
+  const { Share } = await import('@capacitor/share');
+  const base64 = await blobToBase64(blob);
+  const written = await Filesystem.writeFile({
+    path: filename,
+    data: base64,
+    directory: Directory.Cache,
+  });
+  await Share.share({
+    title: filename,
+    url: written.uri,
+    dialogTitle: 'Abrir ou compartilhar arquivo',
+  });
+}
+
+function openBlobWeb(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const opened = window.open(url, '_blank');
+  if (!opened) {
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+// Ponto único de saída para qualquer blob baixado (PDF, DOCX, ZIP) que
+// precisa ser aberto/visualizado pelo usuário, com o caminho certo por
+// plataforma. Se o Filesystem/Share nativo falhar por algum motivo, cai de
+// volta para a estratégia web (garante ao menos o download do arquivo).
+async function openOrDownloadBlob(blob, filename) {
+  if (isNativeApp()) {
+    try {
+      await openBlobNative(blob, filename);
+      return;
+    } catch (err) {
+      console.error('[openOrDownloadBlob] fallback nativo->web:', err);
+    }
+  }
+  openBlobWeb(blob, filename);
+}
+
 // [FIX v10.4] No WebView do Capacitor Android o fetch cross-origin precisa
 // de mode:'cors' explícito + timeout para não travar silenciosamente.
 // Retry automático (1x) para falhas de rede transitórias durante cold start.
@@ -177,19 +245,7 @@ export async function downloadPdf(analysisId, token) {
   }
   const blob = await r.blob();
   if (blob.size === 0) throw new Error('PDF vazio — tente novamente.');
-  const url  = URL.createObjectURL(blob);
-  // [fix-pdf-mobile-redirect] <a download> sobre blob: não é confiável em
-  // navegadores/webviews mobile (iOS Safari em especial ignora o atributo
-  // download em blob: e não faz nada visível). window.open é a estratégia
-  // primária: se o navegador sabe baixar, baixa; senão, ao menos abre o
-  // PDF pra visualização. Fallback pro <a download> só se o popup for
-  // bloqueado (comum em desktop com bloqueador ativo).
-  const opened = window.open(url, '_blank');
-  if (!opened) {
-    const a = document.createElement('a');
-    a.href = url; a.download = `jurir-analise-${analysisId}.pdf`; a.click();
-  }
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  await openOrDownloadBlob(blob, `jurir-analise-${analysisId}.pdf`);
 }
 
 // ── Delta Analysis ────────────────────────────────────────────────────
@@ -246,10 +302,7 @@ export async function generatePetition(body, token) {
     throw new Error(err.detail || `HTTP ${r.status}`);
   }
   const blob = await r.blob();
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = `jurir_peticao_${body.analysis_id}.docx`; a.click();
-  URL.revokeObjectURL(url);
+  await openOrDownloadBlob(blob, `jurir_peticao_${body.analysis_id}.docx`);
 }
 
 // ── Simulador de Instâncias ───────────────────────────────────────────
@@ -346,10 +399,7 @@ export async function downloadZip(analysis_ids, token) {
   });
   if (!r.ok) throw new Error(`ZIP ${r.status}`);
   const blob = await r.blob();
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = 'jurir_lote.zip'; a.click();
-  URL.revokeObjectURL(url);
+  await openOrDownloadBlob(blob, 'jurir_lote.zip');
 }
 
 // ── API Keys (Plano API) ───────────────────────────────────────────────

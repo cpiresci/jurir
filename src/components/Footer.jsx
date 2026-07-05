@@ -42,11 +42,11 @@ const STATS = [
   { value: 'v11.0', unit: 'motor',   label: 'jurídico quântico' },
 ];
 
+// [fix-footer-vendor-leak] Antes exibia os provedores de IA reais por trás do
+// swarm (SambaNova/Cerebras/Gemini/OpenRouter). Isso não pode aparecer
+// publicamente — vira uma única marca própria da Jurir.
 const PROVIDERS = [
-  { name: 'SambaNova', dot: '#00f2fe' },
-  { name: 'Cerebras',  dot: '#4facfe' },
-  { name: 'Gemini',    dot: '#a78bfa' },
-  { name: 'OpenRouter',dot: '#10b981' },
+  { name: 'Jurir Quantum Engine', dot: '#00f2fe' },
 ];
 
 /* ── hook de breakpoint ─────────────────────────────────────────────── */
@@ -430,7 +430,7 @@ export default function Footer() {
             letterSpacing: '.10em', color: 'var(--t4)',
             lineHeight: 1.6,
           }}>
-            © {year} JURIR · INTELIGÊNCIA JURÍDICA QUÂNTICA
+            © {year} JURIR · INTELIGÊNCIA POR IA
             {!mobile && ' · TODOS OS DIREITOS RESERVADOS'}
           </div>
 
