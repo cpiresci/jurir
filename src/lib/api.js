@@ -28,18 +28,29 @@ function blobToBase64(blob) {
 
 async function openBlobNative(blob, filename) {
   const { Filesystem, Directory } = await import('@capacitor/filesystem');
-  const { Share } = await import('@capacitor/share');
   const base64 = await blobToBase64(blob);
   const written = await Filesystem.writeFile({
     path: filename,
     data: base64,
     directory: Directory.Cache,
   });
-  await Share.share({
-    title: filename,
-    url: written.uri,
-    dialogTitle: 'Abrir ou compartilhar arquivo',
-  });
+
+  try {
+    const { FileOpener } = await import('@capacitor-community/file-opener');
+    await FileOpener.open({
+      filePath: written.uri,
+      contentType: blob.type || 'application/pdf',
+      openWithDefault: true,
+    });
+  } catch (err) {
+    console.error('[openBlobNative] FileOpener falhou, usando Share:', err);
+    const { Share } = await import('@capacitor/share');
+    await Share.share({
+      title: filename,
+      url: written.uri,
+      dialogTitle: 'Abrir ou compartilhar arquivo',
+    });
+  }
 }
 
 function openBlobWeb(blob, filename) {
