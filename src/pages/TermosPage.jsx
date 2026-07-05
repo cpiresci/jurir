@@ -364,7 +364,7 @@ export default function TermosPage() {
         marginTop: 40, textAlign: 'center',
         fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.1em',
       }}>
-        © {new Date().getFullYear()} {APP_NAME} · INTELIGÊNCIA JURÍDICA QUÂNTICA<br />
+        © {new Date().getFullYear()} {APP_NAME} · INTELIGÊNCIA JURÍDICA POR IA<br />
         <span style={{ opacity: .7 }}>Estes Termos de Uso devem ser lidos em conjunto com nossa Política de Privacidade.</span>
       </div>
     </div>

@@ -18,8 +18,8 @@ function loadMarkdown(slug) {
 // etc). Cada post troca o <title> e a meta description ao montar, e devolve
 // pro padrão do site ao desmontar. Importa pra SEO (Google indexando cada
 // post com seu próprio título) e pra preview ao compartilhar (WhatsApp etc).
-const DEFAULT_TITLE = 'JURIR — Inteligência Jurídica Quântica';
-const DEFAULT_DESCRIPTION = 'JURIR — Inteligência Jurídica Quântica. 16 agentes de IA especializados analisam seu caso em paralelo.';
+const DEFAULT_TITLE = 'JURIR — Inteligência Jurídica por IA';
+const DEFAULT_DESCRIPTION = 'JURIR — Inteligência Jurídica por IA. 16 agentes de IA especializados analisam seu caso em paralelo.';
 
 function useDocumentMeta(meta) {
   useEffect(() => {

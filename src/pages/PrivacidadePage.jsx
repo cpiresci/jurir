@@ -443,7 +443,7 @@ export default function PrivacidadePage() {
         marginTop: 40, textAlign: 'center',
         fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', letterSpacing: '.1em',
       }}>
-        © {new Date().getFullYear()} {APP_NAME} · INTELIGÊNCIA JURÍDICA QUÂNTICA<br />
+        © {new Date().getFullYear()} {APP_NAME} · INTELIGÊNCIA JURÍDICA POR IA<br />
         <span style={{ opacity: .7 }}>Esta política é parte integrante dos Termos de Uso do JURIR.</span>
       </div>
     </div>

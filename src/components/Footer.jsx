@@ -319,7 +319,7 @@ export default function Footer() {
                   letterSpacing: '.28em', color: 'var(--t4)',
                   marginTop: 5, textTransform: 'uppercase',
                 }}>
-                  INTELIGÊNCIA JURÍDICA QUÂNTICA
+                  INTELIGÊNCIA JURÍDICA POR IA
                 </div>
               </div>
             </div>
@@ -430,7 +430,7 @@ export default function Footer() {
             letterSpacing: '.10em', color: 'var(--t4)',
             lineHeight: 1.6,
           }}>
-            © {year} JURIR · INTELIGÊNCIA POR IA
+            © {year} JURIR · INTELIGÊNCIA JURÍDICA POR IA
             {!mobile && ' · TODOS OS DIREITOS RESERVADOS'}
           </div>
 
