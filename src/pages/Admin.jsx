@@ -139,10 +139,33 @@ function UsersTab({ api }) {
     const days = plan === 'free' || plan === 'credito' ? 30 : parseInt(prompt('Dias de validade:', '30') || '30');
     try { await api(`/api/admin/users/${u.id}/plan`, { method: "POST", body: JSON.stringify({ plan, days }) }); load(); alert(`Plano '${plan}' setado!`); } catch(e) { alert(e.message); }
   }
+  // [wire-bulk-credits] add-credits/remove-credits/set-credits existiam no
+  // backend sem UI (Achado #5 da auditoria 2026-07-06) — ferramenta rápida
+  // por ID pra ajustar créditos sem precisar achar o usuário na tabela.
+  const [bulkId, setBulkId] = useState(""); const [bulkAmount, setBulkAmount] = useState(""); const [bulkBusy, setBulkBusy] = useState(false);
+  async function bulkCredits(op) {
+    const user_id = parseInt(bulkId); const amount = parseInt(bulkAmount);
+    if (!user_id || isNaN(amount)) { alert("Informe ID do usuário e quantidade."); return; }
+    setBulkBusy(true);
+    try {
+      const path = op === "add" ? "/api/admin/add-credits" : op === "remove" ? "/api/admin/remove-credits" : "/api/admin/set-credits";
+      const r = await api(path, { method: "POST", body: JSON.stringify({ user_id, amount }) });
+      alert(op === "set" ? "Créditos definidos!" : `Créditos: ${r.credits}`);
+      load();
+    } catch(e) { alert(e.message); } finally { setBulkBusy(false); }
+  }
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por e-mail ou nome…" style={{ padding: "7px 12px", border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 13, background: T.bg, color: T.text, width: 280 }} />
+      </div>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 16, background: T.surfaceAlt, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px" }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted }}>Créditos por ID</span>
+        <input value={bulkId} onChange={e => setBulkId(e.target.value)} placeholder="ID do usuário" style={{ width: 110, padding: "6px 10px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 }} />
+        <input value={bulkAmount} onChange={e => setBulkAmount(e.target.value)} placeholder="Quantidade" style={{ width: 110, padding: "6px 10px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 }} />
+        <Btn small variant="secondary" disabled={bulkBusy} onClick={() => bulkCredits("add")}>+ Adicionar</Btn>
+        <Btn small variant="secondary" disabled={bulkBusy} onClick={() => bulkCredits("remove")}>− Remover</Btn>
+        <Btn small variant="ghost" disabled={bulkBusy} onClick={() => bulkCredits("set")}>= Definir</Btn>
       </div>
       <Table loading={loading} data={filtered} empty="Nenhum usuário."
         columns={[
@@ -227,12 +250,23 @@ function OabTab({ api }) {
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
+  // [wire-oab-rejected] GET /api/admin/oab/rejected existia sem UI (Achado #5
+  // da auditoria 2026-07-06) — histórico de rejeições, útil pra auditar se
+  // alguém reenviou e o motivo antigo ainda não foi limpo.
+  const [rejected, setRejected] = useState([]);
+  const [rejLoading, setRejLoading] = useState(true);
 
   const load = useCallback(() => {
     setLoading(true);
     api("/api/admin/oab/pending").then(setPending).catch(() => setPending([])).finally(() => setLoading(false));
   }, [api]);
   useEffect(() => { load(); }, [load]);
+
+  const loadRejected = useCallback(() => {
+    setRejLoading(true);
+    api("/api/admin/oab/rejected").then(setRejected).catch(() => setRejected([])).finally(() => setRejLoading(false));
+  }, [api]);
+  useEffect(() => { loadRejected(); }, [loadRejected]);
 
   async function viewDoc(id) {
     try {
@@ -253,7 +287,7 @@ function OabTab({ api }) {
     const reason = prompt("Motivo da rejeição (enviado por email ao usuário):");
     if (reason === null) return;
     setBusyId(id);
-    try { await api(`/api/admin/oab/${id}/reject`, { method: "POST", body: JSON.stringify({ reason }) }); load(); }
+    try { await api(`/api/admin/oab/${id}/reject`, { method: "POST", body: JSON.stringify({ reason }) }); load(); loadRejected(); }
     catch (e) { alert(e.message); }
     finally { setBusyId(null); }
   }
@@ -278,6 +312,22 @@ function OabTab({ api }) {
         ]}
         data={pending}
       />
+      <div style={{ marginTop: 32 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted }}>Rejeições (histórico)</span>
+          <Btn small variant="secondary" onClick={loadRejected}>↺ Atualizar</Btn>
+        </div>
+        <Table
+          loading={rejLoading}
+          empty="Nenhuma rejeição registrada."
+          columns={[
+            { key: "email", label: "Usuário" },
+            { key: "oab_number", label: "OAB", render: (v, row) => `${v}/${row.oab_uf}` },
+            { key: "rejection_reason", label: "Motivo" },
+          ]}
+          data={rejected}
+        />
+      </div>
     </div>
   );
 }
@@ -286,13 +336,50 @@ function SystemTab({ api, token }) {
   const [health, setHealth] = useState(null); const [llm, setLlm] = useState(null); const [rag, setRag] = useState(null); const [logs, setLogs] = useState([]); const [loading, setLoading] = useState(true);
   const [reindexing, setReindexing] = useState(false); const [reindexMsg, setReindexMsg] = useState(null);
   const [testQuery, setTestQuery] = useState(""); const [testArea, setTestArea] = useState(""); const [testResult, setTestResult] = useState(null); const [testLoading, setTestLoading] = useState(false);
+  // [wire-rag-stats] [wire-db-tables] rag/stats e db/tables existiam sem UI
+  // (Achado #5 da auditoria 2026-07-06).
+  const [ragStats, setRagStats] = useState(null);
+  const [dbTables, setDbTables] = useState(null);
+  const [exportBusy, setExportBusy] = useState(false);
+  const [migrateBusy, setMigrateBusy] = useState(false); const [migrateMsg, setMigrateMsg] = useState(null);
   const load = useCallback(() => {
     setLoading(true);
-    Promise.all([api("/api/health").catch(()=>null), api("/api/admin/llm/status").catch(()=>null), api("/api/admin/rag/status").catch(()=>null), api("/api/admin/logs?limit=50").catch(()=>[])])
-      .then(([h,l,r,lg]) => { setHealth(h); setLlm(l); setRag(r); setLogs(lg.logs||lg||[]); }).finally(() => setLoading(false));
+    Promise.all([
+      api("/api/health").catch(()=>null),
+      api("/api/admin/llm/status").catch(()=>null),
+      api("/api/admin/rag/status").catch(()=>null),
+      api("/api/admin/logs?limit=50").catch(()=>[]),
+      api("/api/admin/rag/stats").catch(()=>null),
+      api("/api/admin/db/tables").catch(()=>null),
+    ])
+      .then(([h,l,r,lg,rs,db]) => { setHealth(h); setLlm(l); setRag(r); setLogs(lg.logs||lg||[]); setRagStats(rs); setDbTables(db); }).finally(() => setLoading(false));
   }, [api]);
   useEffect(() => { load(); }, [load]);
   async function resetCB(name) { try { await api(`/api/admin/llm/${name}/reset`, { method: "POST" }); load(); } catch(e) { alert(e.message); } }
+  // [wire-rag-export] GET /api/admin/rag/export só aceita Authorization via
+  // header (ao contrário de vectors-cache-download, que aceita ?token= pra
+  // navegação direta) — por isso baixa como blob via fetch em vez de
+  // window.location.href.
+  async function runExport() {
+    setExportBusy(true);
+    try {
+      const r = await fetch(`${API}/api/admin/rag/export`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) { const b = await r.json().catch(()=>({})); throw new Error(b.detail || `HTTP ${r.status}`); }
+      const blob = await r.blob();
+      const filename = r.headers.get("content-disposition")?.match(/filename="(.+)"/)?.[1] || "legislation-vectors-cache";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) { alert(e.message); } finally { setExportBusy(false); }
+  }
+  async function runMigrateCacheToBinary() {
+    setMigrateBusy(true); setMigrateMsg(null);
+    try {
+      const r = await api("/api/admin/rag/migrate-cache-to-binary", { method: "POST" });
+      setMigrateMsg(r.skipped ? "Já estava no formato binário — nada a fazer." : `✓ ${r.migrated} vetores reempacotados.`);
+      load();
+    } catch (e) { setMigrateMsg(`✗ Falhou: ${e.message}`); } finally { setMigrateBusy(false); }
+  }
   // [rag-test-search] Testa a busca de verdade contra o índice em memória —
   // "terminou de indexar" não é o mesmo que "indexou certo". Pergunta uma
   // coisa da área X, os artigos retornados batem com o esperado?
@@ -354,7 +441,14 @@ function SystemTab({ api, token }) {
             `token`, o JWT normal de login admin), então o botão só monta
             a URL da rota que aceita ?token=... e deixa o navegador baixar. */}
         <Btn small variant="secondary" onClick={() => { window.location.href = `${API}/api/admin/rag/vectors-cache-download?token=${encodeURIComponent(token)}`; }}>⬇ Baixar cache .bin</Btn>
+        <Btn small variant="ghost" disabled={exportBusy} onClick={runExport}>{exportBusy ? "Exportando…" : "⬇ Exportar cache (rota oficial)"}</Btn>
+        <Btn small variant="ghost" disabled={migrateBusy} onClick={runMigrateCacheToBinary}>{migrateBusy ? "Migrando…" : "⇄ Migrar cache p/ binário"}</Btn>
       </div>
+      {migrateMsg && (
+        <div style={{ background: migrateMsg.startsWith("✓") ? T.successLight : T.dangerLight, border: `1px solid ${migrateMsg.startsWith("✓") ? T.success : T.danger}`, borderRadius: 8, padding: "10px 16px", marginBottom: 16, fontSize: 13, color: migrateMsg.startsWith("✓") ? T.success : T.danger }}>
+          {migrateMsg}
+        </div>
+      )}
       {reindexMsg && (
         <div style={{ background: reindexMsg.startsWith("✓") ? T.successLight : T.dangerLight, border: `1px solid ${reindexMsg.startsWith("✓") ? T.success : T.danger}`, borderRadius: 8, padding: "10px 16px", marginBottom: 16, fontSize: 13, color: reindexMsg.startsWith("✓") ? T.success : T.danger }}>
           {reindexMsg}
@@ -397,6 +491,31 @@ function SystemTab({ api, token }) {
                 {info.state!=="closed" && <div style={{ marginTop: 10 }}><Btn small variant="secondary" onClick={() => resetCB(name)}>Resetar</Btn></div>}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+      {ragStats && (
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted, marginBottom: 12 }}>Corpus RAG por área</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
+            {Object.entries(ragStats.areas || {}).sort((a,b) => b[1]-a[1]).map(([area, count]) => (
+              <div key={area} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "12px 16px" }}>
+                <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 4 }}>{area}</div>
+                <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "monospace" }}>{count}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {dbTables && (
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted, marginBottom: 12 }}>Tabelas do banco</div>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "16px 20px", borderLeft: `4px solid ${dbTables.all_ok ? T.success : T.danger}` }}>
+            <div style={{ marginBottom: 8 }}>
+              <Badge color={dbTables.all_ok ? T.success : T.danger} bg={dbTables.all_ok ? T.successLight : T.dangerLight}>{dbTables.all_ok ? "Todas as tabelas esperadas existem" : "Faltando tabela(s)"}</Badge>
+            </div>
+            {dbTables.missing?.length > 0 && <div style={{ fontSize: 13, color: T.danger, marginBottom: 8 }}>Faltando: {dbTables.missing.join(", ")}</div>}
+            <div style={{ fontSize: 12, color: T.textMuted }}>Encontradas ({dbTables.tables_found?.length ?? 0}): {dbTables.tables_found?.join(", ")}</div>
           </div>
         </div>
       )}

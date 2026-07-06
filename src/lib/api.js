@@ -232,12 +232,6 @@ export async function analyzeFree(prompt, language = 'pt', signal) {
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
-export async function analyzePremiumPoll(prompt, token) {
-  return apiFetch('/api/analyze/premium', { method: 'POST', body: JSON.stringify({ prompt }) }, token);
-}
-export async function pollJob(jobId, token) {
-  return apiFetch(`/api/job/${jobId}`, {}, token);
-}
 export async function getAnalysis(id, token) {
   return apiFetch(`/api/analysis/${id}`, {}, token);
 }
