@@ -210,18 +210,33 @@ export default function HistoricoPage() {
             {/* [citation-audit-v1] Artigo citado no texto que não bateu
                  contra o corpus real de legislação — vazio na maioria dos
                  casos. */}
-            {selected.citation_audit?.unsourced?.length > 0 && (
-              <div style={{
-                display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 4,
-                background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.25)',
-                borderRadius: 'var(--r-md)', padding: '13px 18px',
-              }}>
-                <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
-                <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: '#f59e0b', lineHeight: 1.6 }}>
-                  Citação não localizada na base de legislação: {selected.citation_audit.unsourced.map(c => `${c.diploma}, ${c.artigo}`).join(' · ')} — confirme na fonte oficial.
-                </span>
-              </div>
-            )}
+            {(() => {
+              // [citation-audit-format-v3] mesmo formatador dual (artigo/súmula)
+              // usado no VerdictSection — ver comentário lá pra contexto completo.
+              const formatUnsourced = (c) => {
+                if (!c) return null;
+                if (c.diploma && c.artigo) return `${c.diploma}, ${c.artigo}`;
+                if (c.tribunal && c.numero) {
+                  const label = c.tipo === 'SV' ? 'Súmula Vinculante' : 'Súmula';
+                  return `${label} ${c.numero} do ${c.tribunal}`;
+                }
+                return null;
+              };
+              const formatted = (selected.citation_audit?.unsourced || []).map(formatUnsourced).filter(Boolean);
+              if (!formatted.length) return null;
+              return (
+                <div style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 4,
+                  background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.25)',
+                  borderRadius: 'var(--r-md)', padding: '13px 18px',
+                }}>
+                  <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
+                  <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: '#f59e0b', lineHeight: 1.6 }}>
+                    Citação não localizada na base de legislação/jurisprudência: {formatted.join(' · ')} — confirme na fonte oficial.
+                  </span>
+                </div>
+              );
+            })()}
 
             {/* [wire-history-dimensions] Score dimensional — antes a API já
                  mandava dimensions/perfil mas esta tela nunca renderizava. */}

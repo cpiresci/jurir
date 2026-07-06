@@ -225,9 +225,24 @@ function CaselawWarningBanner({ warnings }) {
 }
 
 // ── Alerta de artigo citado que não bate com o corpus de legislação ──────────
+// [citation-audit-format-v3] `unsourced` mistura dois formatos: artigo de
+// lei ({diploma, artigo}, de auditCitationsInText) e súmula ({tribunal,
+// tipo, numero}, de auditSumulaCitationsInText — feature irmã já existente
+// no backend). Formata os dois; retorna null pro que não reconhece (em vez
+// de deixar "undefined" vazar pra tela).
+function formatUnsourcedCitation(c) {
+  if (!c) return null;
+  if (c.diploma && c.artigo) return `${c.diploma}, ${c.artigo}`;
+  if (c.tribunal && c.numero) {
+    const label = c.tipo === 'SV' ? 'Súmula Vinculante' : 'Súmula';
+    return `${label} ${c.numero} do ${c.tribunal}`;
+  }
+  return null;
+}
+
 function CitationAuditBanner({ audit }) {
-  const unsourced = audit?.unsourced;
-  if (!unsourced || !unsourced.length) return null;
+  const formatted = (audit?.unsourced || []).map(formatUnsourcedCitation).filter(Boolean);
+  if (!formatted.length) return null;
   return (
     <div style={{
       display: 'flex', alignItems: 'flex-start', gap: 10,
@@ -237,10 +252,10 @@ function CitationAuditBanner({ audit }) {
       <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', color: '#f59e0b', lineHeight: 1.5, fontWeight: 600 }}>
-          Citação não localizada na base de legislação
+          Citação não localizada na base de legislação/jurisprudência
         </span>
         <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', lineHeight: 1.6 }}>
-          {unsourced.map(c => `${c.diploma}, ${c.artigo}`).join(' · ')} — dispositivo citado na análise não foi encontrado no corpus de legislação. Confirme na fonte oficial antes de usar.
+          {formatted.join(' · ')} — dispositivo/súmula citado na análise não foi encontrado no corpus. Confirme na fonte oficial antes de usar.
         </span>
       </div>
     </div>
