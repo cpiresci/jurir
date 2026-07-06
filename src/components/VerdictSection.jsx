@@ -262,6 +262,117 @@ function CitationAuditBanner({ audit }) {
   );
 }
 
+// ── Painel de arbitragem entre especialistas (ao vivo) ──────────────────────
+// [wire-convergence-sse] Espelha buildConflicts() do pdfService.js, mas ao
+// vivo durante o streaming em vez de só no PDF. Só renderiza algo quando
+// há conflito real e material detectado — vazio na maioria das análises.
+function ConvergencePanel({ convergence }) {
+  if (!convergence || convergence.status === 'idle') return null;
+
+  const { status, conflicts = [], revised_verdict: revised, convergence_summary: summary } = convergence;
+
+  if (status === 'running') {
+    return (
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '13px 18px',
+        background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.25)',
+        borderRadius: 'var(--r-md)',
+      }}>
+        <Loader2 size={13} className="spin" style={{ color: '#f59e0b', flexShrink: 0 }} />
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t3)' }}>
+          ⚖️ {conflicts.length || ''} conflito(s) real(is) entre especialistas — Juiz arbitrando…
+        </span>
+      </div>
+    );
+  }
+
+  if (!conflicts.length && !revised && !summary) return null;
+
+  return (
+    <div style={{
+      background: 'rgba(245,158,11,0.03)',
+      border: '1px solid rgba(245,158,11,0.20)',
+      borderRadius: 'var(--r-xl)',
+      padding: '22px 24px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        <Scale size={13} style={{ color: '#f59e0b' }} />
+        <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700, color: '#f59e0b', letterSpacing: '.15em', textTransform: 'uppercase' }}>
+          Conflitos &amp; Arbitragem entre Especialistas
+        </span>
+        {conflicts.length > 0 && (
+          <span style={{
+            marginLeft: 'auto', background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.3)',
+            borderRadius: 999, padding: '2px 10px', fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: '#f59e0b',
+          }}>
+            {conflicts.length} detectado{conflicts.length !== 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+
+      {conflicts.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: revised || summary ? 20 : 0 }}>
+          {conflicts.slice(0, 6).map((cf, idx) => {
+            const agentA = (cf.agentA || cf.agentAId || cf.agent_a || 'Especialista A').toString().toUpperCase();
+            const agentB = (cf.agentB || cf.agentBId || cf.agent_b || 'Especialista B').toString().toUpperCase();
+            const tema = cf.tema || cf.topic || cf.description || 'Divergência doutrinária';
+            const sev = cf.severity != null ? Math.min(Math.max(Number(cf.severity), 0), 1) : 0.5;
+            const sevLabel = sev >= 0.75 ? 'CRÍTICO' : sev >= 0.5 ? 'ALTO' : sev >= 0.25 ? 'MÉDIO' : 'BAIXO';
+            const sevColor = sev >= 0.75 ? 'var(--cr3)' : sev >= 0.5 ? '#f59e0b' : sev >= 0.25 ? '#f97316' : 'var(--co7)';
+            return (
+              <div key={idx} style={{
+                background: 'var(--bg-card)', border: '1px solid var(--b-subtle)',
+                borderRadius: 'var(--r-md)', padding: '12px 14px', borderLeft: `3px solid ${sevColor}`,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                  <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700, color: sevColor }}>{agentA}</span>
+                  <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)' }}>VS</span>
+                  <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700, color: 'var(--co7)' }}>{agentB}</span>
+                  <span style={{
+                    marginLeft: 'auto', fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: sevColor,
+                    border: `1px solid ${sevColor}`, borderRadius: 999, padding: '1px 8px',
+                  }}>
+                    SEV {sevLabel}
+                  </span>
+                </div>
+                <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', color: 'var(--t2)', lineHeight: 1.5 }}>{tema}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {revised && (
+        <div style={{
+          background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.4)',
+          borderRadius: 'var(--r-md)', padding: '16px 18px', marginBottom: summary ? 14 : 0,
+        }}>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700, color: '#f59e0b', letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 10 }}>
+            Veredito Revisado Pós-Arbitragem
+          </div>
+          <MarkdownBlock text={revised} baseColor="var(--t1)" />
+        </div>
+      )}
+
+      {summary && (
+        <div style={{
+          background: 'var(--bg-card)', border: '1px solid var(--b-subtle)',
+          borderRadius: 'var(--r-md)', padding: '14px 16px',
+        }}>
+          <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)', letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+            Convergência do Swarm
+          </div>
+          <MarkdownBlock text={summary} baseColor="var(--t2)" />
+        </div>
+      )}
+
+      {/* Arbitragem entre especialistas — só aparece com conflito real */}
+      <ConvergencePanel convergence={convergence} />
+    </div>
+  );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function VerdictSection() {
   const {
@@ -279,6 +390,7 @@ export default function VerdictSection() {
   }));
 
   const judgeState = useStore(s => s.judgeState);
+  const convergence = useStore(s => s.convergence);
   const hasContent = verdictText || devilText || running ||
     judgeState?.status === 'running' || judgeState?.status === 'done';
   if (!hasContent) return null;

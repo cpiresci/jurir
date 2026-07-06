@@ -12,7 +12,7 @@ export function useSSEAnalysis() {
       incrementCompleted, setVerdict, setDevil, setScore,
       setVeto, setAnalysisId, addToast, setStatusMessage,
       setDevilState, setJudgeState, setCitations, setCaselawWarnings,
-      setCitationAudit,
+      setCitationAudit, setConvergence,
     } = useStore.getState();
 
     if (!authToken) {
@@ -184,6 +184,22 @@ export function useSSEAnalysis() {
           // acima, só que pra dispositivo legal em vez de jurisprudência.
           } else if (t === 'citation_audit_warnings') {
             setCitationAudit(ev.citation_audit || { scanned: 0, unsourced: [] });
+
+          // [wire-convergence-sse] Backend (swarmEngine.js) só emite esses dois
+          // eventos quando detectConflicts() encontra conflito real e material
+          // entre especialistas — na maioria das análises nunca chegam.
+          } else if (t === 'convergence_start') {
+            setStatusMessage(null);
+            setConvergence({ status: 'running', conflicts: ev.conflicts || [] });
+
+          } else if (t === 'convergence_done') {
+            setConvergence({
+              status: 'done',
+              conflicts: ev.conflicts || [],
+              revised_verdict: ev.revised_verdict || '',
+              convergence_summary: ev.convergence_summary || '',
+              score: ev.score ?? null,
+            });
 
           // [FIX CRÍTICO] Backend emite 'saved' APÓS o verdict com o analysis_id real
           } else if (t === 'saved') {

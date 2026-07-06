@@ -66,9 +66,14 @@ export const useStore = create((set, get) => ({
   // status: 'idle' | 'running' | 'done' | 'error'
   devilState: { status: 'idle', analysis: '', confidence: 0 },
   judgeState: { status: 'idle', verdict: '' },
+  // [wire-convergence-sse] Painel de arbitragem entre especialistas ao vivo.
+  // status: 'idle' | 'running' | 'done'. Só existe conteúdo quando há
+  // conflito real e material detectado (a maioria das análises fica 'idle').
+  convergence: { status: 'idle', conflicts: [], revised_verdict: '', convergence_summary: '', score: null },
 
   setDevilState: (patch) => set(s => ({ devilState: { ...s.devilState, ...patch } })),
   setJudgeState: (patch) => set(s => ({ judgeState: { ...s.judgeState, ...patch } })),
+  setConvergence: (patch) => set(s => ({ convergence: { ...s.convergence, ...patch } })),
 
   resetAnalysis: () => set({
     analysisId: null, agentStates: {}, completedAgents: 0,
@@ -79,6 +84,7 @@ export const useStore = create((set, get) => ({
     citationAudit: { scanned: 0, unsourced: [] },
     devilState: { status: 'idle', analysis: '', confidence: 0 },
     judgeState: { status: 'idle', verdict: '' },
+    convergence: { status: 'idle', conflicts: [], revised_verdict: '', convergence_summary: '', score: null },
   }),
 
   setAgentState:      (id, data)      => set(s => ({ agentStates: { ...s.agentStates, [id]: data } })),
