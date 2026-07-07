@@ -68,8 +68,7 @@ const TABS = [
   { id: "users", label: "Usuários" },
   { id: "analyses", label: "Análises" },
   { id: "financial", label: "Financeiro" },
-  { id: "plans", label: "Planos" },
-  { id: "credits", label: "Créditos Avulso" },
+  { id: "grant", label: "Conceder" },
   { id: "orgs", label: "Organizações" },
   { id: "referrals", label: "Indicações" },
   { id: "oab", label: "Verificações OAB" },
@@ -145,14 +144,10 @@ function UsersTab({ api }) {
   }, [api, search]);
   useEffect(() => { const t = setTimeout(load, 300); return () => clearTimeout(t); }, [load]);
   async function toggleBan(u) { try { await api(`/api/admin/users/${u.id}/ban`, { method: "POST", body: JSON.stringify({ banned: !u.is_banned }) }); load(); } catch(e) { alert(e.message); } }
-  async function adjustCredits(u) { const v = prompt(`Créditos atuais: ${u.credits}\nNovo valor:`); if (!v) return; try { await api(`/api/admin/users/${u.id}/credits`, { method: "POST", body: JSON.stringify({ delta: parseInt(v), credit_type: "free" }) }); load(); } catch(e) { alert(e.message); } }
   async function editName(u) { const v = prompt(`Nome atual: ${u.name || '(sem nome)'}\nNovo nome:`, u.name || ""); if (v === null) return; try { await api(`/api/admin/users/${u.id}/name`, { method: "POST", body: JSON.stringify({ name: v }) }); load(); } catch(e) { alert(e.message); } }
-  async function setPlan(u) {
-    const plan = prompt(`Plano atual: ${u.plan || 'free'}\n\nNovo plano:\nfree | credito | mensal | escritorio | api`);
-    if (!plan) return;
-    const days = plan === 'free' || plan === 'credito' ? 30 : parseInt(prompt('Dias de validade:', '30') || '30');
-    try { await api(`/api/admin/users/${u.id}/plan`, { method: "POST", body: JSON.stringify({ plan, days }) }); load(); alert(`Plano '${plan}' setado!`); } catch(e) { alert(e.message); }
-  }
+  // [wire-grant-tab] Conceder plano/créditos saiu daqui (prompt() + caixa
+  // "por ID" sem confirmação visual de e-mail) e virou a aba "Conceder"
+  // dedicada, com busca por e-mail e confirmação do usuário antes de aplicar.
   async function viewReferrals(u) {
     try {
       const refs = await api(`/api/admin/users/${u.id}/referrals`);
@@ -160,34 +155,12 @@ function UsersTab({ api }) {
       alert(`Indicados por ${u.email} (${refs.length}):\n` + refs.map(r => `#${r.id} ${r.name || r.email} — ${r.plan}${r.credited ? " ✓ creditado" : ""}`).join("\n"));
     } catch(e) { alert(e.message); }
   }
-  // [wire-bulk-credits] add-credits/remove-credits/set-credits existiam no
-  // backend sem UI (Achado #5 da auditoria 2026-07-06) — ferramenta rápida
-  // por ID pra ajustar créditos sem precisar achar o usuário na tabela.
-  const [bulkId, setBulkId] = useState(""); const [bulkAmount, setBulkAmount] = useState(""); const [bulkBusy, setBulkBusy] = useState(false);
-  async function bulkCredits(op) {
-    const user_id = parseInt(bulkId); const amount = parseInt(bulkAmount);
-    if (!user_id || isNaN(amount)) { alert("Informe ID do usuário e quantidade."); return; }
-    setBulkBusy(true);
-    try {
-      const path = op === "add" ? "/api/admin/add-credits" : op === "remove" ? "/api/admin/remove-credits" : "/api/admin/set-credits";
-      const r = await api(path, { method: "POST", body: JSON.stringify({ user_id, amount }) });
-      alert(op === "set" ? "Créditos definidos!" : `Créditos: ${r.credits}`);
-      load();
-    } catch(e) { alert(e.message); } finally { setBulkBusy(false); }
-  }
   return (
     <div>
       <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por e-mail, nome ou ID…" style={{ padding: "7px 12px", border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 13, background: T.bg, color: T.text, width: 280 }} />
         <span style={{ fontSize: 12, color: T.textMuted }}>{total} usuário(s)</span>
-      </div>
-      <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 16, background: T.surfaceAlt, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMuted }}>Créditos por ID</span>
-        <input value={bulkId} onChange={e => setBulkId(e.target.value)} placeholder="ID do usuário" style={{ width: 110, padding: "6px 10px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 }} />
-        <input value={bulkAmount} onChange={e => setBulkAmount(e.target.value)} placeholder="Quantidade" style={{ width: 110, padding: "6px 10px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 }} />
-        <Btn small variant="secondary" disabled={bulkBusy} onClick={() => bulkCredits("add")}>+ Adicionar</Btn>
-        <Btn small variant="secondary" disabled={bulkBusy} onClick={() => bulkCredits("remove")}>− Remover</Btn>
-        <Btn small variant="ghost" disabled={bulkBusy} onClick={() => bulkCredits("set")}>= Definir</Btn>
+        <span style={{ fontSize: 12, color: T.textMuted }}>Pra conceder plano ou créditos, use a aba <b>Conceder</b>.</span>
       </div>
       <Table loading={loading} data={users} empty="Nenhum usuário."
         columns={[
@@ -206,7 +179,7 @@ function UsersTab({ api }) {
           { key: "referrals_count", label: "Indicações", render: (v, row) => v > 0 ? <Btn small variant="ghost" onClick={() => viewReferrals(row)}>{v} indicado(s)</Btn> : <span style={{ color: T.textMuted }}>0</span> },
           { key: "is_banned", label: "Status", render: v => v ? <Badge color={T.danger} bg={T.dangerLight}>Banido</Badge> : <Badge color={T.success} bg={T.successLight}>Ativo</Badge> },
           { key: "created_at", label: "Cadastro", render: v => v ? new Date(v).toLocaleDateString("pt-BR") : "—" },
-          { key: "_a", label: "Ações", render: (_, row) => <div style={{ display: "flex", gap: 6 }}><Btn small variant={row.is_banned ? "secondary" : "danger"} onClick={() => toggleBan(row)}>{row.is_banned ? "Desbanir" : "Banir"}</Btn><Btn small variant="ghost" onClick={() => adjustCredits(row)}>Créditos</Btn><Btn small variant="secondary" onClick={() => setPlan(row)}>Plano</Btn></div> },
+          { key: "_a", label: "Ações", render: (_, row) => <div style={{ display: "flex", gap: 6 }}><Btn small variant={row.is_banned ? "secondary" : "danger"} onClick={() => toggleBan(row)}>{row.is_banned ? "Desbanir" : "Banir"}</Btn></div> },
         ]}
       />
     </div>
@@ -280,122 +253,163 @@ function FinancialTab({ api }) {
   );
 }
 
-// [admin-advanced] Aba "Planos" — CRUD dos planos comercializáveis
-// (pricing_plans). base_type referencia o tipo interno de gating
-// (free|credito|mensal|escritorio|api) já usado no resto do sistema.
-function PlansTab({ api }) {
-  const [plans, setPlans] = useState([]); const [loading, setLoading] = useState(true);
-  const load = useCallback(() => { setLoading(true); api("/api/admin/plans").then(setPlans).catch(() => setPlans([])).finally(() => setLoading(false)); }, [api]);
-  useEffect(() => { load(); }, [load]);
+// [wire-grant-tab] Aba "Conceder" — busca o usuário por e-mail (ou nome/ID),
+// mostra nome/e-mail/plano/créditos ATUAIS antes de qualquer ação (resolve o
+// "e-mail não aparece" — antes a ferramenta de créditos só pedia um ID, sem
+// nenhuma confirmação de a quem aquele ID pertencia) e concede plano ou
+// ajusta créditos via formulário — nunca via prompt() do navegador.
+// Não cria/edita catálogo (isso era as antigas abas Planos/Créditos Avulso,
+// que geravam PricingPlan/CreditPackage — desconectadas do checkout real e
+// removidas). Aqui só chama as rotas que já existiam pra afetar 1 usuário:
+// POST /api/admin/users/:id/plan e POST /api/admin/users/:id/credits.
+const VALID_PLANS_UI = ["free", "credito", "mensal", "escritorio", "api"];
 
-  function blankForm() { return { slug: "", name: "", base_type: "free", price_cents: 0, billing_interval: "monthly", credits_included: 0, premium_credits_included: 0, is_active: true, sort_order: plans.length, description: "" }; }
-  const [form, setForm] = useState(blankForm()); const [editingId, setEditingId] = useState(null); const [busy, setBusy] = useState(false);
+function GrantTab({ api }) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [selected, setSelected] = useState(null); // usuário escolhido
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState(null); // { ok, text }
 
-  function startEdit(p) { setEditingId(p.id); setForm({ slug: p.slug, name: p.name, base_type: p.base_type, price_cents: p.price_cents, billing_interval: p.billing_interval, credits_included: p.credits_included, premium_credits_included: p.premium_credits_included, is_active: p.is_active, sort_order: p.sort_order, description: p.description || "" }); }
-  function cancelEdit() { setEditingId(null); setForm(blankForm()); }
+  const [planChoice, setPlanChoice] = useState("mensal");
+  const [planDays, setPlanDays] = useState(30);
+  const [creditType, setCreditType] = useState("free");
+  const [creditAmount, setCreditAmount] = useState(1);
 
-  async function save() {
-    if (!form.slug.trim() || !form.name.trim()) { alert("Preencha slug e nome."); return; }
-    setBusy(true);
-    try {
-      if (editingId) await api(`/api/admin/plans/${editingId}`, { method: "PUT", body: JSON.stringify(form) });
-      else await api("/api/admin/plans", { method: "POST", body: JSON.stringify(form) });
-      cancelEdit(); load();
-    } catch (e) { alert(e.message); } finally { setBusy(false); }
+  useEffect(() => {
+    const term = query.trim();
+    if (term.length < 3) { setResults([]); return; }
+    setSearching(true);
+    const t = setTimeout(() => {
+      api(`/api/admin/users?q=${encodeURIComponent(term)}&limit=8`)
+        .then(d => setResults(d.users || d || []))
+        .catch(() => setResults([]))
+        .finally(() => setSearching(false));
+    }, 300);
+    return () => clearTimeout(t);
+  }, [query, api]);
+
+  function selectUser(u) {
+    setSelected(u); setResults([]); setQuery(""); setFeedback(null);
   }
-  async function remove(p) { if (!confirm(`Excluir o plano "${p.name}"? Usuários já vinculados ao base_type não são afetados.`)) return; try { await api(`/api/admin/plans/${p.id}`, { method: "DELETE" }); load(); } catch (e) { alert(e.message); } }
-  async function toggleActive(p) { try { await api(`/api/admin/plans/${p.id}`, { method: "PUT", body: JSON.stringify({ is_active: !p.is_active }) }); load(); } catch (e) { alert(e.message); } }
+
+  async function refreshSelected() {
+    if (!selected) return;
+    try {
+      const d = await api(`/api/admin/users?q=${encodeURIComponent(selected.email)}&limit=1`);
+      const fresh = (d.users || d || [])[0];
+      if (fresh) setSelected(fresh);
+    } catch (_) {}
+  }
+
+  async function applyPlan() {
+    if (!selected) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const r = await api(`/api/admin/users/${selected.id}/plan`, { method: "POST", body: JSON.stringify({ plan: planChoice, days: planDays }) });
+      setFeedback({ ok: true, text: `Plano '${r.plan}' concedido a ${selected.email}${r.plan_expires_at ? ` (válido até ${r.plan_expires_at})` : ""}.` });
+      refreshSelected();
+    } catch (e) { setFeedback({ ok: false, text: e.message }); } finally { setBusy(false); }
+  }
+
+  async function applyCredits(op) {
+    if (!selected) return;
+    const amount = parseInt(creditAmount);
+    if (!Number.isFinite(amount)) { setFeedback({ ok: false, text: "Quantidade inválida." }); return; }
+    setBusy(true); setFeedback(null);
+    try {
+      const delta = op === "remove" ? -Math.abs(amount) : amount;
+      const r = await api(`/api/admin/users/${selected.id}/credits`, { method: "POST", body: JSON.stringify({ delta, credit_type: creditType }) });
+      const novo = creditType === "premium" ? r.premium_credits : r.credits;
+      setFeedback({ ok: true, text: `Créditos ${creditType === "premium" ? "premium" : "free"} de ${selected.email} agora: ${novo}.` });
+      refreshSelected();
+    } catch (e) { setFeedback({ ok: false, text: e.message }); } finally { setBusy(false); }
+  }
 
   const inputStyle = { padding: "7px 10px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 };
+
   return (
     <div>
       <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.06em" }}>{editingId ? `Editando plano #${editingId}` : "Novo plano"}</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 12 }}>
-          <input style={inputStyle} placeholder="slug (ex: solo_anual)" value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} />
-          <input style={inputStyle} placeholder="Nome exibido" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-          <select style={inputStyle} value={form.base_type} onChange={e => setForm({ ...form, base_type: e.target.value })}>
-            {["free","credito","mensal","escritorio","api"].map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <input style={inputStyle} type="number" placeholder="Preço (centavos)" value={form.price_cents} onChange={e => setForm({ ...form, price_cents: parseInt(e.target.value) || 0 })} />
-          <select style={inputStyle} value={form.billing_interval} onChange={e => setForm({ ...form, billing_interval: e.target.value })}>
-            <option value="monthly">mensal</option><option value="yearly">anual</option><option value="one_time">avulso</option>
-          </select>
-          <input style={inputStyle} type="number" placeholder="Créditos incl." value={form.credits_included} onChange={e => setForm({ ...form, credits_included: parseInt(e.target.value) || 0 })} />
-          <input style={inputStyle} type="number" placeholder="Créditos premium incl." value={form.premium_credits_included} onChange={e => setForm({ ...form, premium_credits_included: parseInt(e.target.value) || 0 })} />
-          <input style={inputStyle} type="number" placeholder="Ordem" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
-        </div>
-        <input style={{ ...inputStyle, width: "100%", boxSizing: "border-box", marginBottom: 12 }} placeholder="Descrição (opcional)" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
-        <div style={{ display: "flex", gap: 8 }}>
-          <Btn onClick={save} disabled={busy}>{editingId ? "Salvar alterações" : "Criar plano"}</Btn>
-          {editingId && <Btn variant="ghost" onClick={cancelEdit}>Cancelar</Btn>}
-        </div>
+        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.06em" }}>1. Buscar usuário</div>
+        <input
+          style={{ ...inputStyle, width: "100%", boxSizing: "border-box" }}
+          placeholder="Digite o e-mail (ou nome / ID) do usuário…"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+        {searching && <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Buscando…</div>}
+        {!searching && results.length > 0 && (
+          <div style={{ marginTop: 10, border: `1px solid ${T.border}`, borderRadius: 6, overflow: "hidden" }}>
+            {results.map(u => (
+              <div key={u.id} onClick={() => selectUser(u)}
+                style={{ padding: "10px 12px", cursor: "pointer", borderBottom: `1px solid ${T.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: T.surface }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{u.name || "(sem nome)"} <span style={{ color: T.textMuted, fontWeight: 400 }}>— {u.email}</span></div>
+                  <div style={{ fontSize: 11, color: T.textMuted }}>#{u.id} · plano {u.plan || "free"} · {u.credits ?? 0} créditos</div>
+                </div>
+                <Btn small variant="secondary" onClick={() => selectUser(u)}>Selecionar</Btn>
+              </div>
+            ))}
+          </div>
+        )}
+        {!searching && query.trim().length >= 3 && results.length === 0 && (
+          <div style={{ fontSize: 12, color: T.textMuted, marginTop: 8 }}>Nenhum usuário encontrado para "{query}".</div>
+        )}
       </div>
-      <Table loading={loading} data={plans} empty="Nenhum plano cadastrado."
-        columns={[
-          { key: "slug", label: "Slug", render: v => <span style={{ fontFamily: "monospace", fontSize: 12 }}>{v}</span> },
-          { key: "name", label: "Nome" },
-          { key: "base_type", label: "Tipo", render: v => <Badge>{v}</Badge> },
-          { key: "price_brl", label: "Preço", render: (v, row) => <span style={{ fontFamily: "monospace" }}>R${v.toFixed(2)}{row.billing_interval==="monthly"?"/mês":row.billing_interval==="yearly"?"/ano":""}</span> },
-          { key: "credits_included", label: "Créditos", render: (v, row) => `${v} + ${row.premium_credits_included} premium` },
-          { key: "is_active", label: "Status", render: (v, row) => <span style={{cursor:"pointer"}} onClick={() => toggleActive(row)}>{v ? <Badge color={T.success} bg={T.successLight}>Ativo</Badge> : <Badge color={T.textMuted} bg={T.surfaceAlt}>Inativo</Badge>}</span> },
-          { key: "_a", label: "Ações", render: (_, row) => <div style={{ display: "flex", gap: 6 }}><Btn small variant="secondary" onClick={() => startEdit(row)}>Editar</Btn><Btn small variant="danger" onClick={() => remove(row)}>Excluir</Btn></div> },
-        ]}
-      />
-    </div>
-  );
-}
 
-// [admin-advanced] Aba "Créditos Avulso" — CRUD dos pacotes de crédito
-// vendidos avulsos (credit_packages).
-function CreditPackagesTab({ api }) {
-  const [pkgs, setPkgs] = useState([]); const [loading, setLoading] = useState(true);
-  const load = useCallback(() => { setLoading(true); api("/api/admin/credit-packages").then(setPkgs).catch(() => setPkgs([])).finally(() => setLoading(false)); }, [api]);
-  useEffect(() => { load(); }, [load]);
+      {selected && (
+        <div style={{ background: T.surface, border: `1px solid ${T.cobalt}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700 }}>{selected.name || "(sem nome)"}</div>
+              <div style={{ fontSize: 13, color: T.textMuted, fontFamily: "monospace" }}>{selected.email}</div>
+              <div style={{ fontSize: 12, color: T.textMuted, marginTop: 4 }}>
+                #{selected.id} · plano atual <Badge>{selected.plan || "free"}</Badge>{selected.plan_expires_at ? ` (até ${selected.plan_expires_at})` : ""}
+                {" · "}{selected.credits ?? 0} créditos free · {selected.premium_credits ?? 0} créditos premium
+              </div>
+            </div>
+            <Btn small variant="ghost" onClick={() => { setSelected(null); setFeedback(null); }}>Trocar usuário</Btn>
+          </div>
 
-  function blankForm() { return { name: "", credits: 0, premium_credits: 0, price_cents: 0, is_active: true, sort_order: pkgs.length }; }
-  const [form, setForm] = useState(blankForm()); const [editingId, setEditingId] = useState(null); const [busy, setBusy] = useState(false);
-  function startEdit(p) { setEditingId(p.id); setForm({ name: p.name, credits: p.credits, premium_credits: p.premium_credits, price_cents: p.price_cents, is_active: p.is_active, sort_order: p.sort_order }); }
-  function cancelEdit() { setEditingId(null); setForm(blankForm()); }
-  async function save() {
-    if (!form.name.trim()) { alert("Preencha o nome do pacote."); return; }
-    setBusy(true);
-    try {
-      if (editingId) await api(`/api/admin/credit-packages/${editingId}`, { method: "PUT", body: JSON.stringify(form) });
-      else await api("/api/admin/credit-packages", { method: "POST", body: JSON.stringify(form) });
-      cancelEdit(); load();
-    } catch (e) { alert(e.message); } finally { setBusy(false); }
-  }
-  async function remove(p) { if (!confirm(`Excluir o pacote "${p.name}"?`)) return; try { await api(`/api/admin/credit-packages/${p.id}`, { method: "DELETE" }); load(); } catch (e) { alert(e.message); } }
-  async function toggleActive(p) { try { await api(`/api/admin/credit-packages/${p.id}`, { method: "PUT", body: JSON.stringify({ is_active: !p.is_active }) }); load(); } catch (e) { alert(e.message); } }
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.06em" }}>Conceder plano</div>
+              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                <select style={inputStyle} value={planChoice} onChange={e => setPlanChoice(e.target.value)}>
+                  {VALID_PLANS_UI.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+                {planChoice !== "free" && planChoice !== "credito" && (
+                  <input style={{ ...inputStyle, width: 90 }} type="number" value={planDays} onChange={e => setPlanDays(parseInt(e.target.value) || 30)} placeholder="dias" />
+                )}
+              </div>
+              <Btn onClick={applyPlan} disabled={busy}>Aplicar plano</Btn>
+            </div>
 
-  const inputStyle = { padding: "7px 10px", borderRadius: 6, border: `1px solid ${T.border}`, background: T.bg, color: T.text, fontSize: 13 };
-  return (
-    <div>
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.06em" }}>{editingId ? `Editando pacote #${editingId}` : "Novo pacote de créditos avulso"}</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 12 }}>
-          <input style={inputStyle} placeholder="Nome (ex: Pacote 5 análises)" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-          <input style={inputStyle} type="number" placeholder="Créditos free" value={form.credits} onChange={e => setForm({ ...form, credits: parseInt(e.target.value) || 0 })} />
-          <input style={inputStyle} type="number" placeholder="Créditos premium" value={form.premium_credits} onChange={e => setForm({ ...form, premium_credits: parseInt(e.target.value) || 0 })} />
-          <input style={inputStyle} type="number" placeholder="Preço (centavos)" value={form.price_cents} onChange={e => setForm({ ...form, price_cents: parseInt(e.target.value) || 0 })} />
-          <input style={inputStyle} type="number" placeholder="Ordem" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.06em" }}>Conceder créditos</div>
+              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                <select style={inputStyle} value={creditType} onChange={e => setCreditType(e.target.value)}>
+                  <option value="free">free</option>
+                  <option value="premium">premium</option>
+                </select>
+                <input style={{ ...inputStyle, width: 90 }} type="number" value={creditAmount} onChange={e => setCreditAmount(e.target.value)} placeholder="quantidade" />
+              </div>
+              <div style={{ display: "flex", gap: 6 }}>
+                <Btn small variant="secondary" disabled={busy} onClick={() => applyCredits("add")}>+ Adicionar</Btn>
+                <Btn small variant="danger" disabled={busy} onClick={() => applyCredits("remove")}>− Remover</Btn>
+              </div>
+            </div>
+          </div>
+
+          {feedback && (
+            <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 6, fontSize: 13, background: feedback.ok ? T.successLight : T.dangerLight, color: feedback.ok ? T.success : T.danger }}>
+              {feedback.text}
+            </div>
+          )}
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <Btn onClick={save} disabled={busy}>{editingId ? "Salvar alterações" : "Criar pacote"}</Btn>
-          {editingId && <Btn variant="ghost" onClick={cancelEdit}>Cancelar</Btn>}
-        </div>
-      </div>
-      <Table loading={loading} data={pkgs} empty="Nenhum pacote cadastrado."
-        columns={[
-          { key: "name", label: "Nome" },
-          { key: "credits", label: "Créditos free" },
-          { key: "premium_credits", label: "Créditos premium" },
-          { key: "price_brl", label: "Preço", render: v => <span style={{ fontFamily: "monospace" }}>R${v.toFixed(2)}</span> },
-          { key: "is_active", label: "Status", render: (v, row) => <span style={{cursor:"pointer"}} onClick={() => toggleActive(row)}>{v ? <Badge color={T.success} bg={T.successLight}>Ativo</Badge> : <Badge color={T.textMuted} bg={T.surfaceAlt}>Inativo</Badge>}</span> },
-          { key: "_a", label: "Ações", render: (_, row) => <div style={{ display: "flex", gap: 6 }}><Btn small variant="secondary" onClick={() => startEdit(row)}>Editar</Btn><Btn small variant="danger" onClick={() => remove(row)}>Excluir</Btn></div> },
-        ]}
-      />
+      )}
     </div>
   );
 }
@@ -803,7 +817,7 @@ export default function AdminPage() {
 
   if (!token) return <Login onLogin={handleLogin} />;
 
-  const CONTENT = { dashboard: <DashboardTab api={api} />, users: <UsersTab api={api} />, analyses: <AnalysesTab api={api} />, financial: <FinancialTab api={api} />, plans: <PlansTab api={api} />, credits: <CreditPackagesTab api={api} />, orgs: <OrgsTab api={api} />, referrals: <ReferralsTab api={api} />, oab: <OabTab api={api} />, audit: <AuditTab api={api} />, system: <SystemTab api={api} token={token} /> };
+  const CONTENT = { dashboard: <DashboardTab api={api} />, users: <UsersTab api={api} />, analyses: <AnalysesTab api={api} />, financial: <FinancialTab api={api} />, grant: <GrantTab api={api} />, orgs: <OrgsTab api={api} />, referrals: <ReferralsTab api={api} />, oab: <OabTab api={api} />, audit: <AuditTab api={api} />, system: <SystemTab api={api} token={token} /> };
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", background: T.bg }}>
