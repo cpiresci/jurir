@@ -445,6 +445,30 @@ export default function VerdictSection() {
         </div>
       )}
 
+      {/* Estratégia Processual — 16º agente (Estrategista).
+          Card próprio, no mesmo padrão visual do Advogado do Diabo/Juiz IA
+          (borda, cabeçalho com ícone+label, divisor, corpo via MarkdownBlock)
+          em vez do parágrafo cru que quebrava a tipografia e o markdown.
+          Posicionado ANTES do card do Juiz — não fica mais abaixo do Score. */}
+      {strategicAnalysis && (
+        <div style={{
+          background: 'rgba(245,158,11,0.03)',
+          border: '1px solid rgba(245,158,11,0.15)',
+          borderRadius: 'var(--r-xl)',
+          padding: '24px 26px',
+          boxShadow: '0 0 0 1px rgba(245,158,11,0.06)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+            <Compass size={13} style={{ color: 'var(--au6)' }} />
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700, color: 'var(--au6)', letterSpacing: '.15em', textTransform: 'uppercase' }}>
+              Estratégia Processual
+            </span>
+          </div>
+          <div style={{ height: 1, background: 'rgba(245,158,11,0.10)', marginBottom: 18 }} />
+          <MarkdownBlock text={strategicAnalysis} baseColor="var(--t2)" />
+        </div>
+      )}
+
       {/* Loading do Juiz */}
       {devilText && !verdictText && (running || judgeState?.status === 'running') && (
         <div style={{
@@ -556,28 +580,6 @@ export default function VerdictSection() {
         </div>
       )}
 
-      {/* Estratégia Processual — 16º agente (Estrategista).
-          Card próprio, no mesmo padrão visual do Advogado do Diabo/Juiz IA
-          (borda, cabeçalho com ícone+label, divisor, corpo via MarkdownBlock)
-          em vez do parágrafo cru que quebrava a tipografia e o markdown. */}
-      {strategicAnalysis && (
-        <div style={{
-          background: 'rgba(245,158,11,0.03)',
-          border: '1px solid rgba(245,158,11,0.15)',
-          borderRadius: 'var(--r-xl)',
-          padding: '24px 26px',
-          boxShadow: '0 0 0 1px rgba(245,158,11,0.06)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
-            <Compass size={13} style={{ color: 'var(--au6)' }} />
-            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700, color: 'var(--au6)', letterSpacing: '.15em', textTransform: 'uppercase' }}>
-              Estratégia Processual
-            </span>
-          </div>
-          <div style={{ height: 1, background: 'rgba(245,158,11,0.10)', marginBottom: 18 }} />
-          <MarkdownBlock text={strategicAnalysis} baseColor="var(--t2)" />
-        </div>
-      )}
     </div>
   );
 }
