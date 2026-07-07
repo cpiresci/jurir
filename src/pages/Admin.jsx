@@ -165,8 +165,19 @@ function UsersTab({ api }) {
       <Table loading={loading} data={users} empty="Nenhum usuário."
         columns={[
           { key: "id", label: "ID", render: v => <span style={{ fontFamily: "monospace", fontSize: 11, color: T.textMuted }}>#{v}</span> },
-          { key: "name", label: "Nome", render: (v, row) => <span onClick={() => editName(row)} style={{ cursor: "pointer", textDecoration: v ? "none" : "underline dotted", color: v ? T.text : T.textMuted }} title="Clique para editar">{v || "definir nome"}</span> },
-          { key: "email", label: "E-mail" },
+          // [fix-users-mobile-email] Nome e E-mail eram 2 colunas separadas —
+          // em telas de celular a tabela tem 9 colunas e exige scroll
+          // horizontal, então o e-mail (dado mais usado pra identificar
+          // alguém) ficava fora da área visível e parecia "sumido". Junta
+          // os dois numa coluna só, igual já é feito em Análises/Financeiro
+          // com user_name/user_email — sem depender de scroll pra ver o básico.
+          { key: "name", label: "Usuário", render: (v, row) => (
+              <span>
+                <span onClick={() => editName(row)} style={{ cursor: "pointer", textDecoration: v ? "none" : "underline dotted", color: v ? T.text : T.textMuted }} title="Clique para editar nome">{v || "definir nome"}</span>
+                <br/>
+                <span style={{ fontSize: 11, color: T.textMuted }}>{row.email}</span>
+              </span>
+            ) },
           { key: "plan", label: "Plano", render: (v, row) => {
               const colors = { escritorio: [T.cobalt, T.cobaltLight], api: [T.success, T.successLight], mensal: [T.gold, T.warningLight], free: [T.textMuted, T.surfaceAlt] };
               const [c, bg] = colors[v] || colors.free;
