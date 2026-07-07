@@ -1,4 +1,4 @@
-import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, ExternalLink, BookOpen } from 'lucide-react';
+import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, ExternalLink, BookOpen, Compass } from 'lucide-react';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
 
@@ -520,20 +520,6 @@ export default function VerdictSection() {
             </div>
           )}
 
-          {/* Análise estratégica do 16º agente (Estrategista) — mesmo campo
-              que o Histórico lê do banco, agora também ao vivo via SSE
-              'strategic_done' (antes chegava e era descartado no hook). */}
-          {strategicAnalysis && (
-            <div style={{ marginTop: 22, borderTop: '1px solid var(--b-subtle)', paddingTop: 18 }}>
-              <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--au6)', letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 10 }}>
-                Estratégia Processual
-              </div>
-              <p style={{ fontSize: 'var(--fs-base)', color: 'var(--t2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
-                {strategicAnalysis}
-              </p>
-            </div>
-          )}
-
           <CitationChips citations={citations} />
 
           {/* Ações */}
@@ -567,6 +553,29 @@ export default function VerdictSection() {
               Este veredito foi gerado por IA e tem caráter informativo. Não substitui a análise de um advogado habilitado pela OAB e não constitui aconselhamento jurídico vinculante.
             </span>
           </div>
+        </div>
+      )}
+
+      {/* Estratégia Processual — 16º agente (Estrategista).
+          Card próprio, no mesmo padrão visual do Advogado do Diabo/Juiz IA
+          (borda, cabeçalho com ícone+label, divisor, corpo via MarkdownBlock)
+          em vez do parágrafo cru que quebrava a tipografia e o markdown. */}
+      {strategicAnalysis && (
+        <div style={{
+          background: 'rgba(245,158,11,0.03)',
+          border: '1px solid rgba(245,158,11,0.15)',
+          borderRadius: 'var(--r-xl)',
+          padding: '24px 26px',
+          boxShadow: '0 0 0 1px rgba(245,158,11,0.06)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+            <Compass size={13} style={{ color: 'var(--au6)' }} />
+            <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700, color: 'var(--au6)', letterSpacing: '.15em', textTransform: 'uppercase' }}>
+              Estratégia Processual
+            </span>
+          </div>
+          <div style={{ height: 1, background: 'rgba(245,158,11,0.10)', marginBottom: 18 }} />
+          <MarkdownBlock text={strategicAnalysis} baseColor="var(--t2)" />
         </div>
       )}
     </div>
