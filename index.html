@@ -19,6 +19,10 @@
     <meta name="theme-color" content="#050507" />
     <meta name="description" content="JURIR — Inteligência Jurídica por IA. 16 agentes de IA especializados analisam seu caso em paralelo." />
     <title>JURIR — Inteligência Jurídica por IA</title>
+    <!-- [seo-canonical] Sem isso o Google decide sozinho qual URL indexar em
+         caso de variação (query params, trailing slash, etc.). O script de
+         prerender-blog-og.js sobrescreve esta tag pra cada post do blog. -->
+    <link rel="canonical" href="https://jurir.com/" />
 
     <!-- [og-meta-static] Tags estáticas pra preview ao compartilhar (WhatsApp,
          Telegram, Facebook, LinkedIn etc.) — esses crawlers NÃO executam JS,
@@ -59,6 +63,95 @@
     /* Anti-flash: garante que o fundo escuro apareça antes do React montar */
     html, body { background: #050507 !important; }
   </style>
+
+  <!-- [seo-jsonld-org] Structured data estático — igual ao bloco og-meta-static
+       acima, existe fora do React porque crawlers de rich snippet (Google)
+       preferem achar isso direto no HTML, sem esperar hidratação. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "JURIR",
+    "url": "https://jurir.com/",
+    "logo": "https://jurir.com/og-image.png",
+    "description": "Plataforma de inteligência jurídica por IA com 16 agentes especializados, Advogado do Diabo e Juiz IA Quantum para análise de casos."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "JURIR",
+    "url": "https://jurir.com/"
+  }
+  </script>
+  <!-- [seo-jsonld-faq] Espelha o array FAQS de src/components/FaqSection.jsx.
+       Sem geração automática por enquanto (mesma convenção manual do
+       sitemap.xml) — atualizar os dois juntos se o FAQ mudar. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O JURIR substitui meu advogado?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não — e somos muito transparentes sobre isso. O JURIR é uma ferramenta de inteligência jurídica que te dá informação poderosa para tomar decisões mais inteligentes. Você pode usar a análise para entrevistar advogados com mais segurança, negociar acordos com base real ou decidir se vale a pena contratar representação legal. Para decisões legais vinculantes, sempre consulte um advogado habilitado na OAB."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Com que rapidez recebo o resultado?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A análise completa com 16 agentes leva em média 2 a 3 minutos. Você acompanha em tempo real via streaming — cada agente vai apresentando seus resultados conforme termina. O Juiz IA Quantum delibera ao final com o veredicto e o JURIR Score dimensional."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Meus dados jurídicos ficam seguros?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutamente. Toda comunicação é criptografada com SSL/TLS. Seus dados são armazenados de forma segura e jamais são compartilhados com terceiros, advogados ou instituições. Você tem controle total sobre seu histórico — pode exportar ou deletar a qualquer momento."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O que é o \"Advogado do Diabo\"?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É o agente que garante o contraditório real — ele atua como o melhor advogado da parte adversária. Apresenta os argumentos mais fortes contra a sua tese, aponta vulnerabilidades processuais, documentação fraca e jurisprudência desfavorável. Sem esse contraditório, qualquer análise seria parcial e perigosa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O que é o plano Análise por Crédito?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ideal para quem tem um caso específico e não quer uma assinatura mensal. Você paga R$19,90 por uma análise completa com todos os 16 agentes, Advogado do Diabo, Juiz IA Quantum e JURIR Score dimensional. O relatório fica disponível para download em PDF por 30 dias. Sem recorrência, sem compromisso."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O que inclui o plano Escritório?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O plano Escritório (R$299/mês) é para advogados e escritórios que precisam de volume. Inclui até 30 análises completas por mês, acesso para até 5 usuários, API com 500 requisições, white-label no relatório PDF com o logo do escritório, suporte prioritário e treinamento inicial."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Posso cancelar o Premium a qualquer momento?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sim, sem burocracia. Cancele quando quiser diretamente pelo painel da sua conta — sem necessidade de ligar ou enviar e-mail. Você mantém o acesso até o fim do período já pago. Sem taxas de cancelamento, sem multas, sem pegadinha."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
   <body>
     <div id="root"></div>
