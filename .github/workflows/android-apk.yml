@@ -144,6 +144,15 @@ jobs:
     # workflow_dispatch (o mesmo evento que já tem o input release_track).
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     steps:
+      # [fix-whatsnew-missing-in-deploy] Este job nunca fazia checkout do
+      # repo — só baixava o .aab via download-artifact. A pasta whatsnew/
+      # (usada pela action de upload pra ler as notas de versão) só existe
+      # no código-fonte, então sumia nesse job e a action falhava com
+      # ENOENT ao tentar ler whatsnew/. Confirmado em produção: run #214,
+      # 07/07/2026 — upload do AAB funcionou (Successfully uploaded 1
+      # artifacts), só a leitura de whatsNewDirectory falhou depois.
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           name: jurir-release-aab-v${{ needs.build-android.outputs.version_name }}-build${{ needs.build-android.outputs.version_code }}
