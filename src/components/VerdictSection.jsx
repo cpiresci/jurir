@@ -16,6 +16,16 @@ function parseInline(str) {
   });
 }
 
+function isTableRow(line) {
+  return /^\s*\|.*\|\s*$/.test(line);
+}
+function isSeparatorRow(line) {
+  return /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?\s*$/.test(line);
+}
+function splitTableRow(line) {
+  return line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
+}
+
 function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
   if (!text) return null;
   const cleaned = text.replace(/⟦JURIR:[^⟧]*⟧/g, '').trim();
@@ -26,6 +36,63 @@ function MarkdownBlock({ text, baseColor = 'var(--t2)' }) {
   while (i < lines.length) {
     const line = lines[i];
     if (!line.trim()) { els.push(<div key={i} style={{ height: 8 }} />); i++; continue; }
+
+    // Tabela markdown — algumas respostas vêm com uma linha em branco entre
+    // cada linha da tabela (`| A | B |\n\n| C | D |`), então o lookahead
+    // pula 1 branco isolado enquanto ainda houver linha de tabela adiante.
+    if (isTableRow(line)) {
+      const rows = [];
+      let j = i;
+      while (j < lines.length) {
+        if (isTableRow(lines[j])) {
+          rows.push(lines[j]);
+          j++;
+          if (j < lines.length && !lines[j].trim()) {
+            let k = j;
+            while (k < lines.length && !lines[k].trim()) k++;
+            if (k < lines.length && isTableRow(lines[k])) { j = k; continue; }
+            break;
+          }
+        } else break;
+      }
+      if (rows.length >= 2) {
+        const header = splitTableRow(rows[0]);
+        const bodyRows = (isSeparatorRow(rows[1]) ? rows.slice(2) : rows.slice(1)).map(splitTableRow);
+        els.push(
+          <div key={`tbl${i}`} style={{ overflowX: 'auto', margin: '10px 0 14px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 320 }}>
+              <thead>
+                <tr>
+                  {header.map((h, ci) => (
+                    <th key={ci} style={{
+                      textAlign: 'left', fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
+                      fontWeight: 700, color: 'var(--t0)', letterSpacing: '.08em', textTransform: 'uppercase',
+                      padding: '8px 12px', borderBottom: '1px solid var(--b-subtle)', whiteSpace: 'nowrap',
+                    }}>{parseInline(h)}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {bodyRows.map((row, ri) => (
+                  <tr key={ri}>
+                    {row.map((cell, ci) => (
+                      <td key={ci} style={{
+                        fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-sm)', color: baseColor,
+                        lineHeight: 1.6, padding: '8px 12px',
+                        borderBottom: ri < bodyRows.length - 1 ? '1px solid var(--b-subtle)' : 'none',
+                        verticalAlign: 'top',
+                      }}>{parseInline(cell)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        i = j;
+        continue;
+      }
+    }
 
     if (line.startsWith('### ')) {
       els.push(<div key={i} style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', fontWeight: 600, color: 'var(--co7)', letterSpacing: '.12em', textTransform: 'uppercase', marginTop: 18, marginBottom: 6 }}>{line.slice(4)}</div>);
