@@ -517,7 +517,7 @@ export default function VerdictSection() {
           {/* Corpo */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
             <div style={{ minWidth: 0 }}>
-              <MarkdownBlock text={verdictText} baseColor="var(--t1)" />
+              <MarkdownBlock text={verdictText} baseColor="var(--t2)" />
             </div>
             {jurirScore != null && (
               <div style={{
