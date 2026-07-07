@@ -48,7 +48,12 @@ function parsePtDateToIso(dateStr) {
   const [, day, monRaw, year] = m;
   const mon = PT_MONTHS[monRaw.toLowerCase()];
   if (!mon) return null;
-  return `${year}-${mon}-${day.padStart(2, '0')}`;
+  // [seo-jsonld-article-fix] Google Rich Results reclamava de "datetime
+  // value is not valid" / "missing timezone" pra uma data sem hora (só
+  // "AAAA-MM-DD"). Article/datePublished espera datetime completo — fixamos
+  // meia-noite America/Sao_Paulo (-03:00) já que blogPosts.js só guarda o
+  // dia, sem hora de publicação real.
+  return `${year}-${mon}-${day.padStart(2, '0')}T00:00:00-03:00`;
 }
 
 async function main() {
@@ -110,15 +115,21 @@ async function main() {
     // o sufixo "· JURIR Blog" (esse é só pro <title> da aba). datePublished
     // fica de fora do objeto se a data em blogPosts.js não bater no formato
     // esperado, em vez de gerar um ISO inválido.
+    // [seo-jsonld-article-fix] image e author.url adicionados depois que o
+    // Rich Results Test acusou os dois como ausentes (avisos não-críticos,
+    // mas de graça pra resolver). Sem imagem própria por post ainda, então
+    // cai no og-image.png genérico — trocar aqui se algum dia os posts
+    // ganharem imagem de capa própria.
     const isoDate = parsePtDateToIso(post.date);
     const articleLd = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: post.title,
       description: post.excerpt,
+      image: `${SITE}/og-image.png`,
       ...(isoDate ? { datePublished: isoDate } : {}),
-      author: { '@type': 'Organization', name: 'JURIR' },
-      publisher: { '@type': 'Organization', name: 'JURIR', logo: { '@type': 'ImageObject', url: `${SITE}/og-image.png` } },
+      author: { '@type': 'Organization', name: 'JURIR', url: SITE },
+      publisher: { '@type': 'Organization', name: 'JURIR', url: SITE, logo: { '@type': 'ImageObject', url: `${SITE}/og-image.png` } },
       mainEntityOfPage: url,
       ...(post.area ? { articleSection: post.area } : {}),
     };
