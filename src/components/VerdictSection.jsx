@@ -378,7 +378,7 @@ export default function VerdictSection() {
   const {
     verdictText, devilText, jurirScore, scoreDims,
     vetoActive, analysisId, authToken, addToast, running,
-    citations, caselawWarnings, citationAudit,
+    citations, caselawWarnings, citationAudit, strategicAnalysis,
   } = useStore(s => ({
     verdictText: s.verdictText, devilText: s.devilText,
     jurirScore:  s.jurirScore,  scoreDims: s.scoreDims,
@@ -387,6 +387,7 @@ export default function VerdictSection() {
     running:     s.running,     citations: s.citations,
     caselawWarnings: s.caselawWarnings,
     citationAudit:   s.citationAudit,
+    strategicAnalysis: s.strategicAnalysis,
   }));
 
   const judgeState = useStore(s => s.judgeState);
@@ -516,6 +517,20 @@ export default function VerdictSection() {
                   .filter(([k, v]) => typeof v === 'number' && k in DIM_LABELS)
                   .map(([k, v]) => <DimBar key={k} label={k} value={v} />)}
               </div>
+            </div>
+          )}
+
+          {/* Análise estratégica do 16º agente (Estrategista) — mesmo campo
+              que o Histórico lê do banco, agora também ao vivo via SSE
+              'strategic_done' (antes chegava e era descartado no hook). */}
+          {strategicAnalysis && (
+            <div style={{ marginTop: 22, borderTop: '1px solid var(--b-subtle)', paddingTop: 18 }}>
+              <div style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--au6)', letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 10 }}>
+                Estratégia Processual
+              </div>
+              <p style={{ fontSize: 'var(--fs-base)', color: 'var(--t2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+                {strategicAnalysis}
+              </p>
             </div>
           )}
 

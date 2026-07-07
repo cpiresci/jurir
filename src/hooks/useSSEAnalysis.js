@@ -12,7 +12,7 @@ export function useSSEAnalysis() {
       incrementCompleted, setVerdict, setDevil, setScore,
       setVeto, setAnalysisId, addToast, setStatusMessage,
       setDevilState, setJudgeState, setCitations, setCaselawWarnings,
-      setCitationAudit, setConvergence,
+      setCitationAudit, setConvergence, setStrategicAnalysis,
     } = useStore.getState();
 
     if (!authToken) {
@@ -142,6 +142,7 @@ export function useSSEAnalysis() {
 
           } else if (t === 'strategic_done') {
             setStatusMessage(null);
+            setStrategicAnalysis((ev.analysis || '').trim());
 
           } else if (t === 'judge_thinking') {
             setStatusMessage(null);

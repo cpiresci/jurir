@@ -45,6 +45,10 @@ export const useStore = create((set, get) => ({
   devilText:       '',
   jurirScore:      null,
   scoreDims:       null,
+  // [wire-strategic-agent-home] Texto da análise estratégica (16º agente)
+  // vindo do evento SSE 'strategic_done' — antes era descartado no hook
+  // e só aparecia depois, no Histórico, lido do banco.
+  strategicAnalysis: '',
   vetoActive:      false,
   running:         false,
   freeResult:      null,
@@ -78,7 +82,7 @@ export const useStore = create((set, get) => ({
   resetAnalysis: () => set({
     analysisId: null, agentStates: {}, completedAgents: 0,
     verdictText: '', devilText: '', jurirScore: null,
-    scoreDims: null, vetoActive: false, running: false,
+    scoreDims: null, strategicAnalysis: '', vetoActive: false, running: false,
     freeResult: null, deltaResult: null, statusMessage: null,
     citations: [], caselawWarnings: [],
     citationAudit: { scanned: 0, unsourced: [] },
@@ -92,6 +96,7 @@ export const useStore = create((set, get) => ({
   setVerdict:         (text)          => set({ verdictText: text }),
   setDevil:           (text)          => set({ devilText: text }),
   setScore:           (score, dims)   => set({ jurirScore: score, scoreDims: dims }),
+  setStrategicAnalysis: (text)        => set({ strategicAnalysis: text }),
   setVeto:            (v)             => set({ vetoActive: v }),
   setRunning:         (v)             => set({ running: v }),
   // [FIX] statusMessage para cooldown/recovery — limpar ao receber primeiro agent_thinking
