@@ -1,0 +1,25 @@
+const PAGE_TITLES = {
+  '/': 'JURIR — Inteligência Jurídica por IA',
+  '/historico': 'Histórico de Análises · JURIR',
+  '/delta': 'Delta · JURIR',
+  '/documentos': 'Documentos · JURIR',
+  '/peticoes': 'Petições · JURIR',
+  '/simulador': 'Simulador · JURIR',
+  '/monitoramento': 'Monitoramento · JURIR',
+  '/verificar': 'Verificar Documento · JURIR',
+  '/premium': 'Assinatura Premium · JURIR',
+  '/privacidade': 'Política de Privacidade · JURIR',
+  '/termos': 'Termos de Uso · JURIR',
+  '/admin': 'Painel Admin · JURIR',
+  '/escritorio': 'Escritório · JURIR',
+  '/api-panel': 'Painel de API · JURIR',
+  '/aceitar-convite': 'Aceitar Convite · JURIR',
+  '/success': 'Pagamento Confirmado · JURIR',
+  '/cancel': 'Pagamento Cancelado · JURIR',
+  '/conta': 'Minha Conta · JURIR',
+  '/reset-password': 'Redefinir Senha · JURIR',
+  '/verify-email': 'Verificar E-mail · JURIR',
+  '/indique': 'Indique e Ganhe · JURIR',
+};
+
+export default PAGE_TITLES;
