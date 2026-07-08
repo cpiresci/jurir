@@ -11,7 +11,7 @@ Não existe uma lei federal única fixando horário de silêncio — isso costum
 ## O que fazer, em ordem
 
 1. **Conversa direta**, se possível — boa parte dos casos se resolve sem formalizar nada
-2. **Registro formal com o síndico** (se for condomínio), por escrito, pedindo aplicação do regimento interno — advertência, multa e, em casos reiterados, até ação de exclusão de condômino antissocial (Código Civil, art. 1.337) são previstas para quem descumpre repetidamente as normas de boa convivência
+2. **Registro formal com o síndico** (se for condomínio), por escrito, pedindo aplicação do regimento interno — advertência e multa são as sanções expressamente previstas em lei: em casos de comportamento antissocial reiterado, a multa pode chegar a até o décuplo do valor da contribuição condominial (Código Civil, art. 1.337, parágrafo único). A exclusão do condômino, por vezes citada como possibilidade extrema, **não** tem previsão expressa no Código Civil e é tema controvertido na doutrina e na jurisprudência
 3. **Chamado à Polícia Militar** durante o próprio fato, em caso de perturbação do sossego — gera registro de ocorrência que serve como prova
 4. **Ação judicial** (indenização por dano moral e/ou obrigação de cessar a conduta), quando o problema é recorrente e as vias anteriores não resolveram
 
