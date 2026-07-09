@@ -434,8 +434,6 @@ function ConvergencePanel({ convergence }) {
         </div>
       )}
 
-      {/* Arbitragem entre especialistas — só aparece com conflito real */}
-      <ConvergencePanel convergence={convergence} />
     </div>
   );
 }
