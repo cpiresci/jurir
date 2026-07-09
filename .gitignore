@@ -32,3 +32,7 @@ keystore_novo*
 upload_certificate.pem
 *.jks
 *.keystore
+
+# Artefatos de build Android (nunca versionar)
+*.aab
+*.apk
