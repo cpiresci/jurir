@@ -402,7 +402,7 @@ export default function AuthModal() {
           borderRadius: 10, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 8,
         }}>
           {[
-            { icon: '⚖', text: '5 análises jurídicas gratuitas' },
+            { icon: '⚖', text: '1 análise Premium completa de boas-vindas' },
             { icon: '🤖', text: 'Acesso ao swarm de agentes IA' },
             { icon: '📄', text: 'Geração de petições e relatórios' },
           ].map(({ icon, text }) => (
