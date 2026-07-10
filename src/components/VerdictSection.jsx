@@ -487,6 +487,9 @@ export default function VerdictSection() {
       {/* Jurisprudência conflitante */}
       <CaselawWarningBanner warnings={caselawWarnings} />
 
+      {/* Conflitos & arbitragem entre especialistas (Juiz revisando divergências) */}
+      <ConvergencePanel convergence={convergence} />
+
       {/* Citação de artigo que não bate com o corpus */}
       <CitationAuditBanner audit={citationAudit} />
 
