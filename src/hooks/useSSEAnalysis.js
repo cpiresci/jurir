@@ -87,6 +87,18 @@ export function useSSEAnalysis() {
           if (t === 'start') {
             setStatusMessage(ev.message || '⚖ Conectado. Iniciando agentes…');
 
+          // [add-analysis-queue-ui] Backend (analysisQueue.js) emite isso
+          // quando MAX_CONCURRENT_ANALYSES já está em uso -- a análise fica
+          // esperando uma vaga antes de começar de verdade. Reusa o mesmo
+          // statusMessage com spinner que 'cooldown'/'recovery' já usam.
+          } else if (t === 'queued') {
+            const pos = typeof ev.position === 'number' ? ev.position : 1;
+            setStatusMessage(
+              pos <= 1
+                ? '⏳ Fila de análises — você é o próximo, aguarde…'
+                : `⏳ Fila de análises — posição ${pos}, aguarde…`
+            );
+
           } else if (t === 'cooldown') {
             setStatusMessage(ev.message || `⏳ Aguardando ${ev.seconds}s para garantir qualidade dos providers…`);
 
