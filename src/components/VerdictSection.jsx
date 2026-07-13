@@ -1,4 +1,5 @@
-import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, ExternalLink, BookOpen, Compass } from 'lucide-react';
+import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, ExternalLink, BookOpen, Compass, Gift } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
 
@@ -657,6 +658,31 @@ export default function VerdictSection() {
             >
               Baixar app na Play Store →
             </a>
+          </div>
+
+          {/* CTA indicação — mesmo momento de pico de satisfação do CTA de app */}
+          <div style={{
+            marginTop: 10, padding: '14px 16px',
+            background: 'rgba(16,185,129,0.04)',
+            border: '1px solid rgba(16,185,129,0.16)',
+            borderRadius: 'var(--r-md)',
+            display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+          }}>
+            <Gift size={16} style={{ color: 'var(--jade2)', flexShrink: 0 }} />
+            <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', flex: 1, minWidth: 200 }}>
+              Indique um amigo e ganhem 1 análise Premium grátis cada.
+            </span>
+            <Link
+              to="/indique"
+              style={{
+                fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700,
+                color: 'var(--jade2)', letterSpacing: '.08em', textDecoration: 'none',
+                border: '1px solid rgba(16,185,129,0.35)', borderRadius: 999,
+                padding: '6px 14px',
+              }}
+            >
+              Indicar agora →
+            </Link>
           </div>
 
           {/* Aviso legal — reforço específico no rodapé do veredito */}
