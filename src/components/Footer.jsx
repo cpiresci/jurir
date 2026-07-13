@@ -368,6 +368,32 @@ export default function Footer() {
               </span>
             </div>
 
+            <a
+              href="https://play.google.com/store/apps/details?id=com.jurir.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '7px 16px',
+                background: 'rgba(0,242,254,0.03)',
+                border: '1px solid rgba(0,242,254,0.14)',
+                borderRadius: 999,
+                boxShadow: '0 0 20px rgba(0,242,254,0.05)',
+                marginBottom: 22,
+                textDecoration: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <span style={{ fontSize: 14, lineHeight: 1 }}>📲</span>
+              <span style={{
+                fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)',
+                letterSpacing: '.16em', color: 'var(--co7)',
+                textTransform: 'uppercase',
+              }}>
+                Baixe o App na Play Store
+              </span>
+            </a>
+
             {/* Aviso legal */}
             <div id="aviso-legal" style={{
               padding: '14px 16px',

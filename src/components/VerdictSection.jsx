@@ -632,6 +632,33 @@ export default function VerdictSection() {
             </div>
           </div>
 
+          {/* CTA app — Play Store, logo após o resultado (pico de satisfação) */}
+          <div style={{
+            marginTop: 14, padding: '14px 16px',
+            background: 'rgba(0,242,254,0.03)',
+            border: '1px solid rgba(0,242,254,0.14)',
+            borderRadius: 'var(--r-md)',
+            display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+          }}>
+            <span style={{ fontSize: 16 }}>📲</span>
+            <span style={{ fontFamily: 'var(--f-sans)', fontSize: 'var(--fs-xs)', color: 'var(--t3)', flex: 1, minWidth: 200 }}>
+              Prefere acompanhar seus casos pelo celular?
+            </span>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.jurir.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', fontWeight: 700,
+                color: 'var(--co7)', letterSpacing: '.08em', textDecoration: 'none',
+                border: '1px solid rgba(0,242,254,0.30)', borderRadius: 999,
+                padding: '6px 14px',
+              }}
+            >
+              Baixar app na Play Store →
+            </a>
+          </div>
+
           {/* Aviso legal — reforço específico no rodapé do veredito */}
           <div style={{
             marginTop: 14, padding: '10px 14px',
