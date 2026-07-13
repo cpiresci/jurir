@@ -2,6 +2,7 @@ import { Scale, Shield, Download, AlertTriangle, CheckCircle2, Loader2, External
 import { Link } from 'react-router-dom';
 import { useStore } from '../store';
 import { downloadPdf } from '../lib/api';
+import ShareCardButton from './ShareCardButton';
 
 // ── Reutiliza o mesmo renderer do AnalysisPanel ──────────────────────────────
 function parseInline(str) {
@@ -622,6 +623,7 @@ export default function VerdictSection() {
                 <Download size={12} /> Baixar PDF
               </button>
             )}
+            <ShareCardButton score={jurirScore} scoreLabel={jurirScore != null ? SCORE_LABEL(jurirScore) : ''} verdictText={verdictText} />
             {analysisId && (
               <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)' }}>
                 ID #{analysisId}
