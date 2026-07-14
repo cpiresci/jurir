@@ -306,14 +306,35 @@ function looksLikeListItem(str) {
 // Extrai a primeira frase "forte" e em prosa real do veredito (markdown
 // limpo) pra caber no card — pulando linhas de metadado estruturado
 // (probabilidade, urgência, etc.) até achar uma frase de verdade.
+// Detecta linha inteira que é cabeçalho de seção, régua markdown (---, ___,
+// ***) ou metadado estruturado do veredito — mesmo quando o cabeçalho está
+// em Title Case (ex: "Veredito Final — Formato Obrigatório:") e passaria
+// despercebido pela checagem de maiúsculas sozinha.
+function isHeadingOrMetaLine(line) {
+  const trimmed = line.trim();
+  if (!trimmed) return true;
+  if (/^[-_*=]{3,}$/.test(trimmed)) return true;               // régua markdown isolada
+  if (/^-{3,}/.test(trimmed) || /-{3,}$/.test(trimmed)) return true; // régua colada ao início/fim da linha
+  if (/:\s*$/.test(trimmed) && trimmed.length < 90) return true; // linha curta terminando em ":" = cabeçalho de seção
+  if (/PROBABILIDADE DE ÊXITO|NÍVEL DE URGÊNCIA|VEREDITO FINAL/i.test(trimmed)) return true;
+  return false;
+}
+
 export function extractHeadline(text) {
   if (!text) return '';
   const clean = text
     .replace(/^[ \t]*[-*]\s+/gm, '') // remove marcadores de lista markdown ("- " ou "* " no início da linha)
     .replace(/[#*`_>]/g, '')          // remove símbolos de markdown restantes, preservando hífens internos (ex: "recomenda-se")
     .trim();
-  const sentences = clean.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
 
-  const candidate = sentences.find(s => isProseLine(s) && !looksLikeListItem(s) && s.length > 25) || sentences[0] || clean;
+  // Filtra linha a linha ANTES de juntar em frases — cabeçalhos e réguas
+  // markdown sem ponto final grudariam no próximo trecho de prosa real.
+  const lines = clean.split(/\n+/).map(l => l.trim()).filter(l => l && !isHeadingOrMetaLine(l));
+  const joined = lines.length ? lines.join(' ') : clean;
+
+  const sentences = joined.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
+
+  const candidate = sentences.find(s => isProseLine(s) && !looksLikeListItem(s) && !/-{3,}/.test(s) && s.length > 25)
+    || sentences[0] || clean;
   return candidate.length > 140 ? candidate.slice(0, 140) + '…' : candidate;
 }
