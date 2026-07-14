@@ -196,11 +196,20 @@ export async function generateShareCardBlob({ score, scoreLabel, verdictLine, ag
   ctx.fillText('A N Á L I S E   J U R Í D I C A   P O R   I A', W / 2, 150);
 
   ctx.font = '700 96px sans-serif';
+  const jurWidth = ctx.measureText('JUR').width;
+  ctx.font = 'italic 700 96px sans-serif';
+  const irWidth = ctx.measureText('IR').width;
+  const wordmarkGap = 6;
+  const wordmarkStart = W / 2 - (jurWidth + wordmarkGap + irWidth) / 2;
+
+  ctx.textAlign = 'left';
+  ctx.font = '700 96px sans-serif';
   ctx.fillStyle = '#ffffff';
-  ctx.fillText('JUR', W / 2 - 90, 250);
+  ctx.fillText('JUR', wordmarkStart, 250);
   ctx.fillStyle = CY;
   ctx.font = 'italic 700 96px sans-serif';
-  ctx.fillText('IR', W / 2 + 110, 250);
+  ctx.fillText('IR', wordmarkStart + jurWidth + wordmarkGap, 250);
+  ctx.textAlign = 'center';
 
   ctx.font = '400 24px monospace';
   ctx.fillStyle = DIM;
@@ -286,14 +295,25 @@ function isProseLine(str) {
   return upper / letters.length < 0.5;
 }
 
+// Detecta se a frase começa no meio de um item de lista numerada
+// (ex: "3º) e da dispensa...", "2) além disso...", "II - também...") —
+// sinal de que o corte de sentença caiu dentro de uma enumeração, não
+// no início de uma frase de verdade.
+function looksLikeListItem(str) {
+  return /^\s*(\d+|[IVXLCDM]+)\s*[ºª]?\s*[).:-]/i.test(str);
+}
+
 // Extrai a primeira frase "forte" e em prosa real do veredito (markdown
 // limpo) pra caber no card — pulando linhas de metadado estruturado
 // (probabilidade, urgência, etc.) até achar uma frase de verdade.
 export function extractHeadline(text) {
   if (!text) return '';
-  const clean = text.replace(/[#*`_>-]/g, '').trim();
+  const clean = text
+    .replace(/^[ \t]*[-*]\s+/gm, '') // remove marcadores de lista markdown ("- " ou "* " no início da linha)
+    .replace(/[#*`_>]/g, '')          // remove símbolos de markdown restantes, preservando hífens internos (ex: "recomenda-se")
+    .trim();
   const sentences = clean.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
 
-  const candidate = sentences.find(s => isProseLine(s) && s.length > 25) || sentences[0] || clean;
+  const candidate = sentences.find(s => isProseLine(s) && !looksLikeListItem(s) && s.length > 25) || sentences[0] || clean;
   return candidate.length > 140 ? candidate.slice(0, 140) + '…' : candidate;
 }
