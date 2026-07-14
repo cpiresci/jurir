@@ -623,7 +623,7 @@ export default function VerdictSection() {
                 <Download size={12} /> Baixar PDF
               </button>
             )}
-            <ShareCardButton score={jurirScore} scoreLabel={jurirScore != null ? SCORE_LABEL(jurirScore) : ''} verdictText={verdictText} />
+            <ShareCardButton score={jurirScore} scoreLabel={jurirScore != null ? SCORE_LABEL(jurirScore) : ''} verdictText={verdictText} citations={citations} />
             {analysisId && (
               <span style={{ fontFamily: 'var(--f-mono)', fontSize: 'var(--fs-xs)', color: 'var(--t4)' }}>
                 ID #{analysisId}

@@ -5,7 +5,7 @@ import { generateShareCardBlob, extractHeadline } from '../lib/shareCard';
 // [share-card] Botão que gera o card compartilhável (formato story 9:16) e
 // dispara o compartilhamento nativo (Web Share API, disponível também dentro
 // do WebView do app via Capacitor) ou, sem suporte, baixa a imagem direto.
-export default function ShareCardButton({ score, scoreLabel, verdictText }) {
+export default function ShareCardButton({ score, scoreLabel, verdictText, citations }) {
   const [busy, setBusy] = useState(false);
 
   if (score == null) return null;
@@ -17,6 +17,7 @@ export default function ShareCardButton({ score, scoreLabel, verdictText }) {
         score,
         scoreLabel,
         verdictLine: extractHeadline(verdictText),
+        citations: (citations || []).map(c => `${c.diploma || ''} ${c.artigo || ''}`.trim()).filter(Boolean),
       });
       const file = new File([blob], 'jurir-resultado.png', { type: 'image/png' });
 

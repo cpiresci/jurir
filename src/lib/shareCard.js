@@ -167,7 +167,7 @@ function drawDiagnosticBox(ctx, x, y, w, num, label, lines, accent = CY) {
   return h;
 }
 
-export async function generateShareCardBlob({ score, scoreLabel, verdictLine, agentCount = 16 }) {
+export async function generateShareCardBlob({ score, scoreLabel, verdictLine, agentCount = 16, citations = [] }) {
   const W = 1080, H = 1920;
   const canvas = document.createElement('canvas');
   canvas.width = W;
@@ -260,7 +260,20 @@ export async function generateShareCardBlob({ score, scoreLabel, verdictLine, ag
     [`${agentCount} especialistas + Advogado do Diabo + Juiz IA`, 'garantindo análise imparcial e fundamentada.'],
     CY2
   );
-  y += h2 + 40;
+  y += h2 + 24;
+
+  if (citations && citations.length) {
+    const maxShown = 6;
+    const shown = citations.slice(0, maxShown);
+    const extra = citations.length - shown.length;
+    const citationsText = shown.join('   ·   ') + (extra > 0 ? `   +${extra}` : '');
+    ctx.font = '400 30px sans-serif';
+    const citationLines = wrapText(ctx, citationsText, boxW - 130).slice(0, 3);
+    const h3 = drawDiagnosticBox(ctx, 90, y, boxW, '03', 'MÓDULO "FONTES CITADAS"', citationLines, '#fbbf24');
+    y += h3 + 40;
+  } else {
+    y += 16;
+  }
 
   // ── CTA final ─────────────────────────────────────────────────────
   const ctaH = 220;
