@@ -329,6 +329,14 @@ export async function triagemInventario(body, token) {
   return apiFetch('/api/inventario/triagem', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
+// ── Trabalhista (Verbas Rescisórias + Adicionais) ───────────────────────
+export async function calcularVerbasRescisorias(body, token) {
+  return apiFetch('/api/trabalhista/verbas-rescisorias', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+export async function calcularAdicionaisTrabalhistas(body, token) {
+  return apiFetch('/api/trabalhista/adicionais', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+
 // ── Monitoramento de Processos ────────────────────────────────────────
 export async function addMonitoring(body, token) {
   return apiFetch('/api/monitoring/add', { method: 'POST', body: JSON.stringify(body) }, token);

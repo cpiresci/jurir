@@ -6,6 +6,7 @@ import { checkHealth } from '../lib/api';
 
 const FERRAMENTAS_FREE = [
   { to: '/verificar', label: 'Verificar Relatório', icon: '🛡️' },
+  { to: '/trabalhista', label: 'Calculadora Trabalhista', icon: '💼' },
 ];
 
 const FERRAMENTAS_SOLO = [
