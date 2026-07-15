@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Loader2, Briefcase, Calculator, Zap } from 'lucide-react';
+import { Loader2, Briefcase, Calculator, Zap, Scale } from 'lucide-react';
 import { useStore } from '../store';
-import { calcularVerbasRescisorias, calcularAdicionaisTrabalhistas } from '../lib/api';
+import { calcularVerbasRescisorias, calcularAdicionaisTrabalhistas, simularAcordo as simularAcordoApi } from '../lib/api';
 
 export default function TrabalhistaPage() {
   const { authToken, openModal, addToast } = useStore();
@@ -48,6 +48,14 @@ export default function TrabalhistaPage() {
   const [loadingAdic, setLoadingAdic] = useState(false);
   const [resultAdic, setResultAdic] = useState(null);
 
+  // ── Simulador de acordo ─────────────────────────────────────────────
+  const [probabilidadeExito, setProbabilidadeExito] = useState('60');
+  const [tempoEstimadoMeses, setTempoEstimadoMeses] = useState('24');
+  const [valorOferecido, setValorOferecido] = useState('');
+  const [temJusticaGratuita, setTemJusticaGratuita] = useState(true);
+  const [loadingAcordo, setLoadingAcordo] = useState(false);
+  const [resultAcordo, setResultAcordo] = useState(null);
+
   const calcularAdicionais = async () => {
     if (!authToken) { openModal('login'); return; }
     if (!grauInsalubridade && !temPericulosidade) { addToast('Selecione insalubridade e/ou periculosidade.', 'info'); return; }
@@ -64,6 +72,29 @@ export default function TrabalhistaPage() {
       addToast(`Erro: ${e.message}`, 'error');
     } finally {
       setLoadingAdic(false);
+    }
+  };
+
+  const rodarSimulacaoAcordo = async () => {
+    if (!authToken) { openModal('login'); return; }
+    const valorPleito = resultVerbas?.total_estimado;
+    if (!valorPleito || valorPleito <= 0) { addToast('Calcule as verbas rescisórias primeiro.', 'info'); return; }
+    const prob = Number(probabilidadeExito);
+    if (!Number.isFinite(prob) || prob < 0 || prob > 100) { addToast('Probabilidade deve estar entre 0 e 100.', 'info'); return; }
+    setLoadingAcordo(true); setResultAcordo(null);
+    try {
+      const data = await simularAcordoApi({
+        valor_total_pleito: valorPleito,
+        probabilidade_exito: prob,
+        tempo_estimado_dias: (Number(tempoEstimadoMeses) || 24) * 30,
+        valor_acordo_oferecido: valorOferecido ? Number(valorOferecido) : null,
+        tem_justica_gratuita: temJusticaGratuita,
+      }, authToken);
+      setResultAcordo(data);
+    } catch (e) {
+      addToast(`Erro: ${e.message}`, 'error');
+    } finally {
+      setLoadingAcordo(false);
     }
   };
 
@@ -227,6 +258,82 @@ export default function TrabalhistaPage() {
             )}
             <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', lineHeight: 1.6 }}>{resultAdic.aviso}</div>
           </div>
+        )}
+      </div>
+
+      {/* ── Bloco 3: Simulador de valor de acordo ────────────────────── */}
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 28, marginTop: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+          <Scale size={16} style={{ color: 'var(--au6)' }} />
+          <span style={{ fontSize: 'var(--fs-sm)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', color: 'var(--p3)' }}>VALE A PENA ACEITAR O ACORDO?</span>
+        </div>
+
+        {!resultVerbas ? (
+          <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)' }}>Calcule as verbas rescisórias no bloco acima primeiro — o simulador usa esse total como valor do pleito.</p>
+        ) : (
+          <>
+            <div style={{ background: 'var(--bg-glass)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '12px 16px', marginBottom: 20, fontSize: 'var(--fs-sm)', color: 'var(--p3)' }}>
+              Valor do pleito (calculado acima): <strong style={{ color: 'var(--p2)' }}>{fmtBRL(resultVerbas.total_estimado)}</strong>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 16, marginBottom: 16 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>PROBABILIDADE DE ÊXITO ESTIMADA (%)</label>
+                <input className="fg-input" type="number" min="0" max="100" value={probabilidadeExito} onChange={e => setProbabilidadeExito(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>TEMPO ESTIMADO ATÉ RECEBER (MESES)</label>
+                <input className="fg-input" type="number" min="1" value={tempoEstimadoMeses} onChange={e => setTempoEstimadoMeses(e.target.value)} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20, alignItems: 'end' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VALOR OFERECIDO EM ACORDO (opcional)</label>
+                <input className="fg-input" type="number" min="0" step="0.01" placeholder="Deixe em branco para ver só o piso" value={valorOferecido} onChange={e => setValorOferecido(e.target.value)} />
+              </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 'var(--fs-sm)', color: 'var(--p2)', paddingBottom: 10 }}>
+                <input type="checkbox" checked={temJusticaGratuita} onChange={e => setTemJusticaGratuita(e.target.checked)} />
+                Sou beneficiário de justiça gratuita
+              </label>
+            </div>
+
+            <button className="btn btn-crimson btn-lg" onClick={rodarSimulacaoAcordo} disabled={loadingAcordo} style={{ width: '100%', justifyContent: 'center' }}>
+              {loadingAcordo ? <><Loader2 size={15} className="spin"/> Simulando…</> : <><Scale size={14}/> Simular Acordo</>}
+            </button>
+
+            {resultAcordo && (
+              <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div style={{
+                  background: resultAcordo.recomendacao === 'aceitar' ? 'rgba(60,180,100,.08)' : resultAcordo.recomendacao === 'negociar_ou_recusar' ? 'rgba(220,40,40,.08)' : 'var(--bg-glass)',
+                  border: `1px solid ${resultAcordo.recomendacao === 'aceitar' ? 'var(--jade2)' : resultAcordo.recomendacao === 'negociar_ou_recusar' ? 'var(--cr4)' : 'var(--b-crimson)'}`,
+                  borderRadius: 'var(--r-md)', padding: 20,
+                }}>
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.08em', marginBottom: 8 }}>RECOMENDAÇÃO</div>
+                  <div style={{ fontFamily: 'var(--f-display)', fontSize: 'var(--fs-xl)', fontWeight: 700, color: 'var(--p1)', marginBottom: 8, textTransform: 'capitalize' }}>
+                    {resultAcordo.recomendacao.replaceAll('_', ' ')}
+                  </div>
+                  <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--p3)', lineHeight: 1.6 }}>{resultAcordo.motivo}</div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
+                  <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '16px' }}>
+                    <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VALOR ESPERADO (AJUSTADO PELO TEMPO)</div>
+                    <div style={{ fontFamily: 'var(--f-display)', fontSize: 'var(--fs-xl)', fontWeight: 700, color: 'var(--p2)' }}>{fmtBRL(resultAcordo.valor_esperado_ajustado_pelo_tempo)}</div>
+                  </div>
+                  <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: '16px' }}>
+                    <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>PISO MÍNIMO / IDEAL</div>
+                    <div style={{ fontFamily: 'var(--f-display)', fontSize: 'var(--fs-lg)', fontWeight: 700, color: 'var(--p2)' }}>{fmtBRL(resultAcordo.faixa_piso_negociacao.minimo_aceitavel)} — {fmtBRL(resultAcordo.faixa_piso_negociacao.ideal)}</div>
+                  </div>
+                </div>
+
+                {resultAcordo.aviso_honorarios && (
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', lineHeight: 1.6 }}>⚠ {resultAcordo.aviso_honorarios}</div>
+                )}
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', lineHeight: 1.6 }}>{resultAcordo.aviso}</div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

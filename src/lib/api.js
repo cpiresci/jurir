@@ -337,6 +337,11 @@ export async function calcularAdicionaisTrabalhistas(body, token) {
   return apiFetch('/api/trabalhista/adicionais', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
+// ── Simulador de Valor de Acordo ─────────────────────────────────────────
+export async function simularAcordo(body, token) {
+  return apiFetch('/api/acordo/simular', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+
 // ── Monitoramento de Processos ────────────────────────────────────────
 export async function addMonitoring(body, token) {
   return apiFetch('/api/monitoring/add', { method: 'POST', body: JSON.stringify(body) }, token);
