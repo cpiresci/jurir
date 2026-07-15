@@ -53,6 +53,7 @@ export default function SoloBanner({ feature = 'esta funcionalidade' }) {
           '✅ Gerador de Petições',
           '✅ Simulador de Instâncias',
           '✅ Monitoramento Processual',
+          '✅ Triagem de Inventário',
           '✅ Streaming SSE em tempo real',
         ].map(item => (
           <span key={item}>{item}</span>

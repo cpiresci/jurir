@@ -321,6 +321,14 @@ export async function simulateInstances(body, token) {
   return apiFetch('/api/analyze/simulate-instances', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
+// ── Inventário (ITCMD + Triagem) ────────────────────────────────────────
+export async function calcularITCMD(body, token) {
+  return apiFetch('/api/inventario/itcmd', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+export async function triagemInventario(body, token) {
+  return apiFetch('/api/inventario/triagem', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+
 // ── Monitoramento de Processos ────────────────────────────────────────
 export async function addMonitoring(body, token) {
   return apiFetch('/api/monitoring/add', { method: 'POST', body: JSON.stringify(body) }, token);

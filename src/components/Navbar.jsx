@@ -14,6 +14,7 @@ const FERRAMENTAS_SOLO = [
   { to: '/peticoes',      label: 'Gerador de Petições',      icon: '📜',  badge: 'Solo' },
   { to: '/simulador',     label: 'Simulador de Instâncias',  icon: '⚖️', badge: 'Solo' },
   { to: '/monitoramento', label: 'Monitoramento Processual', icon: '🔔',  badge: 'Solo' },
+  { to: '/inventario',    label: 'Triagem de Inventário',    icon: '🏛️', badge: 'Solo' },
 ];
 
 export default function Navbar() {

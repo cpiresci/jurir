@@ -14,6 +14,7 @@ const DeltaPage = lazy(() => import('./pages/Delta'));
 const DocumentosPage = lazy(() => import('./pages/Documentos'));
 const PeticoesPage = lazy(() => import('./pages/Peticoes'));
 const SimuladorPage = lazy(() => import('./pages/Simulador'));
+const InventarioPage = lazy(() => import('./pages/Inventario'));
 const MonitoramentoPage = lazy(() => import('./pages/Monitoramento'));
 const VerificarPage = lazy(() => import('./pages/Verificar'));
 const CheckoutPage = lazy(() => import('./pages/Checkout'));
@@ -66,6 +67,7 @@ export default function App() {
             <Route path="/documentos"    element={<DocumentosPage />} />
             <Route path="/peticoes"      element={<PeticoesPage />} />
             <Route path="/simulador"     element={<SimuladorPage />} />
+            <Route path="/inventario"    element={<InventarioPage />} />
             <Route path="/monitoramento" element={<MonitoramentoPage />} />
             <Route path="/verificar"     element={<VerificarPage />} />
             <Route path="/premium"       element={<CheckoutPage />} />
