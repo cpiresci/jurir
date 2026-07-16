@@ -109,6 +109,32 @@ const FEATURES = [
     accent: '#10b981',
     glowColor: 'rgba(16,185,129,0.18)',
   },
+  {
+    id: 'inventario',
+    emoji: '🏛️',
+    label: 'Inventário',
+    title: 'Triagem de Inventário',
+    desc: 'Calcule o ITCMD estimado por estado e descubra se o inventário cabe via extrajudicial (cartório) ou exige via judicial, com base no CPC e na Resolução CNJ 571/2024.',
+    tag: 'PREMIUM',
+    tagJade: false,
+    route: '/inventario',
+    cta: 'Fazer triagem',
+    accent: '#c084fc',
+    glowColor: 'rgba(192,132,252,0.18)',
+  },
+  {
+    id: 'trabalhista',
+    emoji: '💼',
+    label: 'Trabalhista',
+    title: 'Calculadora Trabalhista',
+    desc: 'Verbas rescisórias, insalubridade, periculosidade, simulador de valor de acordo e estimador de dano moral — tudo com base na CLT.',
+    tag: 'GRATUITO',
+    tagJade: true,
+    route: '/trabalhista',
+    cta: 'Calcular verbas',
+    accent: '#fbbf24',
+    glowColor: 'rgba(251,191,36,0.18)',
+  },
 ];
 
 function FeatureCard({ f, onCta, index }) {
@@ -384,7 +410,7 @@ export default function FeaturesSection() {
           }}>
             {[
               { n: '16', label: 'Agentes IA' },
-              { n: '8', label: 'Ferramentas' },
+              { n: '10', label: 'Ferramentas' },
               { n: '16', label: 'Áreas do Direito' },
               { n: '100%', label: 'Jurisprudência BR' },
             ].map((s, i) => (
