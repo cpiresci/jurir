@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Loader2, Briefcase, Calculator, Zap, Scale } from 'lucide-react';
+import { Loader2, Briefcase, Calculator, Zap, Scale, HeartCrack } from 'lucide-react';
 import { useStore } from '../store';
-import { calcularVerbasRescisorias, calcularAdicionaisTrabalhistas, simularAcordo as simularAcordoApi } from '../lib/api';
+import { calcularVerbasRescisorias, calcularAdicionaisTrabalhistas, simularAcordo as simularAcordoApi, estimarDanoMoral as estimarDanoMoralApi } from '../lib/api';
 
 export default function TrabalhistaPage() {
   const { authToken, openModal, addToast } = useStore();
@@ -56,6 +56,13 @@ export default function TrabalhistaPage() {
   const [loadingAcordo, setLoadingAcordo] = useState(false);
   const [resultAcordo, setResultAcordo] = useState(null);
 
+  // ── Estimador de dano moral ──────────────────────────────────────────
+  const [salarioDanoMoral, setSalarioDanoMoral] = useState('');
+  const [gravidadeDano, setGravidadeDano] = useState('media');
+  const [houveReincidencia, setHouveReincidencia] = useState(false);
+  const [loadingDanoMoral, setLoadingDanoMoral] = useState(false);
+  const [resultDanoMoral, setResultDanoMoral] = useState(null);
+
   const calcularAdicionais = async () => {
     if (!authToken) { openModal('login'); return; }
     if (!grauInsalubridade && !temPericulosidade) { addToast('Selecione insalubridade e/ou periculosidade.', 'info'); return; }
@@ -95,6 +102,24 @@ export default function TrabalhistaPage() {
       addToast(`Erro: ${e.message}`, 'error');
     } finally {
       setLoadingAcordo(false);
+    }
+  };
+
+  const rodarEstimativaDanoMoral = async () => {
+    if (!authToken) { openModal('login'); return; }
+    if (!salarioDanoMoral || Number(salarioDanoMoral) <= 0) { addToast('Informe o salário contratual.', 'info'); return; }
+    setLoadingDanoMoral(true); setResultDanoMoral(null);
+    try {
+      const data = await estimarDanoMoralApi({
+        salario_contratual: Number(salarioDanoMoral),
+        gravidade: gravidadeDano,
+        houve_reincidencia: houveReincidencia,
+      }, authToken);
+      setResultDanoMoral(data);
+    } catch (e) {
+      addToast(`Erro: ${e.message}`, 'error');
+    } finally {
+      setLoadingDanoMoral(false);
     }
   };
 
@@ -334,6 +359,70 @@ export default function TrabalhistaPage() {
               </div>
             )}
           </>
+        )}
+      </div>
+
+      {/* ── Bloco 4: Estimador de dano moral ─────────────────────────── */}
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-xl)', padding: 28, marginTop: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+          <HeartCrack size={16} style={{ color: 'var(--au6)' }} />
+          <span style={{ fontSize: 'var(--fs-sm)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', color: 'var(--p3)' }}>ESTIMADOR DE DANO MORAL</span>
+        </div>
+
+        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)', marginBottom: 20, lineHeight: 1.6 }}>
+          Baseado no art. 223-G da CLT — mostra a faixa de referência legal, não uma previsão do valor do seu processo. O juiz pode fixar valor diferente conforme as circunstâncias do caso.
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>SALÁRIO CONTRATUAL (R$)</label>
+            <input className="fg-input" type="number" min="0" step="0.01" placeholder="Ex: 3000" value={salarioDanoMoral} onChange={e => setSalarioDanoMoral(e.target.value)} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>GRAVIDADE DA OFENSA</label>
+            <select className="fg-input" value={gravidadeDano} onChange={e => setGravidadeDano(e.target.value)}>
+              <option value="leve">Leve (até 3x o salário)</option>
+              <option value="media">Média (até 5x o salário)</option>
+              <option value="grave">Grave (até 20x o salário)</option>
+              <option value="gravissima">Gravíssima (até 50x o salário)</option>
+            </select>
+          </div>
+        </div>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 'var(--fs-sm)', color: 'var(--p2)', marginBottom: 20 }}>
+          <input type="checkbox" checked={houveReincidencia} onChange={e => setHouveReincidencia(e.target.checked)} />
+          Já houve caso semelhante entre as mesmas partes (reincidência)
+        </label>
+
+        <button className="btn btn-crimson btn-lg" onClick={rodarEstimativaDanoMoral} disabled={loadingDanoMoral} style={{ width: '100%', justifyContent: 'center' }}>
+          {loadingDanoMoral ? <><Loader2 size={15} className="spin"/> Calculando…</> : <><HeartCrack size={14}/> Ver Faixa de Referência</>}
+        </button>
+
+        {resultDanoMoral && (
+          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ background: 'var(--bg-glass)', border: '1px solid var(--b-crimson)', borderRadius: 'var(--r-md)', padding: '20px 18px' }}>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>VALOR DE REFERÊNCIA MÁXIMO ({resultDanoMoral.gravidade}, {resultDanoMoral.multiplicador_legal_maximo}x o salário)</div>
+              <div style={{ fontFamily: 'var(--f-display)', fontSize: 'var(--fs-3xl)', fontWeight: 700, color: 'var(--cr4)' }}>{fmtBRL(resultDanoMoral.valor_referencia_maximo)}</div>
+            </div>
+
+            <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--p3)', lineHeight: 1.6 }}>{resultDanoMoral.exemplos_da_categoria}</div>
+
+            {resultDanoMoral.observacao_reincidencia && (
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', lineHeight: 1.6 }}>ℹ {resultDanoMoral.observacao_reincidencia}</div>
+            )}
+
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--b-neutral)', borderRadius: 'var(--r-md)', padding: 18 }}>
+              <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', fontFamily: 'var(--f-mono)', letterSpacing: '.06em', marginBottom: 12 }}>O QUE O JUIZ CONSIDERA (ART. 223-G, CAPUT, CLT)</div>
+              <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {resultDanoMoral.fatores_que_o_juiz_considera?.map((f, i) => (
+                  <li key={i} style={{ fontSize: 'var(--fs-xs)', color: 'var(--p4)', lineHeight: 1.5 }}>{f}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--au6)', lineHeight: 1.6 }}>⚠ {resultDanoMoral.aviso_stf}</div>
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', lineHeight: 1.6 }}>{resultDanoMoral.aviso}</div>
+          </div>
         )}
       </div>
     </div>

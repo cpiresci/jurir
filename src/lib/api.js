@@ -342,6 +342,11 @@ export async function simularAcordo(body, token) {
   return apiFetch('/api/acordo/simular', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
+// ── Estimador de Dano Moral ──────────────────────────────────────────────
+export async function estimarDanoMoral(body, token) {
+  return apiFetch('/api/danomoral/estimar', { method: 'POST', body: JSON.stringify(body) }, token);
+}
+
 // ── Monitoramento de Processos ────────────────────────────────────────
 export async function addMonitoring(body, token) {
   return apiFetch('/api/monitoring/add', { method: 'POST', body: JSON.stringify(body) }, token);
