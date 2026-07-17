@@ -329,6 +329,21 @@ export async function triagemInventario(body, token) {
   return apiFetch('/api/inventario/triagem', { method: 'POST', body: JSON.stringify(body) }, token);
 }
 
+export async function gerarPeticaoInventario(body, token) {
+  const r = await fetch(`${API_BASE}/api/inventario/peticao`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(err.detail || `HTTP ${r.status}`);
+  }
+  const blob = await r.blob();
+  const slug = body.via_recomendada === 'extrajudicial' ? 'escritura-inventario' : 'peticao-inventario';
+  await openOrDownloadBlob(blob, `jurir_${slug}.docx`);
+}
+
 // ── Trabalhista (Verbas Rescisórias + Adicionais) ───────────────────────
 export async function calcularVerbasRescisorias(body, token) {
   return apiFetch('/api/trabalhista/verbas-rescisorias', { method: 'POST', body: JSON.stringify(body) }, token);
