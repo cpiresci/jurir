@@ -16,10 +16,13 @@ const NAV_COLS = [
   {
     heading: 'Ferramentas',
     links: [
-      { label: 'Gerador de Petições', type: 'route', to: '/peticoes' },
-      { label: 'Simulador Judicial',  type: 'route', to: '/simulador' },
-      { label: 'Monitoramento',       type: 'route', to: '/monitoramento' },
-      { label: 'Verificar Relatório', type: 'route', to: '/verificar' },
+      { label: 'Gerador de Petições',      type: 'route', to: '/peticoes' },
+      { label: 'Simulador Judicial',       type: 'route', to: '/simulador' },
+      { label: 'Monitoramento',            type: 'route', to: '/monitoramento' },
+      { label: 'Triagem de Inventário',    type: 'route', to: '/inventario' },
+      { label: 'Calculadora Trabalhista',  type: 'route', to: '/trabalhista' },
+      { label: 'Histórico de Análises',    type: 'route', to: '/historico' },
+      { label: 'Verificar Relatório',      type: 'route', to: '/verificar' },
     ],
   },
   {
