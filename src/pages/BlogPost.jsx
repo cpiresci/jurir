@@ -41,6 +41,19 @@ function useDocumentMeta(meta) {
   }, [meta]);
 }
 
+// [seo-related-posts] Até 3 posts relacionados (mesma área primeiro, resto
+// completa) linkados com <a href> real pro caminho estático /blog/<slug>/ —
+// mesma razão do fix em Blog.jsx: sob HashRouter, <Link to> vira um
+// fragmento "#/..." que o Googlebot não segue como página nova. Isso também
+// resolve o problema de cada post só ter UM link de saída ("voltar pro
+// blog") — um grafo de links interno raso é um dos motivos mais comuns de
+// "rastreada, mas não indexada" em sites novos.
+function getRelatedPosts(current, count = 3) {
+  const sameArea = POSTS.filter(p => p.slug !== current.slug && p.area === current.area);
+  const rest = POSTS.filter(p => p.slug !== current.slug && p.area !== current.area);
+  return [...sameArea, ...rest].slice(0, count);
+}
+
 export default function BlogPostPage() {
   const { slug } = useParams();
   const [content, setContent] = useState(null);
@@ -56,17 +69,19 @@ export default function BlogPostPage() {
     return (
       <div style={{ maxWidth: 680, margin: '0 auto', padding: '140px 24px', textAlign: 'center' }}>
         <p style={{ color: 'var(--p4)' }}>Post não encontrado.</p>
-        <Link to="/blog" className="btn btn-ghost" style={{ marginTop: 16, display: 'inline-flex' }}>Voltar pro blog</Link>
+        <a href="/blog/" className="btn btn-ghost" style={{ marginTop: 16, display: 'inline-flex' }}>Voltar pro blog</a>
       </div>
     );
   }
 
+  const related = getRelatedPosts(meta);
+
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', padding: '100px 24px 60px' }}>
-      <Link to="/blog" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--p4)',
+      <a href="/blog/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--p4)',
         fontSize: 'var(--fs-sm)', textDecoration: 'none', marginBottom: 24 }}>
         <ArrowLeft size={14} /> Voltar pro blog
-      </Link>
+      </a>
 
       <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--p5)', fontFamily: 'var(--f-mono)', marginBottom: 8 }}>
         {meta.area} · {meta.date}
@@ -92,11 +107,28 @@ export default function BlogPostPage() {
             tema quando o post define ctaTo/ctaLabel (ex.: posts trabalhistas
             → calculadora em /trabalhista), em vez de mandar todo mundo pra
             análise completa (alta fricção). Sem ctaTo definido, cai no
-            comportamento antigo (link pra "/"). */}
+            comportamento antigo (link pra "/"). Fica como <Link> (rota só de
+            app, sem gêmea estática) — não precisa de <a> real. */}
         <Link to={meta.ctaTo || '/'} className="btn btn-cobalt">
           {meta.ctaLabel || 'Analisar meu caso grátis'}
         </Link>
       </div>
+
+      {related.length > 0 && (
+        <div style={{ marginTop: 48 }}>
+          <h2 style={{ fontSize: 'var(--fs-base)', fontWeight: 700, color: 'var(--p1)', marginBottom: 16 }}>
+            Leia também
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {related.map(post => (
+              <a key={post.slug} href={`/blog/${post.slug}/`} style={{ textDecoration: 'none', color: 'var(--cy1)',
+                fontSize: 'var(--fs-sm)', fontWeight: 600 }}>
+                {post.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,11 +3,17 @@
   [sitemap-hashrouter] O app usa HashRouter (jurir.com/#/rota) pra navegação
   interna — isso continua assim (migrar pra BrowserRouter é projeto maior,
   mais arriscado, o reset de senha depende do parsing de hash hoje).
-  Posts do blog, porém, agora têm um caminho real e estático além do hash
-  (https://jurir.com/blog/<slug>/, gerado por scripts/prerender-blog-og.js
-  no build) — cada post ganha um HTML próprio com og:tags corretas e é isso
-  que o sitemap referencia abaixo, não mais o fragmento #.
-  Atualizar manualmente ao adicionar posts novos em src/lib/blogPosts.js.
+
+  [seo-sitemap-autogen] Este arquivo (public/sitemap.xml) é só o fallback de
+  dev/preview. Em produção, scripts/generate-sitemap.js sobrescreve
+  dist/sitemap.xml a partir de src/lib/blogPosts.js a cada build — é essa
+  versão gerada, com <lastmod> real e slugs validados contra content/blog/,
+  que vale. Não editar posts aqui à mão; editar em blogPosts.js.
+
+  [seo-fragment-removed] "https://jurir.com/#/blog" foi removido — é um
+  fragmento, não uma URL rastreável (o Google ignora tudo depois do "#"),
+  e estava sendo tratado como duplicata da home. A listagem do blog agora
+  tem HTML estático real em /blog/ (gerado por prerender-blog-og.js).
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -16,7 +22,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://jurir.com/#/blog</loc>
+    <loc>https://jurir.com/blog/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

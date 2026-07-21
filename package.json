@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/prerender-blog-og.js",
+    "build": "vite build && node scripts/prerender-blog-og.js && node scripts/generate-sitemap.js",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
   },

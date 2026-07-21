@@ -8,11 +8,22 @@
 // Facebook, LinkedIn) NÃO executam JS, então sempre pegavam o card genérico
 // da home ao compartilhar um post específico.
 //
+// [seo-blog-index-fix] Também gera dist/blog/index.html — antes só existiam
+// os posts individuais, e "/blog/" (sem slug) não tinha gêmeo estático
+// nenhum: uma requisição direta a https://jurir.com/blog/ caía no 404.html
+// (fallback client-side do GitHub Pages), e a única forma de chegar na
+// listagem era via hash (#/blog), que o Google descarta ao rastrear —
+// era exatamente a URL "https://jurir.com/#/blog" aparecendo como
+// "detectada, mas não indexada" no Search Console. Esse HTML tem uma lista
+// real de <a href> pros posts, então também resolve o link interno: mesmo
+// que o crawler não execute JS, ele já encontra e segue os links reais.
+//
 // Não migra pra BrowserRouter nem mexe no roteamento real do app (HashRouter
 // continua exatamente como está — decisão já tomada de não migrar agora,
-// ver comentário em public/sitemap.xml). O usuário real que abrir uma dessas
-// URLs estáticas (https://jurir.com/blog/<slug>/) ganha um pequeno script
-// síncrono no <head> que seta o hash certo (#/blog/<slug>) ANTES do React
+// ver comentário em public/sitemap.xml / scripts/generate-sitemap.js). O
+// usuário real que abrir uma dessas URLs estáticas (https://jurir.com/blog/
+// ou https://jurir.com/blog/<slug>/) ganha um pequeno script síncrono no
+// <head> que seta o hash certo (#/blog ou #/blog/<slug>) ANTES do React
 // montar — o HashRouter já nasce na rota certa, sem redirect visível, sem
 // flash, sem segunda requisição de rede. O bundle JS é o mesmo de sempre
 // (mesmo dist/index.html só com meta tags trocadas), então zero risco de
@@ -56,6 +67,14 @@ function parsePtDateToIso(dateStr) {
   return `${year}-${mon}-${day.padStart(2, '0')}T00:00:00-03:00`;
 }
 
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 async function main() {
   const baseHtmlPath = path.join(DIST, 'index.html');
   if (!fs.existsSync(baseHtmlPath)) {
@@ -88,14 +107,6 @@ async function main() {
     }
   }
 
-  function escapeHtml(s) {
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
   function buildPostHtml(post) {
     const title = escapeHtml(`${post.title} · JURIR Blog`);
     const desc = escapeHtml(post.excerpt);
@@ -115,11 +126,6 @@ async function main() {
     // o sufixo "· JURIR Blog" (esse é só pro <title> da aba). datePublished
     // fica de fora do objeto se a data em blogPosts.js não bater no formato
     // esperado, em vez de gerar um ISO inválido.
-    // [seo-jsonld-article-fix] image e author.url adicionados depois que o
-    // Rich Results Test acusou os dois como ausentes (avisos não-críticos,
-    // mas de graça pra resolver). Sem imagem própria por post ainda, então
-    // cai no og-image.png genérico — trocar aqui se algum dia os posts
-    // ganharem imagem de capa própria.
     const isoDate = parsePtDateToIso(post.date);
     const articleLd = {
       '@context': 'https://schema.org',
@@ -145,6 +151,37 @@ async function main() {
     return html;
   }
 
+  // [seo-blog-index-fix] Gera dist/blog/index.html: meta tags da listagem +
+  // um bloco de <a href> reais pro crawler seguir sem depender de JS. Fica
+  // fora de #root (id="prerendered-blog-list") pra não brigar com o React —
+  // ver src/main.jsx, que remove esse bloco assim que a SPA monta.
+  function buildBlogIndexHtml() {
+    const title = escapeHtml('Blog Jurídico · JURIR');
+    const desc = escapeHtml('Dúvidas jurídicas comuns, explicadas pelos mesmos especialistas que analisam seu caso na Jurir.');
+    const url = `${SITE}/blog/`;
+
+    let html = baseHtml;
+    html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
+    html = html.replace(/<meta name="description" content=".*?"\s*\/>/, `<meta name="description" content="${desc}" />`);
+    html = html.replace(/<link rel="canonical" href=".*?"\s*\/>/, `<link rel="canonical" href="${url}" />`);
+    html = html.replace(/<meta property="og:title" content=".*?"\s*\/>/, `<meta property="og:title" content="${title}" />`);
+    html = html.replace(/<meta property="og:description" content=".*?"\s*\/>/, `<meta property="og:description" content="${desc}" />`);
+    html = html.replace(/<meta property="og:url" content=".*?"\s*\/>/, `<meta property="og:url" content="${url}" />`);
+    html = html.replace(/<meta name="twitter:title" content=".*?"\s*\/>/, `<meta name="twitter:title" content="${title}" />`);
+    html = html.replace(/<meta name="twitter:description" content=".*?"\s*\/>/, `<meta name="twitter:description" content="${desc}" />`);
+
+    const listItems = POSTS.map(post =>
+      `<li><a href="/blog/${post.slug}/">${escapeHtml(post.title)}</a></li>`
+    ).join('\n      ');
+    const staticList = `<div id="prerendered-blog-list"><h1>${title}</h1>\n    <ul>\n      ${listItems}\n    </ul>\n  </div>\n`;
+    html = html.replace('<div id="root">', `${staticList}<div id="root">`);
+
+    const hashScript = `<script>if (!location.hash) { location.hash = '#/blog'; }</script>\n`;
+    html = html.replace('</head>', `${hashScript}  </head>`);
+
+    return html;
+  }
+
   let count = 0;
   for (const post of POSTS) {
     if (!post.slug || !post.title || !post.excerpt) {
@@ -157,7 +194,11 @@ async function main() {
     count++;
   }
 
-  console.log(`OK [prerender-blog-og]: ${count} página(s) estática(s) geradas em dist/blog/<slug>/index.html`);
+  const blogIndexDir = path.join(DIST, 'blog');
+  fs.mkdirSync(blogIndexDir, { recursive: true });
+  fs.writeFileSync(path.join(blogIndexDir, 'index.html'), buildBlogIndexHtml(), 'utf-8');
+
+  console.log(`OK [prerender-blog-og]: ${count} página(s) de post + 1 índice (/blog/) gerados em dist/blog/`);
 }
 
 main();
