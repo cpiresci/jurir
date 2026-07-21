@@ -88,7 +88,14 @@ export default function BlogPostPage() {
         <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--p4)', marginBottom: 16 }}>
           Analise seu processo ou situação gratuitamente com os agentes especialistas da Jurir.
         </p>
-        <Link to="/" className="btn btn-cobalt">Analisar meu caso grátis</Link>
+        {/* [blog-cta-per-tool] CTA aponta pra ferramenta grátis específica do
+            tema quando o post define ctaTo/ctaLabel (ex.: posts trabalhistas
+            → calculadora em /trabalhista), em vez de mandar todo mundo pra
+            análise completa (alta fricção). Sem ctaTo definido, cai no
+            comportamento antigo (link pra "/"). */}
+        <Link to={meta.ctaTo || '/'} className="btn btn-cobalt">
+          {meta.ctaLabel || 'Analisar meu caso grátis'}
+        </Link>
       </div>
     </div>
   );

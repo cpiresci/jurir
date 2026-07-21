@@ -8,6 +8,8 @@ export const POSTS = [
     excerpt: 'Prazos reais por fase — da reclamação à execução — e o que mais atrasa um processo na Justiça do Trabalho.',
     area: 'Direito Trabalhista',
     date: '28 jun 2026',
+    ctaTo: '/trabalhista',
+    ctaLabel: 'Calcular minhas verbas rescisórias grátis',
   },
   {
     slug: 'como-funciona-garantia-legal-produto-com-defeito',
@@ -57,6 +59,8 @@ export const POSTS = [
     excerpt: 'Saldo de salário, aviso prévio, férias, 13º, FGTS com multa de 40% — a lista completa pra conferir se o TRCT bateu certo.',
     area: 'Direito Trabalhista',
     date: '03 jul 2026',
+    ctaTo: '/trabalhista',
+    ctaLabel: 'Calcular minhas verbas rescisórias grátis',
   },
   {
     slug: 'guarda-compartilhada-como-funciona',
